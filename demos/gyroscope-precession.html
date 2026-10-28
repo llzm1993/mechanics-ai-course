@@ -1,0 +1,1409 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>大学物理《力学》智慧课程 · 陀螺重力进动与角动量增量3D交互演示</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Three.js r128 -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <!-- Google Fonts: Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      box-sizing: border-box;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    body, html {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: #070b14;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+      color: #f1f5f9;
+    }
+    .font-mono-num {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    #canvas-container {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      background: radial-gradient(circle at 50% 45%, #111c35 0%, #070b14 75%);
+    }
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+      cursor: grab;
+    }
+    canvas:active {
+      cursor: grabbing;
+    }
+
+    /* Glassmorphism Panels */
+    .glass-panel {
+      background: rgba(15, 23, 42, 0.82);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(148, 163, 184, 0.18);
+      box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.7);
+    }
+
+    /* Custom Range Sliders */
+    input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 6px;
+      background: rgba(51, 65, 85, 0.9);
+      border-radius: 999px;
+      outline: none;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #38bdf8;
+      border: 2px solid #ffffff;
+      cursor: pointer;
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.8);
+      transition: transform 0.15s ease;
+    }
+    input[type="range"]::-webkit-slider-thumb:hover {
+      transform: scale(1.18);
+    }
+
+    /* 3D Projected Floating Labels */
+    #labels-container {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 10;
+      overflow: hidden;
+    }
+    .vec-label {
+      position: absolute;
+      transform: translate(-50%, -50%);
+      padding: 4px 9px;
+      border-radius: 8px;
+      font-size: 12.5px;
+      font-weight: 600;
+      white-space: nowrap;
+      pointer-events: none;
+      transition: opacity 0.15s ease;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.65);
+      backdrop-filter: blur(6px);
+    }
+    .math-vec {
+      position: relative;
+      display: inline-block;
+      font-style: italic;
+      font-family: "Times New Roman", Times, serif;
+      font-weight: bold;
+      font-size: 1.1em;
+    }
+    .math-vec::after {
+      content: "→";
+      position: absolute;
+      top: -0.58em;
+      left: 50%;
+      transform: translateX(-50%) scale(0.75);
+      font-style: normal;
+      font-weight: bold;
+    }
+    .math-sym {
+      font-style: italic;
+      font-family: "Times New Roman", Times, serif;
+      font-weight: bold;
+    }
+
+    /* Custom Scrollbar for side panels */
+    .custom-scroll::-webkit-scrollbar {
+      width: 5px;
+    }
+    .custom-scroll::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb {
+      background: rgba(100, 116, 139, 0.4);
+      border-radius: 999px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 3D WebGL Canvas Container -->
+  <div id="canvas-container"></div>
+
+  <!-- 2D Projected Vector Labels Overlay -->
+  <div id="labels-container">
+    <!-- Angular Momentum L(t) -->
+    <div id="label-L" class="vec-label bg-sky-950/90 border border-sky-400 text-sky-200">
+      <span class="math-vec">L</span>(<span class="math-sym">t</span>) 角动量
+    </div>
+    <!-- Angular Momentum Increment dL -->
+    <div id="label-dL" class="vec-label bg-amber-950/95 border-2 border-amber-400 text-amber-200">
+      d<span class="math-vec">L</span> = <span class="math-vec">M</span>d<span class="math-sym">t</span> (角动量增量·切向)
+    </div>
+    <!-- Next Instant Angular Momentum L(t+dt) -->
+    <div id="label-Lnext" class="vec-label bg-blue-950/85 border border-blue-400/70 text-blue-200">
+      <span class="math-vec">L</span>(<span class="math-sym">t</span>+Δ<span class="math-sym">t</span>) = <span class="math-vec">L</span>(<span class="math-sym">t</span>)+Δ<span class="math-vec">L</span>
+    </div>
+    <!-- Torque M -->
+    <div id="label-M" class="vec-label bg-fuchsia-950/90 border border-fuchsia-400 text-fuchsia-200">
+      <span class="math-vec">M</span> = <span class="math-vec">r</span><sub>c</sub> × <span class="math-sym">m</span><span class="math-vec">g</span> (重力矩)
+    </div>
+    <!-- Gravity mg -->
+    <div id="label-mg" class="vec-label bg-emerald-950/90 border border-emerald-400 text-emerald-200">
+      <span class="math-sym">m</span><span class="math-vec">g</span> (重力)
+    </div>
+    <!-- Center of mass rc -->
+    <div id="label-rc" class="vec-label bg-rose-950/90 border border-rose-400 text-rose-200">
+      <span class="math-sym">C</span> (<span class="math-vec">r</span><sub>c</sub> 质心)
+    </div>
+    <!-- Precession Angular Velocity Omega_p -->
+    <div id="label-Omega" class="vec-label bg-indigo-950/90 border border-indigo-400 text-indigo-200">
+      <span class="math-vec">Ω</span><sub>p</sub> 进动角速度 (竖直 <span class="math-sym">z</span> 轴)
+    </div>
+    <!-- Spin Angular Velocity omega_s -->
+    <div id="label-ws" class="vec-label bg-cyan-950/85 border border-cyan-400/70 text-cyan-200">
+      自转 <span class="math-sym">ω<sub>s</sub></span>
+    </div>
+    <!-- Pivot O -->
+    <div id="label-O" class="vec-label bg-slate-900/90 border border-slate-500 text-slate-200">
+      支点 <span class="math-sym">O</span> (0,0,0)
+    </div>
+    <!-- Tilt Angle theta -->
+    <div id="label-theta" class="vec-label bg-slate-900/85 border border-slate-400/60 text-slate-100">
+      倾角 <span class="math-sym">θ</span> = <span id="label-theta-val">50</span>°
+    </div>
+  </div>
+
+  <!-- Top Header & Quick Camera Bar -->
+  <header class="fixed top-3 left-3 right-3 z-20 flex flex-wrap items-center justify-between gap-2 pointer-events-none">
+    <!-- Course Title Badge -->
+    <div class="glass-panel px-4 py-2.5 rounded-2xl flex items-center gap-3 pointer-events-auto">
+      <div class="w-3 h-8 rounded-full bg-gradient-to-b from-sky-400 via-amber-400 to-fuchsia-500"></div>
+      <div>
+        <div class="flex items-center gap-2">
+          <span class="text-xs font-semibold uppercase tracking-wider px-2 py-0.5 rounded bg-sky-500/20 text-sky-300 border border-sky-400/30">大学物理《力学》智慧课程</span>
+          <span class="text-xs text-slate-400 hidden sm:inline">刚体定轴转动与进动动力学</span>
+        </div>
+        <h1 class="text-base sm:text-lg font-bold text-white tracking-tight mt-0.5">
+          陀螺在重力作用下的进动与角动量增量 <span class="text-amber-400 font-serif italic">dL = Mdt</span>
+        </h1>
+      </div>
+    </div>
+
+    <!-- Quick Classroom Camera Presets -->
+    <div class="glass-panel p-1.5 rounded-2xl flex flex-wrap items-center gap-1.5 pointer-events-auto">
+      <span class="text-xs text-slate-400 px-2 font-medium hidden md:inline">教学视角切换：</span>
+      <button id="view-3d" class="cam-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-sky-500 text-slate-950 shadow-sm transition">
+        🌐 3D立体全景视角
+      </button>
+      <button id="view-top" class="cam-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-800/80 hover:bg-slate-700 text-slate-200 transition">
+        ⬇️ 俯视投影 (观察 dL⊥L<sub>xy</sub> 与切线)
+      </button>
+      <button id="view-side" class="cam-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-800/80 hover:bg-slate-700 text-slate-200 transition">
+        ➡️ 侧视截面 (观察倾角 θ 与力矩产生)
+      </button>
+      <button id="view-triangle" class="cam-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-800/80 hover:bg-slate-700 text-amber-300 border border-amber-400/30 transition">
+        🔍 矢端合成三角形特写
+      </button>
+    </div>
+  </header>
+
+  <!-- Left Panel: Physics Formulas, Live Telemetry & Core Physical Picture -->
+  <aside id="left-panel" class="fixed top-24 left-3 bottom-20 w-80 sm:w-96 z-20 flex flex-col gap-3 pointer-events-none transition-transform duration-300">
+    <div class="glass-panel rounded-2xl p-4 flex flex-col gap-3.5 overflow-y-auto custom-scroll pointer-events-auto max-h-full">
+      
+      <!-- Real-Time Telemetry Header -->
+      <div class="flex items-center justify-between border-b border-slate-700/70 pb-2.5">
+        <div class="flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          <h2 class="text-sm font-bold text-slate-100">实时物理量监测看板</h2>
+        </div>
+        <span class="text-[11px] text-slate-400 font-mono-num">I = 0.20 kg·m²</span>
+      </div>
+
+      <!-- 3 Key Physics Metrics Cards -->
+      <div class="grid grid-cols-1 gap-2.5">
+        <!-- Spin Angular Momentum L -->
+        <div class="bg-slate-900/75 border border-sky-500/35 rounded-xl p-2.5 flex items-center justify-between">
+          <div>
+            <div class="text-xs text-sky-300 font-semibold flex items-center gap-1.5">
+              <span class="inline-block w-2.5 h-2.5 rounded-full bg-sky-400"></span>
+              自转角动量 <span class="math-sym">L = Iω<sub>s</sub></span>
+            </div>
+            <div class="text-[11px] text-slate-400 mt-0.5">沿陀螺对称轴指向斜上方</div>
+          </div>
+          <div class="text-right font-mono-num">
+            <span id="val-L" class="text-base font-bold text-sky-300">6.00</span>
+            <span class="text-[11px] text-slate-400 block">kg·m²/s</span>
+          </div>
+        </div>
+
+        <!-- Gravitational Torque M = dL/dt -->
+        <div class="bg-slate-900/75 border border-fuchsia-500/35 rounded-xl p-2.5 flex items-center justify-between">
+          <div>
+            <div class="text-xs text-fuchsia-300 font-semibold flex items-center gap-1.5">
+              <span class="inline-block w-2.5 h-2.5 rounded-full bg-fuchsia-400"></span>
+              重力矩 <span class="math-sym">M = mgl</span>·sin<span class="math-sym">θ</span> = |d<span class="math-vec">L</span>/d<span class="math-sym">t</span>|
+            </div>
+            <div class="text-[11px] text-slate-400 mt-0.5">水平切向，决定角动量变化率大小</div>
+          </div>
+          <div class="text-right font-mono-num">
+            <span id="val-M" class="text-base font-bold text-fuchsia-300">7.35</span>
+            <span class="text-[11px] text-slate-400 block">N·m</span>
+          </div>
+        </div>
+
+        <!-- Precession Angular Velocity Omega_p -->
+        <div class="bg-slate-900/75 border border-amber-500/40 rounded-xl p-2.5 flex items-center justify-between">
+          <div>
+            <div class="text-xs text-amber-300 font-semibold flex items-center gap-1.5">
+              <span class="inline-block w-2.5 h-2.5 rounded-full bg-amber-400"></span>
+              进动角速度 <span class="math-sym">Ω<sub>p</sub> = mgl / (Iω<sub>s</sub>)</span>
+            </div>
+            <div class="text-[11px] text-slate-400 mt-0.5">与自转 <span class="math-sym">ω<sub>s</sub></span> 成反比，与倾角 <span class="math-sym">θ</span> 无关</div>
+          </div>
+          <div class="text-right font-mono-num">
+            <span id="val-Omega" class="text-base font-bold text-amber-300">1.60</span>
+            <span class="text-[11px] text-slate-400 block">rad/s</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Vector Legend & Direction Relationship Summary -->
+      <div class="bg-slate-950/70 border border-slate-800 rounded-xl p-3 space-y-2">
+        <div class="text-xs font-bold text-amber-300 flex items-center justify-between">
+          <span>📐 核心矢量正交与平行关系</span>
+          <span class="text-[11px] px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300">重点考点</span>
+        </div>
+        <div class="text-xs text-slate-300 space-y-1.5 leading-relaxed">
+          <div class="flex items-center justify-between bg-slate-900/80 px-2.5 py-1.5 rounded-lg border border-slate-800">
+            <span>1. 力矩叉乘右手定则：</span>
+            <span class="font-mono-num text-fuchsia-300 font-semibold"><span class="math-vec">M</span> = <span class="math-vec">r</span><sub>c</sub> × <span class="math-sym">m</span><span class="math-vec">g</span> (水平切向)</span>
+          </div>
+          <div class="flex items-center justify-between bg-slate-900/80 px-2.5 py-1.5 rounded-lg border border-slate-800">
+            <span>2. 角动量定理方向：</span>
+            <span class="font-mono-num text-amber-300 font-semibold">d<span class="math-vec">L</span> = <span class="math-vec">M</span>d<span class="math-sym">t</span> ∥ <span class="math-vec">M</span></span>
+          </div>
+          <div class="flex items-center justify-between bg-slate-900/80 px-2.5 py-1.5 rounded-lg border border-slate-800">
+            <span>3. 只改方向不改大小：</span>
+            <span class="font-mono-num text-sky-300 font-semibold">d<span class="math-vec">L</span> ⊥ <span class="math-vec">L</span> &nbsp;(|<span class="math-vec">L</span>| = 常数)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Core Physical Explanation Card -->
+      <div class="bg-gradient-to-br from-slate-900/90 to-indigo-950/60 border border-indigo-500/30 rounded-xl p-3.5 space-y-2">
+        <h3 class="text-xs font-bold text-indigo-300 flex items-center gap-1.5">
+          💡 核心物理图像：为什么重力向下，陀螺却不倒下？
+        </h3>
+        <p class="text-xs text-slate-300 leading-relaxed">
+          若陀螺<strong>不自转</strong>（<span class="math-sym">ω<sub>s</sub></span> = 0），重力矩 <span class="math-vec">M</span> 从零开始产生沿水平切向的角动量，陀螺直接绕水平轴向下倾倒。
+        </p>
+        <p class="text-xs text-slate-300 leading-relaxed">
+          当陀螺<strong>高速自转</strong>（<span class="math-sym">ω<sub>s</sub></span> 很大）时，它已拥有沿对称轴斜向上的巨大角动量 <span class="text-sky-300 font-semibold"><span class="math-vec">L</span>(<span class="math-sym">t</span>)</span>。此时竖直向下的重力 <span class="text-emerald-300 font-semibold"><span class="math-sym">m</span><span class="math-vec">g</span></span> 产生的重力矩 <span class="text-fuchsia-300 font-semibold"><span class="math-vec">M</span> = <span class="math-vec">r</span><sub>c</sub> × <span class="math-sym">m</span><span class="math-vec">g</span></span> <strong>并非向下，而是沿水平圆周切线方向</strong>！
+        </p>
+        <p class="text-xs text-slate-300 leading-relaxed">
+          根据角动量定理，角动量增量 <span class="text-amber-300 font-semibold">d<span class="math-vec">L</span> = <span class="math-vec">M</span>d<span class="math-sym">t</span></span> 必然沿<strong>水平切线方向</strong>（与 <span class="math-vec">L</span> 垂直）。正如向心力垂直于速度只改变速度方向一样，<span class="text-amber-300 font-semibold">d<span class="math-vec">L</span></span> 牵引着 <span class="text-sky-300 font-semibold"><span class="math-vec">L</span></span> 的矢端在水平面内做圆周运动，形成<strong>规则进动</strong>。
+        </p>
+      </div>
+
+    </div>
+  </aside>
+
+  <!-- Right Panel: Interactive Parameter Sliders & Vector Layer Controls -->
+  <aside id="right-panel" class="fixed top-24 right-3 bottom-20 w-80 sm:w-88 z-20 flex flex-col gap-3 pointer-events-none transition-transform duration-300">
+    <div class="glass-panel rounded-2xl p-4 flex flex-col gap-4 overflow-y-auto custom-scroll pointer-events-auto max-h-full">
+
+      <!-- Parameter Sliders Section -->
+      <div>
+        <div class="flex items-center justify-between border-b border-slate-700/70 pb-2 mb-3">
+          <h2 class="text-sm font-bold text-slate-100">🎛️ 物理参数实时调节</h2>
+          <button id="btn-reset-params" class="text-xs text-sky-400 hover:text-sky-300 font-medium transition">
+            恢复默认参数
+          </button>
+        </div>
+
+        <div class="space-y-3.5">
+          <!-- Spin angular velocity omega_s -->
+          <div>
+            <div class="flex justify-between text-xs mb-1">
+              <span class="text-slate-200 font-medium">自转角速度 <span class="math-sym text-sky-300">ω<sub>s</sub></span></span>
+              <span class="font-mono-num text-sky-300 font-semibold"><span id="disp-ws">30</span> rad/s</span>
+            </div>
+            <input id="slider-ws" type="range" min="12" max="55" step="1" value="30" />
+            <div class="flex justify-between text-[10px] text-slate-400 mt-0.5">
+              <span>慢速自转 (进动快)</span>
+              <span>高速自转 (进动慢、L长)</span>
+            </div>
+          </div>
+
+          <!-- Tilt Angle theta -->
+          <div>
+            <div class="flex justify-between text-xs mb-1">
+              <span class="text-slate-200 font-medium">陀螺轴倾角 <span class="math-sym text-amber-300">θ</span></span>
+              <span class="font-mono-num text-amber-300 font-semibold"><span id="disp-theta">50</span>°</span>
+            </div>
+            <input id="slider-theta" type="range" min="15" max="82" step="1" value="50" />
+            <div class="flex justify-between text-[10px] text-slate-400 mt-0.5">
+              <span>近竖直 (15°)</span>
+              <span>近水平 (82°)</span>
+            </div>
+          </div>
+
+          <!-- Gravity & Lever Arm Product (mgl) -->
+          <div>
+            <div class="flex justify-between text-xs mb-1">
+              <span class="text-slate-200 font-medium">重力与质心距乘积 <span class="math-sym text-fuchsia-300">mgl</span></span>
+              <span class="font-mono-num text-fuchsia-300 font-semibold"><span id="disp-mgl">9.6</span> N·m</span>
+            </div>
+            <input id="slider-mgl" type="range" min="4.0" max="16.0" step="0.4" value="9.6" />
+            <div class="flex justify-between text-[10px] text-slate-400 mt-0.5">
+              <span>小重力矩</span>
+              <span>大重力矩 (M与dL显著增大)</span>
+            </div>
+          </div>
+
+          <!-- Differential Time Step Magnification delta_t -->
+          <div class="pt-1 border-t border-slate-800">
+            <div class="flex justify-between text-xs mb-1">
+              <span class="text-amber-300 font-semibold">微元步长放大系数 <span class="math-sym">Δt</span> (教学演示)</span>
+              <span class="font-mono-num text-amber-300 font-semibold"><span id="disp-dt">0.22</span> s</span>
+            </div>
+            <input id="slider-dt" type="range" min="0.08" max="0.45" step="0.01" value="0.22" />
+            <div class="text-[10px] text-slate-400 mt-0.5">
+              放大展示 <span class="text-amber-300">Δ<span class="math-vec">L</span> = <span class="math-vec">M</span>Δ<span class="math-sym">t</span></span> 与 <span class="text-sky-300"><span class="math-vec">L</span>(<span class="math-sym">t</span>+Δ<span class="math-sym">t</span>)</span> 构成的矢量三角形
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Layer Visibility Switches -->
+      <div class="border-t border-slate-700/70 pt-3">
+        <h3 class="text-xs font-bold text-slate-200 mb-2.5">👁️ 矢量与教学辅助图层开关</h3>
+        <div class="grid grid-cols-1 gap-2 text-xs">
+          
+          <label class="flex items-center justify-between p-2 rounded-xl bg-amber-500/10 border border-amber-400/35 cursor-pointer hover:bg-amber-500/15 transition">
+            <span class="flex items-center gap-2 font-semibold text-amber-200">
+              <span class="w-3 h-3 rounded-sm bg-amber-400 inline-block"></span>
+              角动量增量 d<span class="math-vec">L</span> (切向箭头)
+            </span>
+            <input id="chk-dL" type="checkbox" checked class="w-4 h-4 accent-amber-400 rounded cursor-pointer" />
+          </label>
+
+          <label class="flex items-center justify-between p-2 rounded-xl bg-blue-500/10 border border-blue-400/35 cursor-pointer hover:bg-blue-500/15 transition">
+            <span class="flex items-center gap-2 font-semibold text-blue-200">
+              <span class="w-3 h-3 rounded-sm bg-blue-400 inline-block"></span>
+              矢量三角形 <span class="math-vec">L</span>(<span class="math-sym">t</span>)+Δ<span class="math-vec">L</span>=<span class="math-vec">L</span>(<span class="math-sym">t</span>+Δ<span class="math-sym">t</span>)
+            </span>
+            <input id="chk-triangle" type="checkbox" checked class="w-4 h-4 accent-blue-400 rounded cursor-pointer" />
+          </label>
+
+          <label class="flex items-center justify-between p-2 rounded-xl bg-slate-800/70 border border-slate-700 cursor-pointer hover:bg-slate-800 transition">
+            <span class="flex items-center gap-2 text-sky-200">
+              <span class="w-3 h-3 rounded-sm bg-sky-400 inline-block"></span>
+              自转角动量矢量 <span class="math-vec">L</span>(<span class="math-sym">t</span>)
+            </span>
+            <input id="chk-L" type="checkbox" checked class="w-4 h-4 accent-sky-400 rounded cursor-pointer" />
+          </label>
+
+          <label class="flex items-center justify-between p-2 rounded-xl bg-slate-800/70 border border-slate-700 cursor-pointer hover:bg-slate-800 transition">
+            <span class="flex items-center gap-2 text-fuchsia-200">
+              <span class="w-3 h-3 rounded-sm bg-fuchsia-400 inline-block"></span>
+              重力矩矢量 <span class="math-vec">M</span> = <span class="math-vec">r</span><sub>c</sub> × <span class="math-sym">m</span><span class="math-vec">g</span> (及平行虚线)
+            </span>
+            <input id="chk-M" type="checkbox" checked class="w-4 h-4 accent-fuchsia-400 rounded cursor-pointer" />
+          </label>
+
+          <label class="flex items-center justify-between p-2 rounded-xl bg-slate-800/70 border border-slate-700 cursor-pointer hover:bg-slate-800 transition">
+            <span class="flex items-center gap-2 text-emerald-200">
+              <span class="w-3 h-3 rounded-sm bg-emerald-400 inline-block"></span>
+              重力 <span class="math-sym">m</span><span class="math-vec">g</span> 与质心位矢 <span class="math-vec">r</span><sub>c</sub>
+            </span>
+            <input id="chk-mg" type="checkbox" checked class="w-4 h-4 accent-emerald-400 rounded cursor-pointer" />
+          </label>
+
+          <label class="flex items-center justify-between p-2 rounded-xl bg-slate-800/70 border border-slate-700 cursor-pointer hover:bg-slate-800 transition">
+            <span class="flex items-center gap-2 text-indigo-200">
+              <span class="w-3 h-3 rounded-sm bg-indigo-400 inline-block"></span>
+              进动轨迹圆环、圆锥面与 <span class="math-vec">Ω</span><sub>p</sub>
+            </span>
+            <input id="chk-cone" type="checkbox" checked class="w-4 h-4 accent-indigo-400 rounded cursor-pointer" />
+          </label>
+
+          <label class="flex items-center justify-between p-2 rounded-xl bg-slate-800/70 border border-slate-700 cursor-pointer hover:bg-slate-800 transition">
+            <span class="flex items-center gap-2 text-slate-200">
+              <span class="w-3 h-3 rounded-sm bg-slate-400 inline-block"></span>
+              显示 3D 实时跟随文字标签
+            </span>
+            <input id="chk-labels" type="checkbox" checked class="w-4 h-4 accent-slate-400 rounded cursor-pointer" />
+          </label>
+
+        </div>
+      </div>
+
+    </div>
+  </aside>
+
+  <!-- Bottom Playback & Classroom Control Bar -->
+  <footer class="fixed bottom-3 left-1/2 -translate-x-1/2 z-20 flex flex-wrap items-center justify-center gap-2 px-4 py-2.5 rounded-2xl glass-panel pointer-events-auto">
+    <!-- Play / Pause -->
+    <button id="btn-play" class="px-4 py-2 rounded-xl bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold text-xs flex items-center gap-1.5 shadow-lg shadow-sky-500/25 transition">
+      <span id="play-icon">⏸</span>
+      <span id="play-text">暂停演示</span>
+    </button>
+
+    <!-- Single Micro-Step Forward (+dt) -->
+    <button id="btn-step" class="px-3.5 py-2 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-400/40 font-semibold text-xs flex items-center gap-1 transition" title="暂停后可逐步推进 Δt，观察 L(t) 沿 dL 移动到 L(t+Δt)">
+      ⏭ 单步微元推进 (+Δ<span class="math-sym">t</span>)
+    </button>
+
+    <div class="h-5 w-[1px] bg-slate-700 mx-1 hidden sm:block"></div>
+
+    <!-- Speed Presets -->
+    <div class="flex items-center gap-1 bg-slate-900/90 p-1 rounded-xl border border-slate-800">
+      <span class="text-[11px] text-slate-400 px-2">演示倍速：</span>
+      <button data-speed="1.0" class="speed-btn px-2.5 py-1 rounded-lg text-xs font-semibold bg-sky-500/25 text-sky-300 border border-sky-400/40 transition">
+        1.0× 常速
+      </button>
+      <button data-speed="0.25" class="speed-btn px-2.5 py-1 rounded-lg text-xs font-semibold text-slate-300 hover:bg-slate-800 transition">
+        0.25× 慢放
+      </button>
+      <button data-speed="0.08" class="speed-btn px-2.5 py-1 rounded-lg text-xs font-semibold text-slate-300 hover:bg-slate-800 transition">
+        0.08× 极慢微元观察
+      </button>
+    </div>
+
+    <div class="h-5 w-[1px] bg-slate-700 mx-1 hidden md:block"></div>
+
+    <!-- Toggle Side Panels for Fullscreen Classroom Projection -->
+    <button id="btn-toggle-ui" class="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium transition">
+      🖥️ 收起/展开侧栏
+    </button>
+  </footer>
+
+  <script>
+    window.onload = function () {
+      // =========================================================================
+      // 1. PHYSICS STATE & CONFIGURATION
+      // =========================================================================
+      // Note: We use a strictly right-handed 3D coordinate system where +Z is
+      // vertically UPWARD (standard physics textbook convention).
+      const state = {
+        I: 0.20,          // Moment of inertia around symmetry axis (kg*m^2)
+        ws: 30.0,         // Spin angular velocity omega_s (rad/s)
+        thetaDeg: 50.0,   // Tilt angle from +Z vertical axis (degrees)
+        mgl: 9.6,         // Product m * g * l (N*m)
+        dtVis: 0.22,      // Visual magnification time-step delta_t (s) for vector triangle
+        phi: 0.35,        // Current precession azimuth angle in XY plane (rad)
+        spinAngle: 0.0,   // Current flywheel self-rotation angle (rad)
+        playing: true,
+        timeScale: 1.0,
+        cameraMode: '3d', // '3d' | 'top' | 'side' | 'triangle'
+        layers: {
+          L: true,
+          dL: true,
+          triangle: true,
+          M: true,
+          mg: true,
+          cone: true,
+          labels: true
+        }
+      };
+
+      // Visual scaling constants so vectors are well-proportioned in the 3D viewport
+      const SCALE_L = 0.72;     // Converts physical L = I*ws to 3D arrow length
+      const SCALE_M = 0.28;     // Converts physical M to 3D torque arrow length
+
+      // =========================================================================
+      // 2. THREE.JS SCENE, CAMERA (Z-UP) & RENDERER INITIALIZATION
+      // =========================================================================
+      const container = document.getElementById('canvas-container');
+      const scene = new THREE.Scene();
+
+      // Use Z-axis as vertical upward axis to match university physics textbooks
+      THREE.Object3D.DefaultUp.set(0, 0, 1);
+
+      const camera = new THREE.PerspectiveCamera(
+        42,
+        window.innerWidth / window.innerHeight,
+        0.1,
+        150
+      );
+      camera.up.set(0, 0, 1);
+
+      const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.shadowMap.enabled = true;
+      container.appendChild(renderer.domElement);
+
+      // Lighting
+      const ambientLight = new THREE.AmbientLight(0xdbeafe, 0.75);
+      scene.add(ambientLight);
+
+      const dirLight1 = new THREE.DirectionalLight(0xffffff, 0.95);
+      dirLight1.position.set(8, -10, 14);
+      scene.add(dirLight1);
+
+      const dirLight2 = new THREE.DirectionalLight(0x38bdf8, 0.45);
+      dirLight2.position.set(-10, 10, -5);
+      scene.add(dirLight2);
+
+      // =========================================================================
+      // 3. CUSTOM ORBIT CAMERA CONTROLLER (SUPPORTS Z-UP & PRESET VIEWS)
+      // =========================================================================
+      const camSpherical = {
+        radius: 12.8,
+        polar: 1.12,      // Angle from +Z axis (rad)
+        azimuth: -0.95,   // Angle in XY plane from +X axis (rad)
+        target: new THREE.Vector3(0, 0, 1.35)
+      };
+      const camGoal = {
+        radius: 12.8,
+        polar: 1.12,
+        azimuth: -0.95,
+        target: new THREE.Vector3(0, 0, 1.35)
+      };
+
+      let isDragging = false;
+      let prevPointer = { x: 0, y: 0 };
+
+      function syncCameraFromSpherical() {
+        // Clamp polar angle slightly away from 0 and PI to avoid gimbal flip
+        const p = Math.max(0.002, Math.min(Math.PI - 0.002, camSpherical.polar));
+        const r = camSpherical.radius;
+        const az = camSpherical.azimuth;
+
+        camera.position.set(
+          camSpherical.target.x + r * Math.sin(p) * Math.cos(az),
+          camSpherical.target.y + r * Math.sin(p) * Math.sin(az),
+          camSpherical.target.z + r * Math.cos(p)
+        );
+        camera.up.set(0, 0, 1);
+        camera.lookAt(camSpherical.target);
+      }
+
+      renderer.domElement.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        prevPointer = { x: e.clientX, y: e.clientY };
+        if (state.cameraMode === 'side' || state.cameraMode === 'triangle') {
+          state.cameraMode = '3d';
+          highlightCameraButton('view-3d');
+        }
+      });
+
+      window.addEventListener('mousemove', (e) => {
+        if (!isDragging) return;
+        const dx = e.clientX - prevPointer.x;
+        const dy = e.clientY - prevPointer.y;
+        prevPointer = { x: e.clientX, y: e.clientY };
+
+        camGoal.azimuth -= dx * 0.0075;
+        camGoal.polar = Math.max(0.02, Math.min(Math.PI - 0.08, camGoal.polar - dy * 0.0075));
+      });
+
+      window.addEventListener('mouseup', () => {
+        isDragging = false;
+      });
+
+      renderer.domElement.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        camGoal.radius = Math.max(4.5, Math.min(26, camGoal.radius + e.deltaY * 0.008));
+      }, { passive: false });
+
+      // Touch support for mobile/tablet
+      renderer.domElement.addEventListener('touchstart', (e) => {
+        if (e.touches.length === 1) {
+          isDragging = true;
+          prevPointer = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+        }
+      }, { passive: true });
+
+      window.addEventListener('touchmove', (e) => {
+        if (!isDragging || e.touches.length !== 1) return;
+        const dx = e.touches[0].clientX - prevPointer.x;
+        const dy = e.touches[0].clientY - prevPointer.y;
+        prevPointer = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+        camGoal.azimuth -= dx * 0.0075;
+        camGoal.polar = Math.max(0.02, Math.min(Math.PI - 0.08, camGoal.polar - dy * 0.0075));
+      }, { passive: true });
+
+      window.addEventListener('touchend', () => {
+        isDragging = false;
+      });
+
+      // =========================================================================
+      // 4. 3D REFERENCE GRID, AXES & PIVOT PEDESTAL
+      // =========================================================================
+      const envGroup = new THREE.Group();
+      scene.add(envGroup);
+
+      // Horizontal XY plane grid (rotated so it lies on Z = 0)
+      const gridHelper = new THREE.GridHelper(12, 24, 0x334155, 0x1e293b);
+      gridHelper.rotation.x = Math.PI / 2;
+      gridHelper.material.transparent = true;
+      gridHelper.material.opacity = 0.65;
+      envGroup.add(gridHelper);
+
+      // Polar concentric rings on XY plane for clearer circular symmetry
+      [1.5, 3.0, 4.5].forEach((rad) => {
+        const ringGeo = new THREE.RingGeometry(rad - 0.015, rad + 0.015, 64);
+        const ringMat = new THREE.MeshBasicMaterial({
+          color: 0x38bdf8,
+          side: THREE.DoubleSide,
+          transparent: true,
+          opacity: 0.14
+        });
+        const ringMesh = new THREE.Mesh(ringGeo, ringMat);
+        envGroup.add(ringMesh);
+      });
+
+      // Coordinate Axes (+X, +Y, +Z vertical)
+      function createAxisLine(start, end, colorHex) {
+        const pts = [start, end];
+        const geo = new THREE.BufferGeometry().setFromPoints(pts);
+        const mat = new THREE.LineBasicMaterial({ color: colorHex, transparent: true, opacity: 0.6 });
+        return new THREE.Line(geo, mat);
+      }
+      envGroup.add(createAxisLine(new THREE.Vector3(-5.5, 0, 0), new THREE.Vector3(5.5, 0, 0), 0x64748b));
+      envGroup.add(createAxisLine(new THREE.Vector3(0, -5.5, 0), new THREE.Vector3(0, 5.5, 0), 0x64748b));
+      envGroup.add(createAxisLine(new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, 0, 5.6), 0x818cf8));
+
+      // Pivot Pedestal under Origin O(0,0,0)
+      const pedestalGroup = new THREE.Group();
+      const baseConeGeo = new THREE.ConeGeometry(0.42, 0.75, 32);
+      baseConeGeo.rotateX(Math.PI / 2); // Align cone axis with +Z
+      baseConeGeo.translate(0, 0, -0.38);
+      const baseMat = new THREE.MeshStandardMaterial({
+        color: 0x475569,
+        metalness: 0.75,
+        roughness: 0.25
+      });
+      pedestalGroup.add(new THREE.Mesh(baseConeGeo, baseMat));
+
+      // Glowing Pivot Sphere at exact Origin O(0,0,0)
+      const pivotSphereGeo = new THREE.SphereGeometry(0.11, 24, 24);
+      const pivotSphereMat = new THREE.MeshStandardMaterial({
+        color: 0xf8fafc,
+        emissive: 0x38bdf8,
+        emissiveIntensity: 0.45,
+        metalness: 0.5,
+        roughness: 0.2
+      });
+      pedestalGroup.add(new THREE.Mesh(pivotSphereGeo, pivotSphereMat));
+      scene.add(pedestalGroup);
+
+      // =========================================================================
+      // 5. GYROSCOPE 3D MODEL (SHAFT, FLYWHEEL WITH SECTORS, SPIN INDICATOR)
+      // =========================================================================
+      const gyroGroup = new THREE.Group();
+      scene.add(gyroGroup);
+
+      // Gyroscope shaft along local +Z axis of gyroGroup
+      const SHAFT_LEN = 2.55;
+      const CM_DIST = 1.65; // Center of mass distance along shaft
+      const shaftGeo = new THREE.CylinderGeometry(0.055, 0.055, SHAFT_LEN, 24);
+      shaftGeo.rotateX(Math.PI / 2);
+      shaftGeo.translate(0, 0, SHAFT_LEN / 2);
+      const shaftMat = new THREE.MeshStandardMaterial({
+        color: 0xe2e8f0,
+        metalness: 0.85,
+        roughness: 0.2
+      });
+      const shaftMesh = new THREE.Mesh(shaftGeo, shaftMat);
+      gyroGroup.add(shaftMesh);
+
+      // Center of Mass Marker Sphere C at z = CM_DIST
+      const cmSphereGeo = new THREE.SphereGeometry(0.11, 20, 20);
+      cmSphereGeo.translate(0, 0, CM_DIST);
+      const cmSphereMat = new THREE.MeshStandardMaterial({
+        color: 0xf43f5e,
+        emissive: 0xe11d48,
+        emissiveIntensity: 0.7
+      });
+      const cmMarker = new THREE.Mesh(cmSphereGeo, cmSphereMat);
+      gyroGroup.add(cmMarker);
+
+      // Spinning Flywheel Assembly at z = CM_DIST
+      const flywheelGroup = new THREE.Group();
+      flywheelGroup.position.set(0, 0, CM_DIST);
+      gyroGroup.add(flywheelGroup);
+
+      // Create striped radial sectors on flywheel so high-speed spin omega_s is super clear
+      const NUM_SECTORS = 12;
+      const WHEEL_RADIUS = 1.05;
+      const WHEEL_THICKNESS = 0.16;
+
+      for (let i = 0; i < NUM_SECTORS; i++) {
+        const startAng = (i * 2 * Math.PI) / NUM_SECTORS;
+        const arcAng = (2 * Math.PI) / NUM_SECTORS;
+        const sectorGeo = new THREE.CylinderGeometry(
+          WHEEL_RADIUS,
+          WHEEL_RADIUS,
+          WHEEL_THICKNESS,
+          16,
+          1,
+          false,
+          startAng,
+          arcAng
+        );
+        sectorGeo.rotateX(Math.PI / 2); // Align cylinder axis with local +Z
+        const isEven = i % 2 === 0;
+        const sectorMat = new THREE.MeshStandardMaterial({
+          color: isEven ? 0x0ea5e9 : 0x1e293b,
+          emissive: isEven ? 0x0284c7 : 0x0f172a,
+          emissiveIntensity: isEven ? 0.25 : 0.1,
+          metalness: 0.65,
+          roughness: 0.28
+        });
+        flywheelGroup.add(new THREE.Mesh(sectorGeo, sectorMat));
+      }
+
+      // Metallic outer rim torus around flywheel
+      const rimGeo = new THREE.TorusGeometry(WHEEL_RADIUS, 0.085, 20, 64);
+      const rimMat = new THREE.MeshStandardMaterial({
+        color: 0xfbbf24,
+        emissive: 0xd97706,
+        emissiveIntensity: 0.2,
+        metalness: 0.8,
+        roughness: 0.22
+      });
+      flywheelGroup.add(new THREE.Mesh(rimGeo, rimMat));
+
+      // Circular spin-direction indicator ring around shaft (shows omega_s direction)
+      const spinRingGroup = new THREE.Group();
+      spinRingGroup.position.set(0, 0, CM_DIST + 0.38);
+      const spinTorusGeo = new THREE.TorusGeometry(0.32, 0.018, 12, 48, Math.PI * 1.55);
+      const spinTorusMat = new THREE.MeshBasicMaterial({ color: 0x22d3ee });
+      spinRingGroup.add(new THREE.Mesh(spinTorusGeo, spinTorusMat));
+
+      const spinConeGeo = new THREE.ConeGeometry(0.055, 0.15, 16);
+      const spinConeMesh = new THREE.Mesh(spinConeGeo, spinTorusMat);
+      const endAng = Math.PI * 1.55;
+      spinConeMesh.position.set(0.32 * Math.cos(endAng), 0.32 * Math.sin(endAng), 0);
+      spinConeMesh.rotation.z = endAng;
+      spinRingGroup.add(spinConeMesh);
+      gyroGroup.add(spinRingGroup);
+
+      // =========================================================================
+      // 6. HIGH-VISIBILITY 3D VECTOR ARROW BUILDER
+      // =========================================================================
+      function createThickVectorArrow(colorHex, shaftRadius = 0.048, headRadius = 0.135, headLength = 0.34, opacity = 1.0) {
+        const group = new THREE.Group();
+        const isTransparent = opacity < 0.99;
+
+        const mat = new THREE.MeshStandardMaterial({
+          color: colorHex,
+          emissive: colorHex,
+          emissiveIntensity: 0.42,
+          metalness: 0.25,
+          roughness: 0.3,
+          transparent: isTransparent,
+          opacity: opacity
+        });
+
+        // Unit cylinder along +Z from 0 to 1
+        const shaftGeo = new THREE.CylinderGeometry(shaftRadius, shaftRadius, 1, 20);
+        shaftGeo.rotateX(Math.PI / 2);
+        shaftGeo.translate(0, 0, 0.5);
+        const shaft = new THREE.Mesh(shaftGeo, mat);
+
+        // Cone head along +Z
+        const headGeo = new THREE.ConeGeometry(headRadius, headLength, 24);
+        headGeo.rotateX(Math.PI / 2);
+        headGeo.translate(0, 0, headLength / 2);
+        const head = new THREE.Mesh(headGeo, mat);
+
+        group.add(shaft);
+        group.add(head);
+
+        group.userData = { shaft, head, headLength };
+        return group;
+      }
+
+      function updateThickVectorArrow(arrowGroup, originVec, dirVec, totalLength) {
+        if (totalLength < 0.05) {
+          arrowGroup.visible = false;
+          return;
+        }
+        arrowGroup.position.copy(originVec);
+
+        const normDir = dirVec.clone().normalize();
+        const quat = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 0, 1), normDir);
+        arrowGroup.quaternion.copy(quat);
+
+        const { shaft, head, headLength } = arrowGroup.userData;
+        const actualHeadLen = Math.min(headLength, totalLength * 0.42);
+        const shaftLen = Math.max(0.01, totalLength - actualHeadLen);
+
+        shaft.scale.set(1, 1, shaftLen);
+        head.position.set(0, 0, shaftLen);
+        head.scale.set(1, 1, actualHeadLen / headLength);
+      }
+
+      // Instantiate all key physics vector arrows
+      // 1. L(t): Current Spin Angular Momentum (Bright Sky/Cyan)
+      const arrowL = createThickVectorArrow(0x38bdf8, 0.056, 0.155, 0.38, 1.0);
+      scene.add(arrowL);
+
+      // 2. dL = M dt: Angular Momentum Increment at tip of L(t) (Vibrant Amber/Yellow)
+      const arrowDL = createThickVectorArrow(0xfacc15, 0.054, 0.155, 0.36, 1.0);
+      scene.add(arrowDL);
+
+      // 3. L(t + dt): Next Instant Angular Momentum (Semi-transparent Blue)
+      const arrowLNext = createThickVectorArrow(0x60a5fa, 0.046, 0.135, 0.35, 0.62);
+      scene.add(arrowLNext);
+
+      // 4. Torque M = r_c x mg at Origin O (Vivid Magenta/Purple)
+      const arrowM = createThickVectorArrow(0xe879f9, 0.050, 0.145, 0.34, 1.0);
+      scene.add(arrowM);
+
+      // 5. Gravity mg at Center of Mass C (Emerald Green)
+      const arrowMg = createThickVectorArrow(0x34d399, 0.046, 0.135, 0.32, 1.0);
+      scene.add(arrowMg);
+
+      // 6. Position Vector r_c from O to C (Rose/Coral highlight arrow)
+      const arrowRc = createThickVectorArrow(0xf43f5e, 0.068, 0.145, 0.28, 0.85);
+      scene.add(arrowRc);
+
+      // 7. Precession Angular Velocity Omega_p along +Z axis (Indigo/Violet)
+      const arrowOmega = createThickVectorArrow(0x818cf8, 0.048, 0.14, 0.34, 0.95);
+      scene.add(arrowOmega);
+
+      // =========================================================================
+      // 7. PRECESSION CIRCLE, CONE, RIGHT-ANGLE BRACKET & ALIGNMENT LINES
+      // =========================================================================
+      // Precession Dashed Circle at tip of L
+      const precCircleGeo = new THREE.BufferGeometry();
+      const precCircleMat = new THREE.LineDashedMaterial({
+        color: 0x38bdf8,
+        dashSize: 0.22,
+        gapSize: 0.12,
+        transparent: true,
+        opacity: 0.85
+      });
+      const precCircleLine = new THREE.Line(precCircleGeo, precCircleMat);
+      scene.add(precCircleLine);
+
+      // Subtle semi-transparent Precession Cone surface
+      let precConeMesh = new THREE.Mesh(
+        new THREE.BufferGeometry(),
+        new THREE.MeshBasicMaterial({
+          color: 0x0ea5e9,
+          side: THREE.DoubleSide,
+          transparent: true,
+          opacity: 0.09,
+          depthWrite: false
+        })
+      );
+      scene.add(precConeMesh);
+
+      // 3D Right-Angle Marker (⊥) between L(t) and dL at the tip of L(t)
+      const rightAngleGeo = new THREE.BufferGeometry();
+      const rightAngleMat = new THREE.LineBasicMaterial({ color: 0xfef08a });
+      const rightAngleLine = new THREE.Line(rightAngleGeo, rightAngleMat);
+      scene.add(rightAngleLine);
+
+      // Dashed parallel guide lines showing M || dL and vertical projection
+      const parallelGuideGeo = new THREE.BufferGeometry();
+      const parallelGuideMat = new THREE.LineDashedMaterial({
+        color: 0xe879f9,
+        dashSize: 0.16,
+        gapSize: 0.12,
+        transparent: true,
+        opacity: 0.55
+      });
+      const parallelGuideLine = new THREE.LineSegments(parallelGuideGeo, parallelGuideMat);
+      scene.add(parallelGuideLine);
+
+      // Tilt angle theta arc between +Z axis and L(t)
+      const thetaArcGeo = new THREE.BufferGeometry();
+      const thetaArcMat = new THREE.LineBasicMaterial({ color: 0xf8fafc, transparent: true, opacity: 0.75 });
+      const thetaArcLine = new THREE.Line(thetaArcGeo, thetaArcMat);
+      scene.add(thetaArcLine);
+
+      // Helper to rebuild Precession Circle & Cone when L or theta changes
+      function updatePrecessionCircleAndCone(radiusXY, heightZ) {
+        const segments = 96;
+        const pts = [];
+        for (let i = 0; i <= segments; i++) {
+          const ang = (i / segments) * Math.PI * 2;
+          pts.push(new THREE.Vector3(radiusXY * Math.cos(ang), radiusXY * Math.sin(ang), heightZ));
+        }
+        precCircleGeo.setFromPoints(pts);
+        precCircleLine.computeLineDistances();
+
+        // Update Precession Cone
+        precConeMesh.geometry.dispose();
+        const coneGeo = new THREE.ConeGeometry(radiusXY, heightZ, 64, 1, true);
+        coneGeo.rotateX(-Math.PI / 2); // Base at +Z, apex at origin
+        coneGeo.translate(0, 0, heightZ / 2);
+        precConeMesh.geometry = coneGeo;
+      }
+
+      // =========================================================================
+      // 8. CORE PHYSICS UPDATE & 3D VECTOR GEOMETRY SYNCHRONIZATION
+      // =========================================================================
+      // Anchor 3D positions for 2D floating HTML labels
+      const labelAnchors = {
+        L: new THREE.Vector3(),
+        dL: new THREE.Vector3(),
+        Lnext: new THREE.Vector3(),
+        M: new THREE.Vector3(),
+        mg: new THREE.Vector3(),
+        rc: new THREE.Vector3(),
+        Omega: new THREE.Vector3(),
+        ws: new THREE.Vector3(),
+        O: new THREE.Vector3(0, 0, -0.28),
+        theta: new THREE.Vector3()
+      };
+
+      function updatePhysicsAndScene(dtReal) {
+        const theta = THREE.MathUtils.degToRad(state.thetaDeg);
+        const sinT = Math.sin(theta);
+        const cosT = Math.cos(theta);
+
+        // 1. Compute physical quantities
+        // Spin angular momentum magnitude L = I * omega_s
+        const L_phys = state.I * state.ws;
+        // Gravitational torque magnitude M = mgl * sin(theta)
+        const M_phys = state.mgl * sinT;
+        // Precession angular speed Omega_p = M / (L * sin(theta)) = mgl / (I * omega_s)
+        const Omega_p = state.mgl / L_phys;
+
+        // Advance precession azimuth phi and spin angle if playing
+        if (state.playing && dtReal > 0) {
+          state.phi = (state.phi + Omega_p * dtReal * state.timeScale) % (Math.PI * 2);
+          state.spinAngle = (state.spinAngle + state.ws * 0.45 * dtReal * state.timeScale) % (Math.PI * 2);
+        }
+
+        // Update telemetry numbers on UI
+        document.getElementById('val-L').textContent = L_phys.toFixed(2);
+        document.getElementById('val-M').textContent = M_phys.toFixed(2);
+        document.getElementById('val-Omega').textContent = Omega_p.toFixed(2);
+        document.getElementById('label-theta-val').textContent = state.thetaDeg.toFixed(0);
+
+        const cosP = Math.cos(state.phi);
+        const sinP = Math.sin(state.phi);
+
+        // 2. Unit vectors in Physics Right-Handed Frame (+Z vertical)
+        // Symmetry axis unit vector u_hat(t)
+        const uHat = new THREE.Vector3(sinT * cosP, sinT * sinP, cosT);
+        // Horizontal tangential unit vector e_phi = (-sin(phi), cos(phi), 0)
+        // Verify: r_c x mg = (l*sinT*cosP, l*sinT*sinP, l*cosT) x (0, 0, -mg)
+        //                  = mgl*sinT * (-sinP, cosP, 0) = M * e_phi
+        const ePhi = new THREE.Vector3(-sinP, cosP, 0);
+
+        // 3. Orient Gyroscope 3D Assembly along uHat
+        const gyroQuat = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 0, 1), uHat);
+        gyroGroup.quaternion.copy(gyroQuat);
+        flywheelGroup.rotation.z = state.spinAngle;
+
+        // 4. Visual lengths of vectors
+        const L_len = Math.max(3.1, L_phys * SCALE_L);
+        const L_tip = uHat.clone().multiplyScalar(L_len);
+
+        // Precession Circle radius & height at the tip of L(t)
+        const radiusXY = L_len * sinT;
+        const heightZ = L_len * cosT;
+        updatePrecessionCircleAndCone(radiusXY, heightZ);
+        precCircleLine.visible = state.layers.cone;
+        precConeMesh.visible = state.layers.cone;
+
+        // 5. Update Angular Momentum Vector L(t)
+        arrowL.visible = state.layers.L;
+        updateThickVectorArrow(arrowL, new THREE.Vector3(0, 0, 0), uHat, L_len);
+
+        // 6. Update Angular Momentum Increment dL = M * dt (along horizontal tangent ePhi!)
+        // Physically dL = M_phys * dtVis, scaled by SCALE_L
+        const dL_len = Math.max(0.65, M_phys * state.dtVis * SCALE_L * 1.45);
+        const dL_vec = ePhi.clone().multiplyScalar(dL_len);
+        const Lnext_tip = L_tip.clone().add(dL_vec);
+
+        arrowDL.visible = state.layers.dL;
+        updateThickVectorArrow(arrowDL, L_tip, ePhi, dL_len);
+
+        // 7. Update Vector Addition Triangle L(t + dt) = L(t) + dL
+        arrowLNext.visible = state.layers.triangle;
+        updateThickVectorArrow(arrowLNext, new THREE.Vector3(0, 0, 0), Lnext_tip, Lnext_tip.length());
+
+        // 8. Update 3D Right-Angle Marker (⊥) between L(t) and dL at L_tip
+        rightAngleLine.visible = state.layers.dL && state.layers.L;
+        const raSize = 0.24;
+        const p1 = L_tip.clone().add(uHat.clone().multiplyScalar(-raSize));
+        const p2 = p1.clone().add(ePhi.clone().multiplyScalar(raSize));
+        const p3 = L_tip.clone().add(ePhi.clone().multiplyScalar(raSize));
+        rightAngleGeo.setFromPoints([p1, p2, p3]);
+
+        // 9. Update Gravitational Torque Vector M = r_c x mg at Origin O
+        const M_len = Math.max(0.85, M_phys * SCALE_M);
+        const M_tip = ePhi.clone().multiplyScalar(M_len);
+        arrowM.visible = state.layers.M;
+        updateThickVectorArrow(arrowM, new THREE.Vector3(0, 0, 0), ePhi, M_len);
+
+        // Dashed parallel alignment lines connecting Origin/M_tip to L_tip/Lnext_tip
+        parallelGuideLine.visible = state.layers.M && state.layers.dL;
+        parallelGuideGeo.setFromPoints([
+          new THREE.Vector3(0, 0, 0),
+          new THREE.Vector3(L_tip.x, L_tip.y, 0),
+          new THREE.Vector3(L_tip.x, L_tip.y, 0),
+          L_tip.clone(),
+          M_tip.clone(),
+          L_tip.clone().add(ePhi.clone().multiplyScalar(M_len))
+        ]);
+        parallelGuideLine.computeLineDistances();
+
+        // 10. Update Center of Mass Vector r_c & Gravity Vector mg
+        const cmPos = uHat.clone().multiplyScalar(CM_DIST);
+        arrowRc.visible = state.layers.mg;
+        updateThickVectorArrow(arrowRc, new THREE.Vector3(0, 0, 0), uHat, CM_DIST);
+
+        const mg_len = Math.max(0.95, state.mgl * 0.16);
+        arrowMg.visible = state.layers.mg;
+        updateThickVectorArrow(arrowMg, cmPos, new THREE.Vector3(0, 0, -1), mg_len);
+
+        // 11. Update Precession Angular Velocity Vector Omega_p along +Z axis
+        const omega_len = Math.max(0.9, Math.min(2.2, Omega_p * 0.65));
+        const omegaOrigin = new THREE.Vector3(0, 0, heightZ + 0.15);
+        arrowOmega.visible = state.layers.cone;
+        updateThickVectorArrow(arrowOmega, omegaOrigin, new THREE.Vector3(0, 0, 1), omega_len);
+
+        // 12. Update Tilt Angle Arc theta between +Z and uHat
+        const arcRadius = 1.15;
+        const arcPts = [];
+        const arcSteps = 24;
+        for (let i = 0; i <= arcSteps; i++) {
+          const a = (i / arcSteps) * theta;
+          arcPts.push(new THREE.Vector3(arcRadius * Math.sin(a) * cosP, arcRadius * Math.sin(a) * sinP, arcRadius * Math.cos(a)));
+        }
+        thetaArcGeo.setFromPoints(arcPts);
+
+        // 13. Update Camera Tracking if in Side View or Triangle Close-up View
+        if (state.cameraMode === 'side') {
+          // Keep camera orthogonal to the plane formed by Z-axis and gyroscope shaft
+          camGoal.azimuth = state.phi - Math.PI / 2;
+          camGoal.polar = Math.PI / 2 - 0.08;
+          camGoal.radius = 11.2;
+          camGoal.target.set(0, 0, heightZ * 0.45);
+        } else if (state.cameraMode === 'triangle') {
+          // Focus camera on the vector addition triangle at the tip of L(t)
+          const focusPt = L_tip.clone().lerp(Lnext_tip, 0.45);
+          camGoal.target.copy(focusPt);
+          camGoal.azimuth = state.phi + 0.55;
+          camGoal.polar = 1.02;
+          camGoal.radius = 6.2;
+        }
+
+        // 14. Record 3D label positions for 2D projection
+        labelAnchors.L.copy(L_tip).add(uHat.clone().multiplyScalar(0.28));
+        labelAnchors.dL.copy(L_tip).add(dL_vec.clone().multiplyScalar(0.55)).add(new THREE.Vector3(0, 0, 0.28));
+        labelAnchors.Lnext.copy(Lnext_tip).add(Lnext_tip.clone().normalize().multiplyScalar(0.32));
+        labelAnchors.M.copy(M_tip).add(ePhi.clone().multiplyScalar(0.35));
+        labelAnchors.mg.copy(cmPos).add(new THREE.Vector3(0, 0, -mg_len - 0.25));
+        labelAnchors.rc.copy(cmPos).add(new THREE.Vector3(0, 0, 0.28));
+        labelAnchors.Omega.copy(omegaOrigin).add(new THREE.Vector3(0, 0, omega_len + 0.25));
+        labelAnchors.ws.copy(uHat.clone().multiplyScalar(CM_DIST + 0.52)).add(ePhi.clone().multiplyScalar(-0.45));
+        const halfTheta = theta * 0.5;
+        labelAnchors.theta.set(
+          (arcRadius + 0.32) * Math.sin(halfTheta) * cosP,
+          (arcRadius + 0.32) * Math.sin(halfTheta) * sinP,
+          (arcRadius + 0.32) * Math.cos(halfTheta)
+        );
+      }
+
+      // =========================================================================
+      // 9. 2D SCREEN PROJECTION FOR FLOATING VECTOR LABELS
+      // =========================================================================
+      const labelElements = {
+        L: document.getElementById('label-L'),
+        dL: document.getElementById('label-dL'),
+        Lnext: document.getElementById('label-Lnext'),
+        M: document.getElementById('label-M'),
+        mg: document.getElementById('label-mg'),
+        rc: document.getElementById('label-rc'),
+        Omega: document.getElementById('label-Omega'),
+        ws: document.getElementById('label-ws'),
+        O: document.getElementById('label-O'),
+        theta: document.getElementById('label-theta')
+      };
+
+      function updateFloatingLabels() {
+        const containerEl = document.getElementById('labels-container');
+        if (!state.layers.labels) {
+          containerEl.style.display = 'none';
+          return;
+        }
+        containerEl.style.display = 'block';
+
+        const visibilityMap = {
+          L: state.layers.L,
+          dL: state.layers.dL,
+          Lnext: state.layers.triangle,
+          M: state.layers.M,
+          mg: state.layers.mg,
+          rc: state.layers.mg,
+          Omega: state.layers.cone,
+          ws: true,
+          O: true,
+          theta: true
+        };
+
+        const width = window.innerWidth;
+        const height = window.innerHeight;
+
+        Object.keys(labelElements).forEach((key) => {
+          const el = labelElements[key];
+          if (!visibilityMap[key]) {
+            el.style.opacity = '0';
+            return;
+          }
+
+          const pos3D = labelAnchors[key].clone();
+          pos3D.project(camera);
+
+          // Hide if behind camera
+          if (pos3D.z > 1) {
+            el.style.opacity = '0';
+            return;
+          }
+
+          const x = (pos3D.x * 0.5 + 0.5) * width;
+          const y = (-(pos3D.y * 0.5) + 0.5) * height;
+
+          el.style.opacity = '1';
+          el.style.left = `${x}px`;
+          el.style.top = `${y}px`;
+        });
+      }
+
+      // =========================================================================
+      // 10. UI CONTROLS & EVENT BINDINGS
+      // =========================================================================
+      // Sliders
+      const sliderWs = document.getElementById('slider-ws');
+      const sliderTheta = document.getElementById('slider-theta');
+      const sliderMgl = document.getElementById('slider-mgl');
+      const sliderDt = document.getElementById('slider-dt');
+
+      sliderWs.addEventListener('input', (e) => {
+        state.ws = parseFloat(e.target.value);
+        document.getElementById('disp-ws').textContent = state.ws.toFixed(0);
+        updatePhysicsAndScene(0);
+      });
+
+      sliderTheta.addEventListener('input', (e) => {
+        state.thetaDeg = parseFloat(e.target.value);
+        document.getElementById('disp-theta').textContent = state.thetaDeg.toFixed(0);
+        updatePhysicsAndScene(0);
+      });
+
+      sliderMgl.addEventListener('input', (e) => {
+        state.mgl = parseFloat(e.target.value);
+        document.getElementById('disp-mgl').textContent = state.mgl.toFixed(1);
+        updatePhysicsAndScene(0);
+      });
+
+      sliderDt.addEventListener('input', (e) => {
+        state.dtVis = parseFloat(e.target.value);
+        document.getElementById('disp-dt').textContent = state.dtVis.toFixed(2);
+        updatePhysicsAndScene(0);
+      });
+
+      // Reset Parameters Button
+      document.getElementById('btn-reset-params').addEventListener('click', () => {
+        state.ws = 30;
+        state.thetaDeg = 50;
+        state.mgl = 9.6;
+        state.dtVis = 0.22;
+
+        sliderWs.value = 30;
+        sliderTheta.value = 50;
+        sliderMgl.value = 9.6;
+        sliderDt.value = 0.22;
+
+        document.getElementById('disp-ws').textContent = '30';
+        document.getElementById('disp-theta').textContent = '50';
+        document.getElementById('disp-mgl').textContent = '9.6';
+        document.getElementById('disp-dt').textContent = '0.22';
+        updatePhysicsAndScene(0);
+      });
+
+      // Layer Checkboxes
+      const layerMap = [
+        { id: 'chk-L', key: 'L' },
+        { id: 'chk-dL', key: 'dL' },
+        { id: 'chk-triangle', key: 'triangle' },
+        { id: 'chk-M', key: 'M' },
+        { id: 'chk-mg', key: 'mg' },
+        { id: 'chk-cone', key: 'cone' },
+        { id: 'chk-labels', key: 'labels' }
+      ];
+
+      layerMap.forEach(({ id, key }) => {
+        document.getElementById(id).addEventListener('change', (e) => {
+          state.layers[key] = e.target.checked;
+          updatePhysicsAndScene(0);
+        });
+      });
+
+      // Camera Preset Buttons
+      function highlightCameraButton(activeId) {
+        document.querySelectorAll('.cam-btn').forEach((btn) => {
+          if (btn.id === activeId) {
+            btn.className = 'cam-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-sky-500 text-slate-950 shadow-sm transition';
+          } else {
+            btn.className = 'cam-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-800/80 hover:bg-slate-700 text-slate-200 transition';
+          }
+        });
+      }
+
+      document.getElementById('view-3d').addEventListener('click', () => {
+        state.cameraMode = '3d';
+        highlightCameraButton('view-3d');
+        camGoal.radius = 12.8;
+        camGoal.polar = 1.12;
+        camGoal.azimuth = state.phi - 0.9;
+        camGoal.target.set(0, 0, 1.35);
+      });
+
+      document.getElementById('view-top').addEventListener('click', () => {
+        state.cameraMode = 'top';
+        highlightCameraButton('view-top');
+        camGoal.radius = 13.5;
+        camGoal.polar = 0.005; // Directly down +Z axis
+        camGoal.azimuth = -Math.PI / 2;
+        camGoal.target.set(0, 0, 1.5);
+      });
+
+      document.getElementById('view-side').addEventListener('click', () => {
+        state.cameraMode = 'side';
+        highlightCameraButton('view-side');
+        updatePhysicsAndScene(0);
+      });
+
+      document.getElementById('view-triangle').addEventListener('click', () => {
+        state.cameraMode = 'triangle';
+        highlightCameraButton('view-triangle');
+        state.layers.dL = true;
+        state.layers.triangle = true;
+        document.getElementById('chk-dL').checked = true;
+        document.getElementById('chk-triangle').checked = true;
+        updatePhysicsAndScene(0);
+      });
+
+      // Play / Pause Button
+      const btnPlay = document.getElementById('btn-play');
+      const playIcon = document.getElementById('play-icon');
+      const playText = document.getElementById('play-text');
+
+      function setPlayState(isPlaying) {
+        state.playing = isPlaying;
+        playIcon.textContent = isPlaying ? '⏸' : '▶';
+        playText.textContent = isPlaying ? '暂停演示' : '继续播放';
+      }
+
+      btnPlay.addEventListener('click', () => {
+        setPlayState(!state.playing);
+      });
+
+      // Single Micro-Step Forward (+dt) Button
+      document.getElementById('btn-step').addEventListener('click', () => {
+        setPlayState(false);
+        const L_phys = state.I * state.ws;
+        const Omega_p = state.mgl / L_phys;
+        state.phi = (state.phi + Omega_p * state.dtVis * 0.5) % (Math.PI * 2);
+        state.spinAngle = (state.spinAngle + state.ws * 0.05) % (Math.PI * 2);
+        updatePhysicsAndScene(0);
+      });
+
+      // Speed Preset Buttons
+      document.querySelectorAll('.speed-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          state.timeScale = parseFloat(btn.getAttribute('data-speed'));
+          document.querySelectorAll('.speed-btn').forEach((b) => {
+            b.className = 'speed-btn px-2.5 py-1 rounded-lg text-xs font-semibold text-slate-300 hover:bg-slate-800 transition';
+          });
+          btn.className = 'speed-btn px-2.5 py-1 rounded-lg text-xs font-semibold bg-sky-500/25 text-sky-300 border border-sky-400/40 transition';
+        });
+      });
+
+      // Toggle Side Panels for Fullscreen Classroom Projection
+      let panelsVisible = true;
+      document.getElementById('btn-toggle-ui').addEventListener('click', () => {
+        panelsVisible = !panelsVisible;
+        const leftP = document.getElementById('left-panel');
+        const rightP = document.getElementById('right-panel');
+        if (panelsVisible) {
+          leftP.style.transform = 'translateX(0)';
+          rightP.style.transform = 'translateX(0)';
+        } else {
+          leftP.style.transform = 'translateX(-115%)';
+          rightP.style.transform = 'translateX(115%)';
+        }
+      });
+
+      // Responsive Resize Handler
+      window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      });
+
+      // =========================================================================
+      // 11. MAIN ANIMATION LOOP
+      // =========================================================================
+      let lastTime = performance.now();
+
+      function animate(now) {
+        requestAnimationFrame(animate);
+
+        const dtReal = Math.min(0.05, (now - lastTime) / 1000);
+        lastTime = now;
+
+        // Update physics and 3D vectors
+        updatePhysicsAndScene(dtReal);
+
+        // Smoothly interpolate camera towards goal spherical coordinates
+        const lerpFactor = 0.12;
+        camSpherical.radius += (camGoal.radius - camSpherical.radius) * lerpFactor;
+        camSpherical.polar += (camGoal.polar - camSpherical.polar) * lerpFactor;
+
+        // Shortest-path angular interpolation for azimuth
+        let diffAz = camGoal.azimuth - camSpherical.azimuth;
+        while (diffAz > Math.PI) diffAz -= Math.PI * 2;
+        while (diffAz < -Math.PI) diffAz += Math.PI * 2;
+        camSpherical.azimuth += diffAz * lerpFactor;
+
+        camSpherical.target.lerp(camGoal.target, lerpFactor);
+        syncCameraFromSpherical();
+
+        // Render 3D scene and update 2D floating labels
+        renderer.render(scene, camera);
+        updateFloatingLabels();
+      }
+
+      // Initialize first frame and start loop
+      updatePhysicsAndScene(0);
+      syncCameraFromSpherical();
+      requestAnimationFrame(animate);
+    };
+  </script>
+</body>
+</html>

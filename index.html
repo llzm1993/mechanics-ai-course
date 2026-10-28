@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>《力学》AI 智慧课程 · 大学物理互动教学平台</title>
+  <meta name="description" content="基于人工智能的大学物理《力学》智慧课程，提供 3D 互动闪卡与物理过程交互演示。" />
+  <style>
+    :root {
+      --bg-primary: #0f172a;
+      --bg-secondary: #1e293b;
+      --accent-blue: #38bdf8;
+      --accent-indigo: #818cf8;
+      --accent-emerald: #34d399;
+      --accent-amber: #fbbf24;
+      --accent-rose: #fb7185;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --border-color: rgba(148, 163, 184, 0.18);
+      --card-bg: rgba(30, 41, 59, 0.55);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+        "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      background: radial-gradient(circle at top right, #1e1b4b, #0f172a 60%);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    /* ===== 顶部导航 ===== */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(15, 23, 42, 0.82);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-color);
+    }
+    .nav-inner {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 14px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      font-size: 1.05rem;
+      letter-spacing: 0.5px;
+    }
+    .brand .logo {
+      width: 34px; height: 34px;
+      border-radius: 9px;
+      background: linear-gradient(135deg, var(--accent-blue), var(--accent-indigo));
+      display: grid; place-items: center;
+      font-size: 1.1rem;
+      box-shadow: 0 6px 18px -6px rgba(56, 189, 248, 0.6);
+    }
+    .nav-links { display: flex; gap: 26px; font-size: 0.92rem; color: var(--text-muted); }
+    .nav-links a:hover { color: var(--accent-blue); transition: color .2s; }
+
+    /* ===== Hero ===== */
+    .hero {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 88px 24px 64px;
+      text-align: center;
+    }
+    .badge {
+      display: inline-block;
+      padding: 6px 14px;
+      border-radius: 999px;
+      border: 1px solid var(--border-color);
+      background: rgba(56, 189, 248, 0.08);
+      color: var(--accent-blue);
+      font-size: 0.8rem;
+      letter-spacing: 1px;
+      margin-bottom: 22px;
+    }
+    .hero h1 {
+      font-size: clamp(2.2rem, 5vw, 3.6rem);
+      line-height: 1.15;
+      font-weight: 800;
+      background: linear-gradient(120deg, #f8fafc 30%, var(--accent-blue) 70%, var(--accent-indigo));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero p {
+      margin: 22px auto 0;
+      max-width: 620px;
+      color: var(--text-muted);
+      font-size: 1.08rem;
+      line-height: 1.7;
+    }
+    .hero-cta {
+      margin-top: 34px;
+      display: inline-flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .btn {
+      padding: 12px 26px;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: transform .18s ease, box-shadow .18s ease;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent-blue), var(--accent-indigo));
+      color: #0f172a;
+      box-shadow: 0 10px 30px -10px rgba(56, 189, 248, 0.7);
+    }
+    .btn-ghost {
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+    }
+    .btn:hover { transform: translateY(-2px); }
+
+    /* ===== 通用区块 ===== */
+    section { max-width: 1120px; margin: 0 auto; padding: 56px 24px; }
+    .section-title {
+      font-size: 1.7rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .section-sub { color: var(--text-muted); margin-bottom: 36px; font-size: 0.98rem; }
+
+    /* ===== 课程亮点 ===== */
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+    }
+    .feature {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 24px;
+      transition: border-color .2s, transform .2s;
+    }
+    .feature:hover { border-color: rgba(56,189,248,0.5); transform: translateY(-3px); }
+    .feature .ico { font-size: 1.6rem; margin-bottom: 12px; }
+    .feature h3 { font-size: 1.05rem; margin-bottom: 8px; }
+    .feature p { color: var(--text-muted); font-size: 0.9rem; line-height: 1.6; }
+
+    /* ===== 演示卡片 ===== */
+    .demo-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 24px;
+    }
+    .demo-card {
+      position: relative;
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      padding: 30px 28px;
+      overflow: hidden;
+      transition: transform .22s ease, box-shadow .22s ease, border-color .22s ease;
+    }
+    .demo-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 80% -10%, rgba(56,189,248,0.18), transparent 55%);
+      opacity: 0;
+      transition: opacity .25s;
+      pointer-events: none;
+    }
+    .demo-card:hover {
+      transform: translateY(-6px);
+      border-color: rgba(56,189,248,0.55);
+      box-shadow: 0 24px 50px -22px rgba(0,0,0,0.8);
+    }
+    .demo-card:hover::before { opacity: 1; }
+    .demo-tag {
+      display: inline-block;
+      font-size: 0.74rem;
+      letter-spacing: 1px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      margin-bottom: 16px;
+    }
+    .tag-blue { background: rgba(56,189,248,0.15); color: var(--accent-blue); }
+    .tag-amber { background: rgba(251,191,36,0.15); color: var(--accent-amber); }
+    .demo-card h3 { font-size: 1.28rem; margin-bottom: 12px; line-height: 1.4; }
+    .demo-card p { color: var(--text-muted); font-size: 0.94rem; line-height: 1.7; margin-bottom: 24px; }
+    .demo-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 600;
+      color: var(--accent-blue);
+      font-size: 0.96rem;
+    }
+    .demo-link .arrow { transition: transform .2s; }
+    .demo-card:hover .demo-link .arrow { transform: translateX(5px); }
+
+    /* ===== 页脚 ===== */
+    footer {
+      border-top: 1px solid var(--border-color);
+      margin-top: 40px;
+      padding: 32px 24px;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.86rem;
+    }
+    footer a { color: var(--accent-blue); }
+
+    @media (max-width: 640px) {
+      .nav-links { display: none; }
+      .hero { padding-top: 60px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 顶部导航 -->
+  <header>
+    <div class="nav-inner">
+      <a class="brand" href="#top">
+        <span class="logo">⚙️</span>
+        <span>力学 · AI 智慧课程</span>
+      </a>
+      <nav class="nav-links">
+        <a href="#features">课程亮点</a>
+        <a href="#demos">互动演示</a>
+        <a href="#about">关于</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <main id="top">
+    <section class="hero">
+      <span class="badge">AI-POWERED · 大学物理</span>
+      <h1>《力学》AI 智慧课程</h1>
+      <p>
+        融合人工智能与大语言模型的大学物理力学教学平台。
+        以 3D 互动闪卡与物理过程可视化演示，让抽象的力学概念变得可感、可玩、可懂。
+      </p>
+      <div class="hero-cta">
+        <a class="btn btn-primary" href="#demos">进入互动演示 →</a>
+        <a class="btn btn-ghost" href="#about">了解课程</a>
+      </div>
+    </section>
+
+    <!-- 课程亮点 -->
+    <section id="features">
+      <h2 class="section-title">课程亮点</h2>
+      <p class="section-sub">依托 AI 重构传统力学课堂的学习体验</p>
+      <div class="features">
+        <div class="feature">
+          <div class="ico">🧠</div>
+          <h3>AI 知识梳理</h3>
+          <p>基于大模型自动提炼核心概念、易错点与知识图谱，构建结构化学习路径。</p>
+        </div>
+        <div class="feature">
+          <div class="ico">🎴</div>
+          <h3>3D 互动闪卡</h3>
+          <p>将公式、概念与三维示意结合，正反面翻转记忆，告别死记硬背。</p>
+        </div>
+        <div class="feature">
+          <div class="ico">🌀</div>
+          <h3>物理过程可视化</h3>
+          <p>用实时三维动画演示陀螺进动、角动量变化等难以想象的物理过程。</p>
+        </div>
+        <div class="feature">
+          <div class="ico">📈</div>
+          <h3>自适应学习</h3>
+          <p>根据练习反馈动态调整难度与重点，让每位学生都有专属节奏。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 互动演示 -->
+    <section id="demos">
+      <h2 class="section-title">互动演示</h2>
+      <p class="section-sub">点击下方卡片，直接进入对应的 3D 交互演示页面</p>
+      <div class="demo-grid">
+
+        <!-- 演示一 -->
+        <a class="demo-card" href="demos/mechanics_ch1_flashcards.html">
+          <span class="demo-tag tag-blue">第一章 · 质点运动学</span>
+          <h3>3D 互动闪卡播放器</h3>
+          <p>
+            将质点运动学的核心概念、公式与三维示意封装为可翻转闪卡，
+            支持逐张浏览与自测，帮助快速建立运动学直觉。
+          </p>
+          <span class="demo-link">打开演示 <span class="arrow">→</span></span>
+        </a>
+
+        <!-- 演示二 -->
+        <a class="demo-card" href="demos/gyroscope-precession.html">
+          <span class="demo-tag tag-amber">刚体力学 · 进动</span>
+          <h3>陀螺重力进动与角动量增量</h3>
+          <p>
+            通过实时三维交互演示，直观呈现陀螺在重力矩作用下为何不倒下、
+            而是发生进动，并展示角动量增量的几何关系。
+          </p>
+          <span class="demo-link">打开演示 <span class="arrow">→</span></span>
+        </a>
+
+      </div>
+    </section>
+
+    <!-- 关于 -->
+    <section id="about">
+      <h2 class="section-title">关于本课程</h2>
+      <p class="section-sub">一个持续生长的开放教学项目</p>
+      <div class="features">
+        <div class="feature">
+          <div class="ico">🎯</div>
+          <h3>面向谁</h3>
+          <p>大学物理（力学）学习者、教师资格备考者，以及希望用新方式讲授力学的教师。</p>
+        </div>
+        <div class="feature">
+          <div class="ico">🛠️</div>
+          <h3>技术栈</h3>
+          <p>纯静态前端：HTML + CSS + Three.js / MathJax，无需后端，可一键部署到 GitHub Pages。</p>
+        </div>
+        <div class="feature">
+          <div class="ico">🌱</div>
+          <h3>持续迭代</h3>
+          <p>后续将按章节补充更多 AI 互动演示，欢迎通过仓库 Issues 提出需求与建议。</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>《力学》AI 智慧课程 · 基于静态前端与 AI 辅助教学构建</p>
+    <p style="margin-top:6px;">© <span id="year"></span> 力学 AI 课程 · 使用 GitHub Pages 部署</p>
+  </footer>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
