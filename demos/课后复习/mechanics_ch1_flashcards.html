@@ -1,0 +1,1571 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>《力学》智慧课程 · 第一章 质点运动学 3D互动闪卡播放器</title>
+  <!-- MathJax 3 配置与加载 -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true
+      },
+      svg: {
+        fontCache: 'global'
+      },
+      startup: {
+        typeset: true
+      }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <style>
+    :root {
+      --bg-primary: #0f172a;
+      --bg-secondary: #1e293b;
+      --card-front-bg: linear-gradient(145deg, #1e293b 0%, #0f172a 100%);
+      --card-back-bg: linear-gradient(145deg, #172554 0%, #0f172a 100%);
+      --accent-blue: #38bdf8;
+      --accent-indigo: #818cf8;
+      --accent-emerald: #34d399;
+      --accent-amber: #fbbf24;
+      --accent-rose: #fb7185;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --border-color: rgba(148, 163, 184, 0.2);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      background: radial-gradient(circle at top right, #1e1b4b, #0f172a 60%);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    /* 顶部导航栏 */
+    header {
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-color);
+      padding: 16px 28px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .brand-badge {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--accent-blue), var(--accent-indigo));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 20px;
+      color: #0f172a;
+      box-shadow: 0 4px 15px rgba(56, 189, 248, 0.35);
+    }
+
+    .brand-title h1 {
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    .brand-title p {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      background: rgba(30, 41, 59, 0.9);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn:hover {
+      border-color: var(--accent-blue);
+      background: rgba(56, 189, 248, 0.12);
+      transform: translateY(-1px);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #0284c7, #4f46e5);
+      border-color: transparent;
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #0369a1, #4338ca);
+      border-color: transparent;
+    }
+
+    /* 返回课程主页按钮 */
+    .btn-home {
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid var(--accent-rose);
+      color: var(--accent-rose);
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none;
+    }
+
+    .btn-home:hover {
+      background: rgba(251, 113, 133, 0.15);
+      color: #fda4af;
+      transform: translateY(-1px);
+    }
+
+    /* 控制与筛选栏 */
+    .control-bar {
+      max-width: 1100px;
+      width: 100%;
+      margin: 20px auto 0;
+      padding: 0 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+    }
+
+    .stat-card {
+      background: rgba(30, 41, 59, 0.65);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .stat-value {
+      font-size: 20px;
+      font-weight: 700;
+      margin-top: 2px;
+    }
+
+    .filter-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(30, 41, 59, 0.5);
+      padding: 12px 16px;
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+    }
+
+    .module-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .tab-btn {
+      background: transparent;
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .tab-btn.active, .tab-btn:hover {
+      background: rgba(56, 189, 248, 0.18);
+      color: var(--accent-blue);
+      border-color: var(--accent-blue);
+      font-weight: 600;
+    }
+
+    .search-box {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .search-input, .status-select {
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 7px 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      outline: none;
+    }
+
+    .search-input:focus, .status-select:focus {
+      border-color: var(--accent-blue);
+    }
+
+    /* 进度条 */
+    .progress-wrapper {
+      width: 100%;
+      background: rgba(30, 41, 59, 0.8);
+      height: 8px;
+      border-radius: 4px;
+      overflow: hidden;
+      display: flex;
+    }
+
+    .progress-segment {
+      height: 100%;
+      transition: width 0.35s ease;
+    }
+
+    .prog-mastered { background: var(--accent-emerald); }
+    .prog-hard { background: var(--accent-amber); }
+    .prog-again { background: var(--accent-rose); }
+
+    /* 主舞台：3D闪卡区 */
+    main {
+      flex: 1;
+      max-width: 1100px;
+      width: 100%;
+      margin: 16px auto 32px;
+      padding: 0 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .stage-container {
+      width: 100%;
+      max-width: 820px;
+      perspective: 1600px;
+      margin: 10px 0 22px;
+    }
+
+    .flashcard {
+      width: 100%;
+      min-height: 430px;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .flashcard.is-flipped {
+      transform: rotateY(180deg);
+    }
+
+    .card-face {
+      position: absolute;
+      inset: 0;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      border-radius: 20px;
+      padding: 32px 38px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(148, 163, 184, 0.24);
+      overflow-y: auto;
+    }
+
+    .card-front {
+      background: var(--card-front-bg);
+    }
+
+    .card-back {
+      background: var(--card-back-bg);
+      transform: rotateY(180deg);
+      border-color: rgba(56, 189, 248, 0.4);
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.15);
+      padding-bottom: 14px;
+    }
+
+    .card-tags {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .badge {
+      font-size: 12px;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-weight: 600;
+    }
+
+    .badge-module {
+      background: rgba(56, 189, 248, 0.15);
+      color: var(--accent-blue);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+    }
+
+    .badge-side {
+      background: rgba(129, 140, 248, 0.18);
+      color: var(--accent-indigo);
+    }
+
+    .badge-status {
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 4px;
+    }
+
+    .status-unseen { background: rgba(148, 163, 184, 0.2); color: #cbd5e1; }
+    .status-again { background: rgba(251, 113, 133, 0.2); color: var(--accent-rose); }
+    .status-hard { background: rgba(251, 191, 36, 0.2); color: var(--accent-amber); }
+    .status-mastered { background: rgba(52, 211, 153, 0.2); color: var(--accent-emerald); }
+
+    .card-body {
+      my: auto;
+      padding: 22px 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 16px;
+      flex: 1;
+    }
+
+    .question-text {
+      font-size: 22px;
+      line-height: 1.55;
+      font-weight: 600;
+      color: #f8fafc;
+      text-align: center;
+    }
+
+    .question-hint {
+      margin-top: 12px;
+      font-size: 14px;
+      color: var(--text-muted);
+      text-align: center;
+      background: rgba(15, 23, 42, 0.55);
+      padding: 10px 16px;
+      border-radius: 10px;
+      border-left: 3px solid var(--accent-blue);
+      align-self: center;
+      max-width: 90%;
+    }
+
+    .answer-content {
+      font-size: 16.5px;
+      line-height: 1.75;
+      color: #e2e8f0;
+    }
+
+    .answer-content ul {
+      padding-left: 20px;
+      margin-top: 8px;
+    }
+
+    .answer-content li {
+      margin-bottom: 6px;
+    }
+
+    .formula-box {
+      background: rgba(15, 23, 42, 0.72);
+      border: 1px solid rgba(56, 189, 248, 0.28);
+      border-radius: 12px;
+      padding: 12px 18px;
+      margin: 10px 0;
+      text-align: center;
+      overflow-x: auto;
+    }
+
+    .key-point {
+      color: var(--accent-blue);
+      font-weight: 600;
+    }
+
+    .card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid rgba(148, 163, 184, 0.15);
+      padding-top: 12px;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    /* 底部操控按钮与自评栏 */
+    .action-panel {
+      width: 100%;
+      max-width: 820px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .nav-controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .nav-btn {
+      padding: 12px 22px;
+      font-size: 14px;
+      font-weight: 600;
+      border-radius: 12px;
+      background: rgba(30, 41, 59, 0.9);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .nav-btn:hover {
+      border-color: var(--accent-blue);
+      background: rgba(56, 189, 248, 0.15);
+    }
+
+    .flip-btn {
+      flex: 1;
+      max-width: 280px;
+      justify-content: center;
+      background: linear-gradient(135deg, rgba(56, 189, 248, 0.2), rgba(129, 140, 248, 0.2));
+      border-color: rgba(56, 189, 248, 0.45);
+    }
+
+    .rating-controls {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .rate-btn {
+      padding: 12px;
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      background: rgba(30, 41, 59, 0.75);
+      color: var(--text-main);
+    }
+
+    .rate-btn span.sub {
+      font-size: 11px;
+      font-weight: 400;
+      opacity: 0.8;
+    }
+
+    .rate-again:hover {
+      background: rgba(251, 113, 133, 0.2);
+      border-color: var(--accent-rose);
+      color: var(--accent-rose);
+    }
+
+    .rate-hard:hover {
+      background: rgba(251, 191, 36, 0.2);
+      border-color: var(--accent-amber);
+      color: var(--accent-amber);
+    }
+
+    .rate-mastered:hover {
+      background: rgba(52, 211, 153, 0.2);
+      border-color: var(--accent-emerald);
+      color: var(--accent-emerald);
+    }
+
+    /* 网格总览模式 */
+    .grid-view {
+      display: none;
+      width: 100%;
+      grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+      gap: 16px;
+      margin-top: 12px;
+    }
+
+    .grid-view.active {
+      display: grid;
+    }
+
+    .grid-item {
+      background: rgba(30, 41, 59, 0.75);
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      padding: 18px;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .grid-item:hover {
+      border-color: var(--accent-blue);
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    }
+
+    .grid-item h4 {
+      font-size: 15px;
+      line-height: 1.45;
+      color: #f1f5f9;
+    }
+
+    .grid-item p {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* 模态弹窗（导入/导出Anki） */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 200;
+      padding: 20px;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal-box {
+      background: #1e293b;
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      max-width: 720px;
+      width: 100%;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-textarea {
+      width: 100%;
+      height: 240px;
+      background: #0f172a;
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      color: #e2e8f0;
+      padding: 12px;
+      font-family: monospace;
+      font-size: 13px;
+      line-height: 1.5;
+      resize: vertical;
+    }
+
+    .shortcut-bar {
+      margin-top: 18px;
+      font-size: 12px;
+      color: var(--text-muted);
+      text-align: center;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 14px;
+    }
+
+    kbd {
+      background: rgba(30, 41, 59, 0.9);
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      border-radius: 4px;
+      padding: 2px 6px;
+      font-size: 11px;
+      color: var(--accent-blue);
+    }
+
+    @media (max-width: 640px) {
+      .card-face {
+        padding: 22px 20px;
+      }
+      .question-text {
+        font-size: 18px;
+      }
+      .answer-content {
+        font-size: 15px;
+      }
+      .flashcard {
+        min-height: 460px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 顶部导航 -->
+  <header>
+    <div class="brand">
+      <div class="brand-badge">力</div>
+      <div class="brand-title">
+        <h1>《力学》智慧课程 · 第一章 质点运动学 3D闪卡</h1>
+        <p>覆盖全章 5 大知识单元 · 30 个核心概念、推演公式与经典模型</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <a class="btn-home" href="../../index.html" title="返回《力学》AI 智慧课程主页">🏠 返回课程主页</a>
+      <button class="btn" id="btnToggleView" onclick="toggleViewMode()">📋 全部卡片总览 (G)</button>
+      <button class="btn" onclick="shuffleCards()">🔀 随机乱序 (S)</button>
+      <button class="btn" onclick="resetProgress()">🔄 重置进度</button>
+      <button class="btn btn-primary" onclick="openModal()">📥 导出 Anki / 批量导入</button>
+    </div>
+  </header>
+
+  <!-- 统计与筛选控制栏 -->
+  <section class="control-bar">
+    <div class="stats-row">
+      <div class="stat-card">
+        <div>
+          <div class="stat-label">当前卡片进度</div>
+          <div class="stat-value" id="statCurrent">1 / 30</div>
+        </div>
+        <span style="font-size: 24px;">🗂️</span>
+      </div>
+      <div class="stat-card">
+        <div>
+          <div class="stat-label">🟢 已掌握 (Mastered)</div>
+          <div class="stat-value" style="color: var(--accent-emerald);" id="statMastered">0</div>
+        </div>
+        <span style="font-size: 24px;">✅</span>
+      </div>
+      <div class="stat-card">
+        <div>
+          <div class="stat-label">🟡 有点模糊 (Hard)</div>
+          <div class="stat-value" style="color: var(--accent-amber);" id="statHard">0</div>
+        </div>
+        <span style="font-size: 24px;">🤔</span>
+      </div>
+      <div class="stat-card">
+        <div>
+          <div class="stat-label">🔴 需重来 (Again)</div>
+          <div class="stat-value" style="color: var(--accent-rose);" id="statAgain">0</div>
+        </div>
+        <span style="font-size: 24px;">🔁</span>
+      </div>
+    </div>
+
+    <div class="progress-wrapper" title="掌握度实时分布">
+      <div class="progress-segment prog-mastered" id="progMastered" style="width: 0%"></div>
+      <div class="progress-segment prog-hard" id="progHard" style="width: 0%"></div>
+      <div class="progress-segment prog-again" id="progAgain" style="width: 0%"></div>
+    </div>
+
+    <div class="filter-row">
+      <div class="module-tabs" id="moduleTabs">
+        <button class="tab-btn active" data-module="all" onclick="filterByModule('all')">全部单元 (30)</button>
+        <button class="tab-btn" data-module="模块一：基本概念与坐标系" onclick="filterByModule('模块一：基本概念与坐标系')">一、基本概念与坐标系 (6)</button>
+        <button class="tab-btn" data-module="模块二：位矢、速度与加速度" onclick="filterByModule('模块二：位矢、速度与加速度')">二、位矢/速度/加速度 (5)</button>
+        <button class="tab-btn" data-module="模块三：直角坐标与一维积分" onclick="filterByModule('模块三：直角坐标与一维积分')">三、直角坐标与一维积分 (5)</button>
+        <button class="tab-btn" data-module="模块四：极坐标与本征坐标系" onclick="filterByModule('模块四：极坐标与本征坐标系')">四、极坐标与本征坐标 (7)</button>
+        <button class="tab-btn" data-module="模块五：相对运动与参考系变换" onclick="filterByModule('模块五：相对运动与参考系变换')">五、相对运动与变换 (7)</button>
+      </div>
+      <div class="search-box">
+        <select class="status-select" id="statusFilter" onchange="applyFilters()">
+          <option value="all">所有状态</option>
+          <option value="unseen">⚪ 未学习</option>
+          <option value="again">🔴 需重来</option>
+          <option value="hard">🟡 有点模糊</option>
+          <option value="mastered">🟢 已掌握</option>
+        </select>
+        <input type="text" class="search-input" id="searchInput" placeholder="搜索公式、概念或例题..." oninput="applyFilters()" />
+      </div>
+    </div>
+  </section>
+
+  <!-- 主舞台 -->
+  <main>
+    <!-- 单卡3D翻转模式 -->
+    <div class="stage-container" id="singleCardStage">
+      <div class="flashcard" id="flashcard" onclick="flipCard()">
+        <!-- 正面：问题 -->
+        <div class="card-face card-front">
+          <div class="card-header">
+            <div class="card-tags">
+              <span class="badge badge-module" id="frontModule">模块一</span>
+              <span class="badge badge-side">正面 · 思考提问</span>
+            </div>
+            <span class="badge-status status-unseen" id="frontStatus">未学习</span>
+          </div>
+          <div class="card-body">
+            <div class="question-text" id="frontQuestion">加载中...</div>
+            <div class="question-hint" id="frontHint">💡 提示：点击卡片或按空格键翻转查看推导与解析</div>
+          </div>
+          <div class="card-footer">
+            <span id="frontIndex">Card #1</span>
+            <span>👆 点击卡片或按 <kbd>Space</kbd> 翻转背面</span>
+          </div>
+        </div>
+
+        <!-- 背面：答案与公式推导 -->
+        <div class="card-face card-back">
+          <div class="card-header">
+            <div class="card-tags">
+              <span class="badge badge-module" id="backModule">模块一</span>
+              <span class="badge badge-side" style="background: rgba(52,211,153,0.18); color: var(--accent-emerald);">背面 · 详解与公式</span>
+            </div>
+            <span class="badge-status status-unseen" id="backStatus">未学习</span>
+          </div>
+          <div class="card-body">
+            <div class="answer-content" id="backAnswer">加载中...</div>
+          </div>
+          <div class="card-footer">
+            <span id="backIndex">Card #1</span>
+            <span>请根据掌握程度点击下方自评按钮（快捷键 <kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd>）</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 操控面板 -->
+    <div class="action-panel" id="actionPanel">
+      <div class="nav-controls">
+        <button class="nav-btn" onclick="prevCard()">⬅️ 上一张 (<kbd>←</kbd>)</button>
+        <button class="nav-btn flip-btn" onclick="flipCard()">🔄 翻转卡片 (<kbd>Space</kbd>)</button>
+        <button class="nav-btn" onclick="nextCard()">下一张 (<kbd>→</kbd>) ➡️</button>
+      </div>
+      <div class="rating-controls">
+        <button class="rate-btn rate-again" onclick="rateCard('again')">
+          <span>🔴 需重来 (快捷键 1)</span>
+          <span class="sub">概念或公式推导尚不熟悉，稍后重点复习</span>
+        </button>
+        <button class="rate-btn rate-hard" onclick="rateCard('hard')">
+          <span>🟡 有点模糊 (快捷键 2)</span>
+          <span class="sub">知道大致思路，但细节或矢量方向易错</span>
+        </button>
+        <button class="rate-btn rate-mastered" onclick="rateCard('mastered')">
+          <span>🟢 已掌握 (快捷键 3)</span>
+          <span class="sub">物理图像清晰，能独立完成数理推演</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- 网格总览视图 -->
+    <div class="grid-view" id="gridView"></div>
+
+    <div class="shortcut-bar">
+      <span>⌨️ 快捷键支持：</span>
+      <span><kbd>Space</kbd> 翻转正反面</span>
+      <span><kbd>←</kbd> / <kbd>→</kbd> 切换卡片</span>
+      <span><kbd>1</kbd> 需重来</span>
+      <span><kbd>2</kbd> 有点模糊</span>
+      <span><kbd>3</kbd> 已掌握</span>
+      <span><kbd>S</kbd> 随机洗牌</span>
+      <span><kbd>G</kbd> 切换网格总览</span>
+    </div>
+  </main>
+
+  <!-- 导入/导出模态弹窗 -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>📥 导出 Anki 格式 / 批量导入自定义闪卡</h3>
+        <button class="btn" onclick="closeModal()">✖ 关闭</button>
+      </div>
+      <p style="font-size: 13px; color: var(--text-muted);">
+        下方文本框为标准 <code>正面问题 | 背面解析 | 所属模块</code> 格式，可直接复制保存为 <code>.txt</code> 导入 <strong>Anki / Quizlet</strong>，也可以在末尾直接粘贴新行并点击“应用更新”动态扩充题库：
+      </p>
+      <textarea class="modal-textarea" id="modalTextarea"></textarea>
+      <div style="display: flex; justify-content: flex-end; gap: 10px;">
+        <button class="btn" onclick="copyAnkiText()">📋 一键复制全部文本</button>
+        <button class="btn" onclick="downloadAnkiFile()">💾 下载 Anki 导入文件 (.txt)</button>
+        <button class="btn btn-primary" onclick="importFromTextarea()">✅ 应用修改到播放器</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 第一章《质点运动学》30个核心知识点闪卡数据（严格对标PPT教学大纲与例题体系）
+    const initialCards = [
+      // ==================== 模块一：基本概念与坐标系 (1-6) ====================
+      {
+        id: 1,
+        module: "模块一：基本概念与坐标系",
+        question: "【物理学史】人类对“运动、速度、加速度”概念的建立以及系统运动学理论的形成，分别经历了哪些重要历史节点？",
+        hint: "思考《墨经》、亚里士多德、伽利略与牛顿的贡献",
+        answer: `<ul>
+          <li><strong>运动与时间先后的描述：</strong>最早可追溯到中国战国时期的<strong>《墨经》</strong>。</li>
+          <li><strong>速度的概念：</strong>最早见于古希腊<strong>亚里士多德</strong>的《物理学》。</li>
+          <li><strong>加速度的概念：</strong>由<strong>伽利略</strong>在研究等加速直线运动（斜面实验）时首次科学建立。</li>
+          <li><strong>运动学的系统建立：</strong>由<strong>牛顿</strong>采用<strong>微元法</strong>系统建立，并为此创立了微积分工具。</li>
+        </ul>`
+      },
+      {
+        id: 2,
+        module: "模块一：基本概念与坐标系",
+        question: "什么是“质点（Particle）”模型？一个物体能否被视为质点取决于什么？",
+        hint: "从理想化模型的定义与研究问题的尺度出发",
+        answer: `<p><span class="key-point">质点定义：</span>无体积、无形状，只具有质量的理想化几何点。</p>
+        <ul>
+          <li>质点是一种<strong>科学抽象的理想化模型</strong>，并不是真实存在体积极小的物体。</li>
+          <li>一个物体能否视为质点<strong>不是一成不变的，要视具体研究的问题而定</strong>：当物体的大小和形状对所研究运动的影响可以忽略不计时（如研究地球绕太阳公转），即可视为质点。</li>
+        </ul>`
+      },
+      {
+        id: 3,
+        module: "模块一：基本概念与坐标系",
+        question: "什么是参考系？惯性参考系与非惯性参考系在“运动学”和“动力学”中有什么本质区别？",
+        hint: "对比运动学描述与牛顿动力学方程对参考系的依赖性",
+        answer: `<p><span class="key-point">参考系定义：</span>为描述物体运动而被选作参考的物体或物体组（如“小小竹排江中游”以地面为参考系，“巍巍青山两岸走”以竹排为参考系）。</p>
+        <div class="formula-box">
+          <strong>核心判据：</strong><br/>
+          ① <strong>运动学规律</strong>在惯性系与非惯性系中<strong>无差别</strong>（地位完全等价）；<br/>
+          ② <strong>动力学规律</strong>在两类参考系中<strong>有本质差别</strong>（非惯性系需引入惯性力）。
+        </div>`
+      },
+      {
+        id: 4,
+        module: "模块一：基本概念与坐标系",
+        question: "为什么经典力学中质点可以有确定的“运动轨迹方程”，而微观粒子（量子力学）却没有？",
+        hint: "对比经典质点轨道 $y=f(x)$ 与微观粒子的概率波描述",
+        answer: `<ul>
+          <li><strong>经典力学质点：</strong>在任一时刻 $t$ 的空间位置都可由坐标 $(x(t), y(t), z(t))$ 唯一确定，消去时间参量 $t$ 即可得到确定的<strong>运动轨迹方程</strong>。</li>
+          <li><strong>微观粒子：</strong>受量子不确定性原理制约，微观粒子<strong>并没有确定的经典轨道</strong>，其状态只能由粒子在空间各处出现的<strong>概率（波函数模平方 $|\\psi|^2$）</strong>来描述。</li>
+        </ul>`
+      },
+      {
+        id: 5,
+        module: "模块一：基本概念与坐标系",
+        question: "质点运动学常用的三种坐标系（直角坐标系、极坐标系、本征坐标系）各有什么特点？哪一种不能用来描述质点的空间位置？",
+        hint: "特别注意本征坐标系（自然坐标系）的单位矢量性质",
+        answer: `<ul>
+          <li><strong>直角坐标系 $(x,y,z)$：</strong>单位矢量 $\\vec{i}, \\vec{j}, \\vec{k}$ 固定不变，适合平动与正交分解问题。</li>
+          <li><strong>平面极坐标系 $(r,\\theta)$：</strong>用极径 $r$ 和极角 $\\theta$ 定量描述平面位置，轨迹方程为 $r=r(\\theta)$，适合有心运动与圆周运动。</li>
+          <li><strong>本征坐标系（本性坐标系/自然坐标系，$\\vec{e}_\\tau, \\vec{e}_n$）：</strong>随质点运动实时变动的坐标系。<span class="key-point">它不能用来描述质点在空间所处的位置</span>，但非常适合表示已知轨迹上质点的<strong>速度和加速度</strong>（切向与法向）。</li>
+        </ul>`
+      },
+      {
+        id: 6,
+        module: "模块一：基本概念与坐标系",
+        question: "位置矢量 $\\vec{r}$ 的定义是什么？它是否依赖于坐标系的存在？位移 $\\Delta\\vec{r}$ 与路程 $\\Delta s$ 在什么条件下大小相等？",
+        hint: "区分矢量与标量，注意微元极限与运动方向",
+        answer: `<ul>
+          <li><strong>位置矢量 $\\vec{r}$：</strong>从参考点 $O$ 出发引向质点所在位置 $P$ 的有向线段。<span class="key-point">位置矢量只需要选定参考点，并不需要有坐标系存在。</span></li>
+          <li><strong>位移与路程的区别：</strong>位移 $\\Delta\\vec{r} = \\vec{r}_2 - \\vec{r}_1$ 是描述位置变化的<strong>矢量</strong>；路程 $\\Delta s$ 是实际运动轨迹长度的<strong>标量</strong>，一般有 $|\\Delta\\vec{r}| \\le \\Delta s$。</li>
+          <li><strong>两者大小相等的两个条件：</strong>① <strong>无限小位移过程</strong>（$|d\\vec{r}| = ds$）；② 质点做<strong>单向直线运动</strong>。</li>
+        </ul>`
+      },
+
+      // ==================== 模块二：位矢、速度与加速度 (7-11) ====================
+      {
+        id: 7,
+        module: "模块二：位矢、速度与加速度",
+        question: "写出平均速度 $\\bar{\\vec{v}}$、瞬时速度 $\\vec{v}$ 与瞬时速率 $v$ 的数学定义式，并说明 $|\\bar{\\vec{v}}|$ 与平均速率是否相等？",
+        hint: "注意矢量求导与标量弧长求导的区别",
+        answer: `<div class="formula-box">
+          $$\\bar{\\vec{v}} = \\frac{\\Delta\\vec{r}}{\\Delta t}, \\qquad \\vec{v} = \\lim_{\\Delta t \\to 0}\\frac{\\Delta\\vec{r}}{\\Delta t} = \\frac{d\\vec{r}}{dt}$$
+          $$v = |\\vec{v}| = \\lim_{\\Delta t \\to 0}\\left|\\frac{\\Delta\\vec{r}}{\\Delta t}\\right| = \\frac{|d\\vec{r}|}{dt} = \\frac{ds}{dt}$$
+        </div>
+        <ul>
+          <li>在有限时间 $\\Delta t$ 内，由于 $|\\Delta\\vec{r}| \\le \\Delta s$，故平均速度的大小 $|\\bar{\\vec{v}}| = \\frac{|\\Delta\\vec{r}|}{\\Delta t}$ 一般<strong>不等于</strong>平均速率 $\\frac{\\Delta s}{\\Delta t}$。</li>
+          <li>但在瞬时极限 $\\Delta t \\to 0$ 下，由于 $|d\\vec{r}| = ds$，<strong>瞬时速度的大小严格等于瞬时速率</strong>。</li>
+        </ul>`
+      },
+      {
+        id: 8,
+        module: "模块二：位矢、速度与加速度",
+        question: "写出平均加速度 $\\bar{\\vec{a}}$ 与瞬时加速度 $\\vec{a}$ 的矢量定义式。需要注意 $\\left|\\frac{d\\vec{v}}{dt}\\right|$ 与 $\\frac{dv}{dt}$ 的区别是什么？",
+        hint: "前者是加速度矢量的模，后者仅是速率对时间的变化率",
+        answer: `<div class="formula-box">
+          $$\\bar{\\vec{a}} = \\frac{\\Delta\\vec{v}}{\\Delta t}, \\qquad \\vec{a} = \\lim_{\\Delta t \\to 0}\\frac{\\Delta\\vec{v}}{\\Delta t} = \\frac{d\\vec{v}}{dt} = \\frac{d^2\\vec{r}}{dt^2}$$
+        </div>
+        <ul>
+          <li>$\\left|\\frac{d\\vec{v}}{dt}\\right| = |\\vec{a}|$ 是<strong>总加速度的大小</strong>（同时包含速度大小和速度方向变化的影响）。</li>
+          <li>$\\frac{dv}{dt} = \\frac{d|\\vec{v}|}{dt} = a_\\tau$ 仅仅是<strong>速率对时间的变化率</strong>（即切向加速度）。例如匀速圆周运动中 $\\frac{dv}{dt}=0$，但 $\\left|\\frac{d\\vec{v}}{dt}\\right| = \\frac{v^2}{R} \\ne 0$。</li>
+        </ul>`
+      },
+      {
+        id: 9,
+        module: "模块二：位矢、速度与加速度",
+        question: "位置矢量 $\\vec{r}(t)$、速度 $\\vec{v}(t)$、加速度 $\\vec{a}(t)$ 三者之间的一般微分关系与积分关系是什么？",
+        hint: "写出矢量微积分的双向关系式",
+        answer: `<p><span class="key-point">1. 微分形式（已知位矢求速度与加速度）：</span></p>
+        <div class="formula-box">
+          $$\\vec{v}(t) = \\frac{d\\vec{r}}{dt}, \\qquad \\vec{a}(t) = \\frac{d\\vec{v}}{dt} = \\frac{d^2\\vec{r}}{dt^2}$$
+        </div>
+        <p><span class="key-point">2. 积分形式（已知加速度和初值求速度与位矢）：</span></p>
+        <div class="formula-box">
+          $$\\vec{v}(t) = \\vec{v}_0 + \\int_{t_0}^{t} \\vec{a}(t)\\,dt, \\qquad \\vec{r}(t) = \\vec{r}_0 + \\int_{t_0}^{t} \\vec{v}(t)\\,dt$$
+        </div>`
+      },
+      {
+        id: 10,
+        module: "模块二：位矢、速度与加速度",
+        question: "在一维直线运动中，$x-t$ 曲线、$v-t$ 曲线和 $a-t$ 曲线的“切线斜率”与“曲线下面积”分别具有什么几何物理意义？",
+        hint: "微分对应斜率，定积分对应曲线与时间轴围成的代数面积",
+        answer: `<ul>
+          <li><strong>$x-t$ 曲线的切线斜率</strong> $\\frac{dx}{dt}$ $\\longrightarrow$ 对应瞬时<strong>速度 $v$</strong>。</li>
+          <li><strong>$v-t$ 曲线的切线斜率</strong> $\\frac{dv}{dt}$ $\\longrightarrow$ 对应瞬时<strong>加速度 $a$</strong>。</li>
+          <li><strong>$v-t$ 曲线下的代数面积</strong> $\\int_{t_1}^{t_2} v\\,dt$ $\\longrightarrow$ 对应时间段内的<strong>位移 $\\Delta x$</strong>。</li>
+          <li><strong>$a-t$ 曲线下的代数面积</strong> $\\int_{t_1}^{t_2} a\\,dt$ $\\longrightarrow$ 对应时间段内的<strong>速度增量 $\\Delta v$</strong>。</li>
+        </ul>`
+      },
+      {
+        id: 11,
+        module: "模块二：位矢、速度与加速度",
+        question: "矢量求导的核心法则：为什么直角坐标系单位矢量 $\\frac{d\\vec{i}}{dt}=0$，而极坐标和本征坐标系的单位矢量对时间求导不为零？",
+        hint: "单位矢量模为1恒定，但其方向是否随质点运动而转动？",
+        answer: `<ul>
+          <li>任何单位矢量 $\\vec{e}$ 的模长恒为 $1$，但当其<strong>方向随时间转动</strong>时，其对时间的导数不为零，且导数方向<strong>垂直于该单位矢量本身</strong>（指向转动方向）：</li>
+        </ul>
+        <div class="formula-box">
+          $$\\vec{e}\\cdot\\vec{e} = 1 \\implies \\frac{d(\\vec{e}\\cdot\\vec{e})}{dt} = 2\\vec{e}\\cdot\\frac{d\\vec{e}}{dt} = 0 \\implies \\frac{d\\vec{e}}{dt} \\perp \\vec{e}$$
+        </div>
+        <ul>
+          <li>直角坐标系中 $\\vec{i},\\vec{j},\\vec{k}$ 方向固定，故导数为 $0$；极坐标 $(\\vec{e}_r, \\vec{e}_\\theta)$ 和本征坐标 $(\\vec{e}_\\tau, \\vec{e}_n)$ 的方向随质点位置变化而旋转，故求导时<strong>必须对单位矢量使用乘积求导法则</strong>。</li>
+        </ul>`
+      },
+
+      // ==================== 模块三：直角坐标与一维积分 (12-16) ====================
+      {
+        id: 12,
+        module: "模块三：直角坐标与一维积分",
+        question: "写出三维直角坐标系下位置矢量 $\\vec{r}$、速度 $\\vec{v}$ 和加速度 $\\vec{a}$ 的分量表达式。",
+        hint: "利用直角坐标基矢 $\\vec{i}, \\vec{j}, \\vec{k}$ 的常矢量特性",
+        answer: `<div class="formula-box">
+          $$\\vec{r} = x\\vec{i} + y\\vec{j} + z\\vec{k}$$
+          $$\\vec{v} = \\frac{d\\vec{r}}{dt} = v_x\\vec{i} + v_y\\vec{j} + v_z\\vec{k} = \\frac{dx}{dt}\\vec{i} + \\frac{dy}{dt}\\vec{j} + \\frac{dz}{dt}\\vec{k}$$
+          $$\\vec{a} = \\frac{d\\vec{v}}{dt} = a_x\\vec{i} + a_y\\vec{j} + a_z\\vec{k} = \\frac{d^2x}{dt^2}\\vec{i} + \\frac{d^2y}{dt^2}\\vec{j} + \\frac{d^2z}{dt^2}\\vec{k}$$
+        </div>
+        <p>在直角坐标系中，复杂的三维矢量微分/积分运算可以完全解耦为三个正交方向上的独立标量运算。</p>`
+      },
+      {
+        id: 13,
+        module: "模块三：直角坐标与一维积分",
+        question: "【例1.2.4-2】如何用微积分方法从 $a = \\text{常量}$ 严格推导出匀加速直线运动的三大基本公式？",
+        hint: "取 $t=0$ 时初速度为 $v_0$、初位置为 $x_0$，分步积分",
+        answer: `<p>1. 由 $\\frac{dv}{dt} = a$ 积分：$\\int_{v_0}^v dv = \\int_0^t a\\,dt \\implies v = v_0 + at$。</p>
+        <p>2. 由 $\\frac{dx}{dt} = v = v_0 + at$ 积分：$\\int_{x_0}^x dx = \\int_0^t (v_0 + at)\\,dt \\implies x = x_0 + v_0 t + \\frac{1}{2}at^2$。</p>
+        <p>3. 利用链式法则消去时间 $t$：$a = \\frac{dv}{dt} = v\\frac{dv}{dx} \\implies \\int_{v_0}^v v\\,dv = \\int_{x_0}^x a\\,dx$：</p>
+        <div class="formula-box">
+          $$v^2 - v_0^2 = 2a(x - x_0)$$
+        </div>`
+      },
+      {
+        id: 14,
+        module: "模块三：直角坐标与一维积分",
+        question: "【例1.2.4-3】已知一维质点运动学方程为 $x(t) = pt + qt^2 + rt^3$（$p,q,r$ 为常量），如何求 $(t_1, t_2)$ 期间的平均速度、平均加速度以及瞬时速度、瞬时加速度？",
+        hint: "严格区分时间区间内的差商（平均值）与对时间的导数（瞬时值）",
+        answer: `<ul>
+          <li><strong>瞬时速度与瞬时加速度（先求导后代值）：</strong></li>
+        </ul>
+        <div class="formula-box">
+          $$v(t) = \\frac{dx}{dt} = p + 2qt + 3rt^2, \\qquad a(t) = \\frac{dv}{dt} = 2q + 6rt$$
+        </div>
+        <ul>
+          <li><strong>平均速度与平均加速度（由首末状态差值除以 $\\Delta t$）：</strong>
+          $$\\bar{v} = \\frac{x(t_2) - x(t_1)}{t_2 - t_1}, \\qquad \\bar{a} = \\frac{v(t_2) - v(t_1)}{t_2 - t_1}$$
+          切忌直接将瞬时速度做算术平均 $(v_1+v_2)/2$（该式仅在匀变速时成立）！</li>
+        </ul>`
+      },
+      {
+        id: 15,
+        module: "模块三：直角坐标与一维积分",
+        question: "【例1.2.4-5 核心方法】若已知质点加速度是位置的函数 $a = a(x)$（例如 $a = 2x$，且 $x=0$ 时 $v_0=3$），应如何积分求速度 $v(x)$？",
+        hint: "不能直接对时间 t 积分！需利用链式法则将 dt 转化为 dx",
+        answer: `<p><span class="key-point">关键变形技巧：</span>利用复合函数求导链式法则消去 $dt$：</p>
+        <div class="formula-box">
+          $$a = \\frac{dv}{dt} = \\frac{dv}{dx}\\cdot\\frac{dx}{dt} = v\\frac{dv}{dx}$$
+        </div>
+        <p>分离变量并结合初始条件 $(x_0=0, v_0=3)$ 定积分：</p>
+        <div class="formula-box">
+          $$\\int_{3}^{v} v\\,dv = \\int_{0}^{x} 2x\\,dx \\implies \\frac{1}{2}(v^2 - 9) = x^2 \\implies v(x) = \\sqrt{2x^2 + 9}$$
+        </div>`
+      },
+      {
+        id: 16,
+        module: "模块三：直角坐标与一维积分",
+        question: "【例1.2.4-6】质点从位矢 $\\vec{r}_0 = 3\\vec{i}+5\\vec{j}$ 以初速度 $\\vec{v}_0 = 4\\vec{i}-3\\vec{j}$ 运动，加速度 $\\vec{a} = -2\\vec{i}+4\\vec{j}$，如何求质点到达 $y$ 轴的时间与位置？",
+        hint: "矢量的定积分可拆分为各分量独立积分；到达 y 轴等价于横坐标 x(t) = 0",
+        answer: `<p>1. 积分求速度：$\\vec{v}(t) = \\vec{v}_0 + \\int_0^t \\vec{a}\\,dt = (4-2t)\\vec{i} + (-3+4t)\\vec{j}$。</p>
+        <p>2. 再次积分求位矢：</p>
+        <div class="formula-box">
+          $$\\vec{r}(t) = \\vec{r}_0 + \\int_0^t \\vec{v}\\,dt = (3 + 4t - t^2)\\vec{i} + (5 - 3t + 2t^2)\\vec{j}$$
+        </div>
+        <p>3. 到达 $y$ 轴时满足 $x(t) = 3 + 4t - t^2 = 0$，解得正根 $t = 3\\text{ s}$；代入 $y(3) = 5 - 9 + 18 = 14\\text{ m}$，故位置为 $\\vec{r} = 14\\vec{j}\\text{ (m)}$。</p>`
+      },
+
+      // ==================== 模块四：极坐标与本征坐标系 (17-23) ====================
+      {
+        id: 17,
+        module: "模块四：极坐标与本征坐标系",
+        question: "平面极坐标系 $(r,\\theta)$ 与直角坐标系 $(x,y)$ 的坐标变换关系及基矢正交分解关系是什么？",
+        hint: "写出 x, y 与 r, θ 的关系，以及径向单位矢量和横向单位矢量在 i, j 下的展开",
+        answer: `<p><span class="key-point">1. 坐标变换关系：</span></p>
+        <div class="formula-box">
+          $$x = r\\cos\\theta, \\quad y = r\\sin\\theta \\quad \\Longleftrightarrow \\quad r = \\sqrt{x^2+y^2}, \\quad \\tan\\theta = \\frac{y}{x}$$
+        </div>
+        <p><span class="key-point">2. 极坐标单位矢量与直角坐标单位矢量的关系：</span></p>
+        <div class="formula-box">
+          $$\\vec{e}_r = \\cos\\theta\\,\\vec{i} + \\sin\\theta\\,\\vec{j}, \\qquad \\vec{e}_\\theta = -\\sin\\theta\\,\\vec{i} + \\cos\\theta\\,\\vec{j}$$
+        </div>`
+      },
+      {
+        id: 18,
+        module: "模块四：极坐标与本征坐标系",
+        question: "在平面极坐标系中，径向单位矢量 $\\vec{e}_r$ 和横向单位矢量 $\\vec{e}_\\theta$ 对时间 $t$ 的导数分别等于什么？",
+        hint: "这是推导极坐标速度和加速度的核心桥梁！注意方向的正负号",
+        answer: `<p>由 $\\vec{e}_r = \\cos\\theta\\,\\vec{i} + \\sin\\theta\\,\\vec{j}$ 和 $\\vec{e}_\\theta = -\\sin\\theta\\,\\vec{i} + \\cos\\theta\\,\\vec{j}$ 对时间 $t$ 求导：</p>
+        <div class="formula-box">
+          $$\\frac{d\\vec{e}_r}{dt} = \\frac{d\\theta}{dt}\\vec{e}_\\theta = \\dot{\\theta}\\,\\vec{e}_\\theta$$
+          $$\\frac{d\\vec{e}_\\theta}{dt} = -\\frac{d\\theta}{dt}\\vec{e}_r = -\\dot{\\theta}\\,\\vec{e}_r$$
+        </div>
+        <p><strong>物理图像：</strong>当极角增加 $d\\theta$ 时，$\\vec{e}_r$ 的增量指向横向 $+\\vec{e}_\\theta$；而 $\\vec{e}_\\theta$ 的增量指向圆心（即径向负方向 $-\\vec{e}_r$）。</p>`
+      },
+      {
+        id: 19,
+        module: "模块四：极坐标与本征坐标系",
+        question: "写出平面极坐标系下质点速度 $\\vec{v}$ 的表达式，并说明径向速度 $v_r$ 和横向速度 $v_\\theta$ 的物理意义。",
+        hint: "对 $\\vec{r} = r\\vec{e}_r$ 两边关于时间 t 求导",
+        answer: `<p>对位矢 $\\vec{r} = r\\vec{e}_r$ 求导：</p>
+        <div class="formula-box">
+          $$\\vec{v} = \\frac{d(r\\vec{e}_r)}{dt} = \\frac{dr}{dt}\\vec{e}_r + r\\frac{d\\vec{e}_r}{dt} = \\frac{dr}{dt}\\vec{e}_r + r\\frac{d\\theta}{dt}\\vec{e}_\\theta = v_r\\vec{e}_r + v_\\theta\\vec{e}_\\theta$$
+        </div>
+        <ul>
+          <li><strong>径向速度 $v_r = \\dot{r} = \\frac{dr}{dt}$：</strong>描述质点远离或靠近极点 $O$ 的快慢（源于极径长度变化）。</li>
+          <li><strong>横向速度 $v_\\theta = r\\dot{\\theta} = r\\frac{d\\theta}{dt}$：</strong>描述质点绕极点 $O$ 旋转的线速度分量（源于极角方位变化）。</li>
+        </ul>`
+      },
+      {
+        id: 20,
+        module: "模块四：极坐标与本征坐标系",
+        question: "写出平面极坐标系下质点加速度 $\\vec{a} = a_r\\vec{e}_r + a_\\theta\\vec{e}_\\theta$ 的完整表达式！为什么横向加速度中会出现 $2\\dot{r}\\dot{\\theta}$ 项？",
+        hint: "对 $\\vec{v} = \\dot{r}\\vec{e}_r + r\\dot{\\theta}\\vec{e}_\\theta$ 再次关于时间求导并合并同类项",
+        answer: `<div class="formula-box">
+          $$\\vec{a} = \\left[\\frac{d^2r}{dt^2} - r\\left(\\frac{d\\theta}{dt}\\right)^2\\right]\\vec{e}_r + \\left[r\\frac{d^2\\theta}{dt^2} + 2\\frac{dr}{dt}\\frac{d\\theta}{dt}\\right]\\vec{e}_\\theta$$
+          $$a_r = \\ddot{r} - r\\dot{\\theta}^2, \\qquad a_\\theta = r\\ddot{\\theta} + 2\\dot{r}\\dot{\\theta} = \\frac{1}{r}\\frac{d}{dt}(r^2\\dot{\\theta})$$
+        </div>
+        <ul>
+          <li><strong>$a_r$ 的两项来源：</strong>$\\ddot{r}$ 为径向伸缩加速度，$-r\\dot{\\theta}^2$ 为横向速度方向旋转产生的向心项。</li>
+          <li><strong>$2\\dot{r}\\dot{\\theta}$ 的两个来源：</strong>一半来自径向速度 $\\dot{r}\\vec{e}_r$ 随极角旋转产生的横向分量 $\\dot{r}\\dot{\\theta}$，另一半来自横向速度 $r\\dot{\\theta}$ 因半径伸长产生的变化率 $\\dot{r}\\dot{\\theta}$（对应转动系中的科里奥利效应）。</li>
+        </ul>`
+      },
+      {
+        id: 21,
+        module: "模块四：极坐标与本征坐标系",
+        question: "【例1.2.4-7】当质点做半径为 $r=R$（常量）的圆周运动时，极坐标系下的速度与加速度公式如何简化？匀速圆周运动又如何简化？",
+        hint: "令 $\\dot{r} = 0, \\ddot{r} = 0$，角速度记为 $\\omega = \\dot{\\theta}$",
+        answer: `<p>对于固定半径 $r=R$ 的圆周运动，$\\dot{r}=0, \\ddot{r}=0$：</p>
+        <div class="formula-box">
+          $$\\vec{v} = R\\dot{\\theta}\\,\\vec{e}_\\theta = R\\omega\\,\\vec{e}_\\theta \\quad (\\text{沿切线方向})$$
+          $$\\vec{a} = -R\\dot{\\theta}^2\\,\\vec{e}_r + R\\ddot{\\theta}\\,\\vec{e}_\\theta = -R\\omega^2\\,\\vec{e}_r + R\\alpha\\,\\vec{e}_\\theta$$
+        </div>
+        <p>若为<strong>匀速圆周运动</strong>（$\\omega = \\dot{\\theta} = \\text{常量} \\implies \\ddot{\\theta}=0$）：</p>
+        <div class="formula-box">
+          $$\\vec{a} = -R\\omega^2\\,\\vec{e}_r = -\\frac{v^2}{R}\\vec{e}_r \\quad (\\text{纯向心方向，指向圆心})$$
+        </div>`
+      },
+      {
+        id: 22,
+        module: "模块四：极坐标与本征坐标系",
+        question: "在本征坐标系（自然坐标系）中，什么是轨迹的“曲率半径 $\\rho$”？写出本征坐标系下速度 $\\vec{v}$ 与加速度 $\\vec{a}$ 的标准表达式。",
+        hint: "对 $\\vec{v} = v\\vec{e}_\\tau$ 求导，利用 $\\frac{d\\vec{e}_\\tau}{dt} = \\frac{v}{\\rho}\\vec{e}_n$",
+        answer: `<p><strong>曲率半径定义：</strong>曲线上某点处微元弧长 $ds$ 与切线转角 $|d\\theta|$ 之比 $\\rho = \\left|\\frac{ds}{d\\theta}\\right|$。由此可得切向单位矢量对时间的导数：$\\frac{d\\vec{e}_\\tau}{dt} = \\frac{d\\theta}{dt}\\vec{e}_n = \\frac{ds/dt}{\\rho}\\vec{e}_n = \\frac{v}{\\rho}\\vec{e}_n$。</p>
+        <div class="formula-box">
+          $$\\vec{v} = v\\,\\vec{e}_\\tau = \\frac{ds}{dt}\\vec{e}_\\tau$$
+          $$\\vec{a} = \\frac{d(v\\vec{e}_\\tau)}{dt} = \\frac{dv}{dt}\\vec{e}_\\tau + \\frac{v^2}{\\rho}\\vec{e}_n = a_\\tau\\vec{e}_\\tau + a_n\\vec{e}_n$$
+        </div>
+        <ul>
+          <li><strong>切向加速度 $a_\\tau = \\frac{dv}{dt} = \\frac{d^2s}{dt^2}$：</strong>只反映速度<strong>大小（速率）</strong>变化的快慢。</li>
+          <li><strong>法向加速度 $a_n = \\frac{v^2}{\\rho}$：</strong>恒指向曲率中心，只反映速度<strong>方向</strong>变化的快慢。</li>
+        </ul>`
+      },
+      {
+        id: 23,
+        module: "模块四：极坐标与本征坐标系",
+        question: "【例1.2.4-8 猎犬追狐狸问题】狐狸以恒定速率 $v_1$ 沿直线逃跑，猎犬以恒定速率 $v_2$ 追捕且运动方向始终对准狐狸。当两者相距 $L$ 且速度垂直（$FD \\perp v_1$）时，猎犬的加速度大小是多少？",
+        hint: "猎犬速率恒定意味着切向加速度为0，只需分析猎犬速度方向的转动角速度 dθ/dt",
+        answer: `<ul>
+          <li>因猎犬速率 $v_2$ 恒定，其切向加速度 $a_\\tau = \\frac{dv_2}{dt} = 0$，总加速度即为法向加速度 $a = a_n = v_2 \\frac{d\\theta}{dt}$。</li>
+          <li>在微元时间 $\\Delta t$ 内，狐狸沿垂直于 $FD$ 连线的方向前进 $v_1\\Delta t$，在 $FD=L$ 距离处造成猎犬视线方向转过角度 $\\Delta\\theta \\approx \\frac{v_1\\Delta t}{L}$，故角速度 $\\frac{d\\theta}{dt} = \\frac{v_1}{L}$。</li>
+        </ul>
+        <div class="formula-box">
+          $$a = v_2 \\frac{d\\theta}{dt} = \\frac{v_1 v_2}{L} \\quad \\left(\\text{此时轨迹曲率半径 } \\rho = \\frac{v_2^2}{a} = \\frac{v_2 L}{v_1}\\right)$$
+        </div>`
+      },
+
+      // ==================== 模块五：相对运动与参考系变换 (24-30) ====================
+      {
+        id: 24,
+        module: "模块五：相对运动与参考系变换",
+        question: "在相对运动分析中，如何严格区分“绝对运动”、“相对运动”和“牵连运动”？解题的第一步关键是什么？",
+        hint: "明确三个角色：静系 S、动系 S'、研究对象（质点 P）",
+        answer: `<p><span class="key-point">解题铁律：必须首先明确谁是静系 $S$、谁是动系 $S'$、谁是研究对象 $P$！</span></p>
+        <ul>
+          <li><strong>绝对运动 $(\\vec{v}, \\vec{a})$：</strong>研究对象（质点 $P$）相对于<strong>静系 $S$</strong> 的运动。</li>
+          <li><strong>相对运动 $(\\vec{v}', \\vec{a}')$：</strong>研究对象（质点 $P$）相对于<strong>动系 $S'$</strong> 的运动。</li>
+          <li><strong>牵连运动 $(\\vec{v}_e, \\vec{a}_e)$：</strong><strong>动系 $S'$ 本身</strong>（即动系上与质点瞬时重合的固定点）相对于<strong>静系 $S$</strong> 的运动。</li>
+        </ul>`
+      },
+      {
+        id: 25,
+        module: "模块五：相对运动与参考系变换",
+        question: "当动系 $S'$ 相对于静系 $S$ 只做“平动”（无转动）时，位置、速度和加速度的变换关系式是什么？",
+        hint: "由于动系坐标轴方向不变，直接对 $\\vec{r} = \\vec{r}_0 + \\vec{r}'$ 求导即可",
+        answer: `<p>当 $S'$ 相对 $S$ 平动时，动系单位矢量 $\\vec{i}', \\vec{j}', \\vec{k}'$ 方向保持不变，求导导数为零：</p>
+        <div class="formula-box">
+          $$\\text{位置关系：}\\vec{r} = \\vec{r}_0 + \\vec{r}'$$
+          $$\\text{速度合成定理：}\\vec{v} = \\vec{v}_e + \\vec{v}' \\quad (\\text{绝对速度} = \\text{牵连速度} + \\text{相对速度})$$
+          $$\\text{加速度合成定理：}\\vec{a} = \\vec{a}_e + \\vec{a}' \\quad (\\text{绝对加速度} = \\text{牵连加速度} + \\text{相对加速度})$$
+        </div>
+        <p>当动系做匀速直线平动时，$\\vec{a}_e = 0 \\implies \\vec{a} = \\vec{a}'$（力学相对性原理的运动学基础）。</p>`
+      },
+      {
+        id: 26,
+        module: "模块五：相对运动与参考系变换",
+        question: "【例1.3.3-1 逆水行船追木料】小船逆水过桥时木料落水，半小时后发觉并立即掉头追赶，在桥下游 $5.0\\text{ km}$ 处追上。设船相对水划行速率不变，求追赶时间 $t$ 和水速 $v_e$。",
+        hint: "对比“以河岸为参考系”与“以流水为参考系”两种视角的精妙之处",
+        answer: `<ul>
+          <li><strong>巧解（以流水为动系 $S'$）：</strong>木料相对水静止（$v'_{\\text{木}}=0$），小船相对水往返速率相等（$|v'_{\\text{船}}|$ 恒定）。因此小船离开木料历时 $t_1 = 0.5\\text{ h}$，掉头追回木料所需时间必定也是 <strong>$t_2 = 0.5\\text{ h}$</strong>！</li>
+          <li><strong>求水流速度 $v_e$：</strong>从木料落水到被追上共历时 $T = t_1 + t_2 = 1.0\\text{ h}$，此期间木料随水流向下游漂流了 $\\Delta x = 5.0\\text{ km}$，故水流速度：</li>
+        </ul>
+        <div class="formula-box">
+          $$v_e = \\frac{\\Delta x}{t_1 + t_2} = \\frac{5.0\\text{ km}}{0.5\\text{ h} + 0.5\\text{ h}} = 5.0\\text{ km/h}$$
+        </div>`
+      },
+      {
+        id: 27,
+        module: "模块五：相对运动与参考系变换",
+        question: "【例1.3.3-2 小船/游泳渡河模型】已知人在静水中游速 $v'=3\\text{ m/s}$，水流速度 $v_e=2\\text{ m/s}$，河宽 $l$。（1）欲垂直河岸到达正对岸，应朝什么方向游？（2）朝什么方向游渡河历时最短？",
+        hint: "利用 $\\vec{v} = \\vec{v}_e + \\vec{v}'$ 正交分解到沿河岸与垂直河岸方向",
+        answer: `<p>1. <strong>垂直渡河（位移最短）：</strong>要求绝对速度 $\\vec{v}$ 垂直河岸，即相對速度的平行河岸分量抵消水速 $v'\\sin\\theta = v_e$：</p>
+        <div class="formula-box">
+          $$\\theta = \\arcsin\\left(\\frac{v_e}{v'}\\right) = \\arcsin\\left(\\frac{2}{3}\\right) \\approx 41.8^\\circ \\quad (\\text{偏向上游与正对岸夹角})$$
+        </div>
+        <p>2. <strong>最短时间渡河：</strong>渡河时间 $t = \\frac{l}{v'\\cos\\theta}$，当 $\\cos\\theta = 1$（即 <strong>$\\theta = 0^\\circ$，人头始终正对对岸游</strong>）时，用时最短 $t_{\\min} = \\frac{l}{v'}$。</p>`
+      },
+      {
+        id: 28,
+        module: "模块五：相对运动与参考系变换",
+        question: "【例1.3.3-3 运动测风问题】某人以 $v_1=2.5\\text{ m/s}$ 向正西跑时感到风从正北吹来；速度加倍（$v_2=5.0\\text{ m/s}$ 向正西）时感到风从正西北吹来。如何求真实风速与风向？",
+        hint: "选地面为静系、人为动系、风为研究对象：$\\vec{v}_{\\text{风地}} = \\vec{v}_{\\text{人地}} + \\vec{v}_{\\text{风人}}$",
+        answer: `<ul>
+          <li>取向东为 $+x$，向北为 $+y$。人的牵连速度 $\\vec{v}_{e1} = -2.5\\vec{i}$，$\\vec{v}_{e2} = -5.0\\vec{i}$。</li>
+          <li>第一次感到风从正北来 $\\implies \\vec{v}'_1 = -v'_1\\vec{j}$，故真实风速 $\\vec{v} = \\vec{v}_{e1} + \\vec{v}'_1 = -2.5\\vec{i} - v'_1\\vec{j}$（可知风的 $x$ 分量恒为 $-2.5\\text{ m/s}$）。</li>
+          <li>第二次速度加倍后：$\\vec{v}'_2 = \\vec{v} - \\vec{v}_{e2} = +2.5\\vec{i} - v'_1\\vec{j}$。因感到风从正西北（$45^\\circ$）吹来，故 $v'_1 = 2.5\\text{ m/s}$。</li>
+        </ul>
+        <div class="formula-box">
+          $$\\vec{v}_{\\text{风}} = -2.5\\vec{i} - 2.5\\vec{j} \\implies v = 2.5\\sqrt{2}\\text{ m/s} \\approx 3.54\\text{ m/s} \\text{（从东北吹向西南，即北偏东 } 45^\\circ \\text{ 来风）}$$
+        </div>`
+      },
+      {
+        id: 29,
+        module: "模块五：相对运动与参考系变换",
+        question: "当动系 $S'$ 相对于静系 $S$ 以匀角速度 $\\vec{\\omega}$ 转动时，两个参考系之间的“速度变换定理”是什么？【例1.3.3-4】凸轮推动竖直顶杆 $AB$ 运动时如何应用？",
+        hint: "由于动系基矢随动系旋转，$\\frac{d\\vec{i}'}{dt} = \\vec{\\omega}\\times\\vec{i}'$",
+        answer: `<p><span class="key-point">转动参考系速度变换定理：</span></p>
+        <div class="formula-box">
+          $$\\vec{v} = \\vec{v}' + \\vec{\\omega} \\times \\vec{r}' = \\vec{v}' + \\vec{v}_e$$
+        </div>
+        <p>其中牵连速度 $\\vec{v}_e = \\vec{\\omega}\\times\\vec{r}'$（大小为 $\\omega r'$，方向沿圆周横向）。</p>
+        <ul>
+          <li><strong>凸轮顶杆问题（例1.3.3-4）：</strong>选地面为静系、凸轮 $M$ 为动系、顶杆端点 $A$ 为研究对象。绝对速度 $\\vec{v}$ 竖直向上，牵连速度 $v_e = \\omega a$ 水平向右，相对速度 $\\vec{v}'$ 沿凸轮接触点切线方向（与水平夹角 $\\alpha$）。由矢量三角形正交分解即得 $v = \\omega a \\tan\\alpha$。</li>
+        </ul>`
+      },
+      {
+        id: 30,
+        module: "模块五：相对运动与参考系变换",
+        question: "当动系 $S'$ 相对于静系 $S$ 以匀角速度 $\\vec{\\omega}$ 转动时，“加速度变换定理”包含哪三项？其中科里奥利加速度 $\\vec{a}_c$ 的大小与方向如何确定？",
+        hint: "对 $\\vec{v} = \\vec{v}' + \\vec{\\omega}\\times\\vec{r}'$ 再次求导，注意动系基矢本身也在以 $\\vec{\\omega}$ 旋转",
+        answer: `<div class="formula-box">
+          $$\\vec{a} = \\vec{a}' + \\vec{\\omega}\\times(\\vec{\\omega}\\times\\vec{r}') + 2\\vec{\\omega}\\times\\vec{v}' = \\vec{a}' + \\vec{a}_e + \\vec{a}_c$$
+        </div>
+        <ul>
+          <li><strong>相对加速度 $\\vec{a}'$：</strong>质点相对于转动动系的加速度。</li>
+          <li><strong>牵连加速度 $\\vec{a}_e = \\vec{\\omega}\\times(\\vec{\\omega}\\times\\vec{r}') = -\\omega^2\\vec{r}'_\\perp$：</strong>指向转动轴心的向心加速度。</li>
+          <li><strong>科里奥利加速度 $\\vec{a}_c = 2\\vec{\\omega}\\times\\vec{v}'$：</strong>由动系转动与相对运动相互耦合产生，大小为 $2\\omega v'\\sin\\varphi$，方向遵循右手螺旋定则（垂直于 $\\vec{\\omega}$ 和相对速度 $\\vec{v}'$）。</li>
+        </ul>`
+      }
+    ];
+
+    // 状态管理
+    let allCards = [];
+    let filteredCards = [];
+    let currentIndex = 0;
+    let isFlipped = false;
+    let currentModule = 'all';
+    let isGridView = false;
+
+    const STORAGE_KEY = 'mechanics_ch1_flashcards_progress_v1';
+
+    function initApp() {
+      const savedStatus = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+      allCards = initialCards.map(c => ({
+        ...c,
+        status: savedStatus[c.id] || 'unseen'
+      }));
+      filteredCards = [...allCards];
+      updateStats();
+      renderCurrentCard();
+      renderGridView();
+    }
+
+    function saveProgress() {
+      const map = {};
+      allCards.forEach(c => { map[c.id] = c.status; });
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(map));
+    }
+
+    function statusLabel(status) {
+      switch (status) {
+        case 'again': return { text: '🔴 需重来', cls: 'badge-status status-again' };
+        case 'hard': return { text: '🟡 有点模糊', cls: 'badge-status status-hard' };
+        case 'mastered': return { text: '🟢 已掌握', cls: 'badge-status status-mastered' };
+        default: return { text: '⚪ 未学习', cls: 'badge-status status-unseen' };
+      }
+    }
+
+    function renderCurrentCard() {
+      const cardEl = document.getElementById('flashcard');
+      isFlipped = false;
+      cardEl.classList.remove('is-flipped');
+
+      if (filteredCards.length === 0) {
+        document.getElementById('frontModule').textContent = '无匹配卡片';
+        document.getElementById('frontQuestion').innerHTML = '当前筛选条件下没有找到匹配的闪卡，请切换筛选标签或清空搜索词。';
+        document.getElementById('frontHint').style.display = 'none';
+        document.getElementById('statCurrent').textContent = '0 / 0';
+        return;
+      }
+
+      if (currentIndex >= filteredCards.length) currentIndex = 0;
+      if (currentIndex < 0) currentIndex = filteredCards.length - 1;
+
+      const card = filteredCards[currentIndex];
+      const st = statusLabel(card.status);
+
+      document.getElementById('frontModule').textContent = card.module;
+      document.getElementById('backModule').textContent = card.module;
+
+      const fSt = document.getElementById('frontStatus');
+      const bSt = document.getElementById('backStatus');
+      fSt.textContent = st.text;
+      fSt.className = st.cls;
+      bSt.textContent = st.text;
+      bSt.className = st.cls;
+
+      document.getElementById('frontQuestion').innerHTML = card.question;
+      const hintEl = document.getElementById('frontHint');
+      if (card.hint) {
+        hintEl.style.display = 'block';
+        hintEl.innerHTML = '💡 思考提示：' + card.hint;
+      } else {
+        hintEl.style.display = 'none';
+      }
+
+      document.getElementById('backAnswer').innerHTML = card.answer;
+      document.getElementById('frontIndex').textContent = `卡片 #${card.id} （当前列表 ${currentIndex + 1} / ${filteredCards.length}）`;
+      document.getElementById('backIndex').textContent = `卡片 #${card.id} （当前列表 ${currentIndex + 1} / ${filteredCards.length}）`;
+      document.getElementById('statCurrent').textContent = `${currentIndex + 1} / ${filteredCards.length}`;
+
+      typesetMath();
+    }
+
+    function typesetMath() {
+      if (window.MathJax && window.MathJax.typesetPromise) {
+        window.MathJax.typesetPromise().catch(err => console.warn('MathJax error:', err));
+      }
+    }
+
+    function flipCard() {
+      if (filteredCards.length === 0) return;
+      isFlipped = !isFlipped;
+      document.getElementById('flashcard').classList.toggle('is-flipped', isFlipped);
+    }
+
+    function nextCard() {
+      if (filteredCards.length === 0) return;
+      currentIndex = (currentIndex + 1) % filteredCards.length;
+      renderCurrentCard();
+    }
+
+    function prevCard() {
+      if (filteredCards.length === 0) return;
+      currentIndex = (currentIndex - 1 + filteredCards.length) % filteredCards.length;
+      renderCurrentCard();
+    }
+
+    function rateCard(level) {
+      if (filteredCards.length === 0) return;
+      const card = filteredCards[currentIndex];
+      card.status = level;
+      const origin = allCards.find(c => c.id === card.id);
+      if (origin) origin.status = level;
+
+      saveProgress();
+      updateStats();
+      renderGridView();
+
+      if (currentIndex < filteredCards.length - 1) {
+        currentIndex++;
+      } else {
+        currentIndex = 0;
+      }
+      renderCurrentCard();
+    }
+
+    function updateStats() {
+      const total = allCards.length || 1;
+      const mastered = allCards.filter(c => c.status === 'mastered').length;
+      const hard = allCards.filter(c => c.status === 'hard').length;
+      const again = allCards.filter(c => c.status === 'again').length;
+
+      document.getElementById('statMastered').textContent = mastered;
+      document.getElementById('statHard').textContent = hard;
+      document.getElementById('statAgain').textContent = again;
+
+      document.getElementById('progMastered').style.width = ((mastered / total) * 100).toFixed(1) + '%';
+      document.getElementById('progHard').style.width = ((hard / total) * 100).toFixed(1) + '%';
+      document.getElementById('progAgain').style.width = ((again / total) * 100).toFixed(1) + '%';
+    }
+
+    function filterByModule(mod) {
+      currentModule = mod;
+      document.querySelectorAll('#moduleTabs .tab-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('data-module') === mod);
+      });
+      applyFilters();
+    }
+
+    function applyFilters() {
+      const statusVal = document.getElementById('statusFilter').value;
+      const keyword = document.getElementById('searchInput').value.trim().toLowerCase();
+
+      filteredCards = allCards.filter(c => {
+        const matchMod = currentModule === 'all' || c.module === currentModule;
+        const matchStatus = statusVal === 'all' || c.status === statusVal;
+        const matchKey = !keyword ||
+          c.question.toLowerCase().includes(keyword) ||
+          c.answer.toLowerCase().includes(keyword) ||
+          (c.hint && c.hint.toLowerCase().includes(keyword));
+        return matchMod && matchStatus && matchKey;
+      });
+
+      currentIndex = 0;
+      renderCurrentCard();
+      renderGridView();
+    }
+
+    function shuffleCards() {
+      for (let i = filteredCards.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [filteredCards[i], filteredCards[j]] = [filteredCards[j], filteredCards[i]];
+      }
+      currentIndex = 0;
+      renderCurrentCard();
+      renderGridView();
+    }
+
+    function resetProgress() {
+      if (!confirm('确定要清空所有卡片的掌握度标记吗？')) return;
+      allCards.forEach(c => c.status = 'unseen');
+      localStorage.removeItem(STORAGE_KEY);
+      applyFilters();
+      updateStats();
+    }
+
+    function toggleViewMode() {
+      isGridView = !isGridView;
+      document.getElementById('singleCardStage').style.display = isGridView ? 'none' : 'block';
+      document.getElementById('actionPanel').style.display = isGridView ? 'none' : 'flex';
+      document.getElementById('gridView').classList.toggle('active', isGridView);
+      document.getElementById('btnToggleView').textContent = isGridView ? '🎴 返回单卡学习 (G)' : '📋 全部卡片总览 (G)';
+      if (isGridView) {
+        renderGridView();
+        typesetMath();
+      }
+    }
+
+    function renderGridView() {
+      const container = document.getElementById('gridView');
+      container.innerHTML = filteredCards.map((c, idx) => {
+        const st = statusLabel(c.status);
+        return `
+          <div class="grid-item" onclick="jumpToCard(${idx})">
+            <div style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
+              <span class="badge badge-module" style="font-size:11px;">#${c.id} · ${c.module.split('：')[1] || c.module}</span>
+              <span class="${st.cls}">${st.text}</span>
+            </div>
+            <h4>${c.question}</h4>
+            <p>👆 点击进入 3D 卡片详解</p>
+          </div>
+        `;
+      }).join('');
+      if (isGridView) typesetMath();
+    }
+
+    function jumpToCard(idx) {
+      currentIndex = idx;
+      if (isGridView) toggleViewMode();
+      renderCurrentCard();
+    }
+
+    // 导出与批量导入功能
+    function openModal() {
+      const lines = allCards.map(c => {
+        const cleanQ = c.question.replace(/\s+/g, ' ').trim();
+        const cleanA = c.answer.replace(/\s+/g, ' ').trim();
+        return `${cleanQ} | ${cleanA} | ${c.module}`;
+      });
+      document.getElementById('modalTextarea').value = lines.join('\n');
+      document.getElementById('modalOverlay').classList.add('active');
+    }
+
+    function closeModal() {
+      document.getElementById('modalOverlay').classList.remove('active');
+    }
+
+    function copyAnkiText() {
+      const textarea = document.getElementById('modalTextarea');
+      textarea.select();
+      document.execCommand('copy');
+      alert('已复制全部 30 张闪卡内容！可直接粘贴至 Anki 或笔记软件。');
+    }
+
+    function downloadAnkiFile() {
+      const content = document.getElementById('modalTextarea').value;
+      const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = '力学_第一章_质点运动学_Anki闪卡.txt';
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function importFromTextarea() {
+      const raw = document.getElementById('modalTextarea').value.trim();
+      if (!raw) return;
+      const lines = raw.split('\n').filter(l => l.trim().includes('|'));
+      const newCards = lines.map((line, i) => {
+        const parts = line.split('|').map(p => p.trim());
+        return {
+          id: i + 1,
+          question: parts[0] || `问题 #${i + 1}`,
+          answer: parts[1] || '',
+          module: parts[2] || '自定义拓展模块',
+          hint: '点击卡片翻转查看解析',
+          status: 'unseen'
+        };
+      });
+      if (newCards.length > 0) {
+        allCards = newCards;
+        currentModule = 'all';
+        applyFilters();
+        updateStats();
+        closeModal();
+      }
+    }
+
+    // 键盘快捷键绑定
+    window.addEventListener('keydown', (e) => {
+      if (['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement.tagName)) return;
+      if (document.getElementById('modalOverlay').classList.contains('active')) {
+        if (e.key === 'Escape') closeModal();
+        return;
+      }
+
+      if (e.code === 'Space') {
+        e.preventDefault();
+        flipCard();
+      } else if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        nextCard();
+      } else if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        prevCard();
+      } else if (e.key === '1') {
+        rateCard('again');
+      } else if (e.key === '2') {
+        rateCard('hard');
+      } else if (e.key === '3') {
+        rateCard('mastered');
+      } else if (e.key.toLowerCase() === 's') {
+        shuffleCards();
+      } else if (e.key.toLowerCase() === 'g') {
+        toggleViewMode();
+      }
+    });
+
+    window.addEventListener('DOMContentLoaded', initApp);
+  </script>
+</body>
+</html>
