@@ -1,0 +1,1216 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>高等数学：常用微分与积分公式大全及详细推导手册</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#eef2ff',
+              100: '#e0e7ff',
+              200: '#c7d2fe',
+              500: '#6366f1',
+              600: '#4f46e5',
+              700: '#4338ca',
+              800: '#3730a3',
+              900: '#312e81',
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'sans-serif'],
+            serif: ['Georgia', 'Cambria', 'Times New Roman', 'serif'],
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+
+  <style>
+    /* KaTeX equation display tuning */
+    .katex-display {
+      margin: 0.75rem 0 !important;
+      overflow-x: auto;
+      overflow-y: hidden;
+      padding: 0.35rem 0;
+    }
+    /* Custom scrollbars */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(156, 163, 175, 0.5);
+      border-radius: 9999px;
+    }
+    .dark ::-webkit-scrollbar-thumb {
+      background: rgba(75, 85, 99, 0.5);
+    }
+    /* Smooth height transition for accordion panels */
+    .derivation-panel {
+      transition: max-height 0.35s ease, opacity 0.3s ease;
+    }
+    @media print {
+      .no-print { display: none !important; }
+      .derivation-panel { display: block !important; max-height: none !important; }
+      body { background: white !important; color: black !important; }
+      .formula-card { break-inside: avoid; border: 1px solid #ccc !important; box-shadow: none !important; }
+    }
+  </style>
+</head>
+
+<body class="bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-100 min-h-screen flex flex-col font-sans transition-colors duration-200">
+
+  <!-- 顶部粘性导航栏 -->
+  <header class="sticky top-0 z-40 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 shadow-sm no-print">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+      <!-- 品牌/标题 -->
+      <div class="flex items-center gap-3">
+        <button id="sidebarToggleBtn" class="lg:hidden p-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800" aria-label="切换侧边栏">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-500 flex items-center justify-center text-white font-bold shadow-md shadow-brand-500/20">
+          $\int$
+        </div>
+        <div>
+          <h1 class="font-bold text-base sm:text-lg leading-tight text-slate-900 dark:text-white flex items-center gap-2">
+            高等数学：微分与积分公式全解
+            <span class="hidden sm:inline-block px-2 py-0.5 text-xs font-semibold bg-brand-50 text-brand-700 dark:bg-brand-900/40 dark:text-brand-300 rounded-full border border-brand-200 dark:border-brand-700/50">含详细推导</span>
+          </h1>
+          <p class="text-xs text-slate-500 dark:text-slate-400 hidden md:block">严格定义 • 法则解析 • 公式原理解构 • 一键复制 LaTeX</p>
+        </div>
+      </div>
+
+      <!-- 顶部操作区 -->
+      <div class="flex items-center gap-2 sm:gap-3">
+        <!-- 返回课程主页 -->
+        <a href="../index.html" class="px-3 py-1.5 text-xs font-medium rounded-lg border border-brand-300 dark:border-brand-700 text-brand-700 dark:text-brand-300 bg-brand-50 dark:bg-brand-900/30 hover:bg-brand-100 dark:hover:bg-brand-800/40 transition flex items-center gap-1.5 no-print" title="返回《力学》AI 智慧课程主页">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+          返回课程主页
+        </a>
+
+        <!-- 一键展开/收起全部 -->
+        <button id="toggleAllBtn" class="px-3 py-1.5 text-xs font-medium rounded-lg border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition flex items-center gap-1.5" title="展开或收起所有推导过程">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          <span id="toggleAllText">展开全部推导</span>
+        </button>
+
+        <!-- 打印按钮 -->
+        <button onclick="window.print()" class="hidden sm:flex p-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition" title="打印/导出 PDF">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+        </button>
+
+        <!-- 主题切换按钮 -->
+        <button id="themeToggleBtn" class="p-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition" aria-label="切换明暗主题">
+          <svg id="sunIcon" class="w-5 h-5 hidden dark:block text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd"/></svg>
+          <svg id="moonIcon" class="w-5 h-5 block dark:hidden text-slate-600" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 w-full flex-1 flex gap-8">
+    
+    <!-- 侧边导航栏 (Desktop & Mobile Drawer) -->
+    <aside id="sidebar" class="fixed inset-y-0 left-0 z-50 w-64 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 p-6 flex flex-col gap-4 transform -translate-x-full lg:translate-x-0 lg:static lg:h-[calc(100vh-6rem)] lg:sticky lg:top-20 transition-transform duration-300 ease-in-out no-print overflow-y-auto rounded-2xl shadow-sm lg:shadow-none">
+      <div class="flex items-center justify-between lg:hidden mb-2">
+        <span class="font-bold text-slate-800 dark:text-white">目录导航</span>
+        <button id="sidebarCloseBtn" class="p-1 rounded-md text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <nav class="space-y-6 text-sm">
+        <div>
+          <div class="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-2">一、核心理论与定义</div>
+          <ul class="space-y-1.5 font-medium">
+            <li><a href="#def-derivative" class="block px-2.5 py-1.5 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-brand-50 hover:text-brand-600 dark:hover:bg-slate-800 dark:hover:text-brand-400 transition">1. 导数与微分定义</a></li>
+            <li><a href="#def-indefinite" class="block px-2.5 py-1.5 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-brand-50 hover:text-brand-600 dark:hover:bg-slate-800 dark:hover:text-brand-400 transition">2. 不定积分与原函数</a></li>
+            <li><a href="#def-definite" class="block px-2.5 py-1.5 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-brand-50 hover:text-brand-600 dark:hover:bg-slate-800 dark:hover:text-brand-400 transition">3. 定积分与黎曼和</a></li>
+            <li><a href="#def-newton-leibniz" class="block px-2.5 py-1.5 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-brand-50 hover:text-brand-600 dark:hover:bg-slate-800 dark:hover:text-brand-400 transition">4. 牛顿-莱布尼茨公式推导</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <div class="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-2">二、求导法则与公式</div>
+          <ul class="space-y-1.5 font-medium">
+            <li><a href="#diff-rules" class="block px-2.5 py-1.5 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-brand-50 hover:text-brand-600 dark:hover:bg-slate-800 dark:hover:text-brand-400 transition">求导基本运算法则</a></li>
+            <li><a href="#diff-power-exp-log" class="block px-2.5 py-1.5 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-brand-50 hover:text-brand-600 dark:hover:bg-slate-800 dark:hover:text-brand-400 transition">幂函数、指数与对数求导</a></li>
+            <li><a href="#diff-trig" class="block px-2.5 py-1.5 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-brand-50 hover:text-brand-600 dark:hover:bg-slate-800 dark:hover:text-brand-400 transition">三角函数求导推导</a></li>
+            <li><a href="#diff-inv-trig" class="block px-2.5 py-1.5 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-brand-50 hover:text-brand-600 dark:hover:bg-slate-800 dark:hover:text-brand-400 transition">反三角函数求导推导</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <div class="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-2">三、积分法则与常用公式</div>
+          <ul class="space-y-1.5 font-medium">
+            <li><a href="#integ-rules" class="block px-2.5 py-1.5 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-brand-50 hover:text-brand-600 dark:hover:bg-slate-800 dark:hover:text-brand-400 transition">换元积分法与分部积分法</a></li>
+            <li><a href="#integ-basic" class="block px-2.5 py-1.5 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-brand-50 hover:text-brand-600 dark:hover:bg-slate-800 dark:hover:text-brand-400 transition">初等函数基础不定积分</a></li>
+            <li><a href="#integ-trig" class="block px-2.5 py-1.5 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-brand-50 hover:text-brand-600 dark:hover:bg-slate-800 dark:hover:text-brand-400 transition">三角函数积分(含sec, csc)</a></li>
+            <li><a href="#integ-rational-irrational" class="block px-2.5 py-1.5 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-brand-50 hover:text-brand-600 dark:hover:bg-slate-800 dark:hover:text-brand-400 transition">有理分式与无理根式积分</a></li>
+          </ul>
+        </div>
+      </nav>
+      
+      <!-- 快捷统计与提示 -->
+      <div class="mt-auto pt-4 border-t border-slate-200 dark:border-slate-800 text-xs text-slate-500">
+        💡 点击各卡片的 <span class="text-brand-600 dark:text-brand-400 font-semibold">LaTeX 复制</span> 可直接拷贝数学源码。
+      </div>
+    </aside>
+
+    <!-- 侧边栏遮罩 (Mobile) -->
+    <div id="sidebarOverlay" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-40 hidden lg:hidden"></div>
+
+    <main class="flex-1 w-full min-w-0">
+      
+      <!-- 搜索与分类过滤栏 -->
+      <div class="mb-8 space-y-4 no-print">
+        <div class="relative">
+          <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          </div>
+          <input type="text" id="searchInput" placeholder="搜索公式名称、数学式、法则或关键词 (如: 链式法则, 割线积分, sec, arcsin)..." 
+                 class="w-full pl-10 pr-10 py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-sm text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 dark:focus:ring-brand-400 transition">
+          <button id="clearSearchBtn" class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hidden">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+          </button>
+        </div>
+
+        <!-- 标签过滤器 -->
+        <div class="flex items-center gap-2 overflow-x-auto pb-1 text-xs sm:text-sm scrollbar-none" id="categoryFilters">
+          <button data-cat="all" class="filter-btn active px-3.5 py-1.5 rounded-lg font-medium whitespace-nowrap bg-brand-600 text-white shadow-sm transition">全部公式与推导</button>
+          <button data-cat="concept" class="filter-btn px-3.5 py-1.5 rounded-lg font-medium whitespace-nowrap bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition">基础概念与定义</button>
+          <button data-cat="diff-rule" class="filter-btn px-3.5 py-1.5 rounded-lg font-medium whitespace-nowrap bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition">求导法则</button>
+          <button data-cat="diff-elem" class="filter-btn px-3.5 py-1.5 rounded-lg font-medium whitespace-nowrap bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition">基本初等函数导数</button>
+          <button data-cat="integ-rule" class="filter-btn px-3.5 py-1.5 rounded-lg font-medium whitespace-nowrap bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition">积分运算法则</button>
+          <button data-cat="integ-elem" class="filter-btn px-3.5 py-1.5 rounded-lg font-medium whitespace-nowrap bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition">常用不定积分</button>
+        </div>
+      </div>
+
+      <section class="space-y-8">
+        
+        <!-- 一、核心理论与定义 -->
+        <div>
+          <div class="flex items-center gap-3 mb-6">
+            <span class="w-2.5 h-7 bg-brand-600 rounded-full"></span>
+            <h2 class="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 dark:text-white">第一部分：微积分基础概念与核心定义</h2>
+          </div>
+
+          <div class="space-y-6">
+            <!-- 导数与微分定义 -->
+            <div id="def-derivative" class="formula-card bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-6 shadow-sm hover:shadow-md transition duration-200" data-category="concept" data-keywords="导数定义 微分定义 增量 极限 切线斜率 dy dx">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+                <div class="flex items-center gap-2">
+                  <span class="px-2.5 py-1 text-xs font-semibold bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 rounded-md">核心概念</span>
+                  <h3 class="font-bold text-base sm:text-lg text-slate-900 dark:text-white">1.1 导数与微分的严格定义</h3>
+                </div>
+                <button onclick="copyLatex(this)" data-latex="f'(x) = \lim_{\Delta x \to 0} \frac{f(x+\Delta x) - f(x)}{\Delta x}, \quad dy = f'(x)dx" class="copy-btn text-xs font-medium text-slate-500 hover:text-brand-600 dark:text-slate-400 dark:hover:text-brand-300 flex items-center gap-1 border border-slate-200 dark:border-slate-700 px-2.5 py-1 rounded-lg transition">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                  复制 LaTeX
+                </button>
+              </div>
+
+              <!-- 主公式展示 -->
+              <div class="bg-slate-50 dark:bg-slate-950/60 rounded-xl p-4 my-3 text-center border border-slate-100 dark:border-slate-800/80">
+                $$f'(x_0) = \lim_{\Delta x \to 0} \frac{\Delta y}{\Delta x} = \lim_{\Delta x \to 0} \frac{f(x_0+\Delta x) - f(x_0)}{\Delta x}$$
+                $$dy = f'(x)\,dx \quad \iff \quad \frac{dy}{dx} = f'(x)$$
+              </div>
+
+              <!-- 折叠推导与解析 -->
+              <div class="mt-4">
+                <button class="toggle-derivation-btn w-full text-left py-2 px-3 rounded-lg bg-slate-100/70 dark:bg-slate-800/70 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center justify-between transition">
+                  <span>查看概念解析与几何意义</span>
+                  <svg class="w-4 h-4 transform transition-transform chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                </button>
+                <div class="derivation-panel hidden mt-3 p-4 rounded-xl bg-slate-50/50 dark:bg-slate-950/40 border border-slate-100 dark:border-slate-800/50 text-sm space-y-3 leading-relaxed">
+                  <p><strong>1. 导数的本质与极限描述：</strong> 导数刻画了函数因变量相对于自变量变化的瞬时变化率。设函数 $y = f(x)$ 在点 $x_0$ 的某邻域内有定义，若差商极限存在，则称 $f(x)$ 在 $x_0$ 处可导。</p>
+                  <p><strong>2. 微分的概念：</strong> 若函数增量可表示为 $\Delta y = A \Delta x + o(\Delta x)$（其中 $A$ 是与 $\Delta x$ 无关的常数，$o(\Delta x)$ 为高阶无穷小），则称函数在该点可微，并称线性主部 $A \Delta x$ 为函数的<strong>微分</strong>，记作 $dy = A \Delta x = f'(x)dx$。</p>
+                  <p><strong>3. 几何意义：</strong> 导数 $f'(x_0)$ 是曲线 $y=f(x)$ 在点 $(x_0, f(x_0))$ 处切线的斜率 $k = \tan \alpha$。切线方程为：$y - f(x_0) = f'(x_0)(x - x_0)$。</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- 不定积分定义 -->
+            <div id="def-indefinite" class="formula-card bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-6 shadow-sm hover:shadow-md transition duration-200" data-category="concept" data-keywords="不定积分 原函数 任意常数 C">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+                <div class="flex items-center gap-2">
+                  <span class="px-2.5 py-1 text-xs font-semibold bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 rounded-md">核心概念</span>
+                  <h3 class="font-bold text-base sm:text-lg text-slate-900 dark:text-white">1.2 原函数与不定积分的定义</h3>
+                </div>
+                <button onclick="copyLatex(this)" data-latex="\int f(x)\,dx = F(x) + C \quad (\text{其中 } F'(x) = f(x))" class="copy-btn text-xs font-medium text-slate-500 hover:text-brand-600 dark:text-slate-400 dark:hover:text-brand-300 flex items-center gap-1 border border-slate-200 dark:border-slate-700 px-2.5 py-1 rounded-lg transition">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                  复制 LaTeX
+                </button>
+              </div>
+
+              <div class="bg-slate-50 dark:bg-slate-950/60 rounded-xl p-4 my-3 text-center border border-slate-100 dark:border-slate-800/80">
+                $$\int f(x)\,dx = F(x) + C \quad \Longleftrightarrow \quad \frac{d}{dx}[F(x) + C] = f(x)$$
+              </div>
+
+              <div class="mt-4">
+                <button class="toggle-derivation-btn w-full text-left py-2 px-3 rounded-lg bg-slate-100/70 dark:bg-slate-800/70 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center justify-between transition">
+                  <span>查看概念解析与常数 $C$ 的意义</span>
+                  <svg class="w-4 h-4 transform transition-transform chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                </button>
+                <div class="derivation-panel hidden mt-3 p-4 rounded-xl bg-slate-50/50 dark:bg-slate-950/40 border border-slate-100 dark:border-slate-800/50 text-sm space-y-3 leading-relaxed">
+                  <p><strong>1. 原函数的存在性：</strong> 若在区间 $I$ 上 $F'(x) = f(x)$，则称 $F(x)$ 为 $f(x)$ 在该区间上的一个原函数。连续函数必有原函数。</p>
+                  <p><strong>2. 任意常数 $C$ 的本质：</strong> 若 $F_1(x)$ 与 $F_2(x)$ 均为 $f(x)$ 的原函数，则由拉格朗日中值定理推论可得：$\frac{d}{dx}[F_1(x) - F_2(x)] = 0 \implies F_1(x) - F_2(x) = C$（常数）。</p>
+                  <p><strong>3. 几何意义：</strong> 不定积分代表一簇沿 $y$ 轴垂直平移的积分曲线族，曲线上任意横坐标 $x$ 相同处的切线斜率均恒等于 $f(x)$。</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- 定积分与黎曼和 -->
+            <div id="def-definite" class="formula-card bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-6 shadow-sm hover:shadow-md transition duration-200" data-category="concept" data-keywords="定积分 黎曼和 Riemann sum 面积 分割 近似 求和 取极限">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+                <div class="flex items-center gap-2">
+                  <span class="px-2.5 py-1 text-xs font-semibold bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 rounded-md">核心概念</span>
+                  <h3 class="font-bold text-base sm:text-lg text-slate-900 dark:text-white">1.3 定积分的黎曼和（Riemann Sum）定义</h3>
+                </div>
+                <button onclick="copyLatex(this)" data-latex="\int_a^b f(x)\,dx = \lim_{\lambda \to 0} \sum_{i=1}^n f(\xi_i)\Delta x_i" class="copy-btn text-xs font-medium text-slate-500 hover:text-brand-600 dark:text-slate-400 dark:hover:text-brand-300 flex items-center gap-1 border border-slate-200 dark:border-slate-700 px-2.5 py-1 rounded-lg transition">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                  复制 LaTeX
+                </button>
+              </div>
+
+              <div class="bg-slate-50 dark:bg-slate-950/60 rounded-xl p-4 my-3 text-center border border-slate-100 dark:border-slate-800/80">
+                $$\int_a^b f(x)\,dx = \lim_{\lambda \to 0} \sum_{i=1}^n f(\xi_i)\,\Delta x_i \quad \left(\lambda = \max_{1\le i\le n}\{\Delta x_i\}\right)$$
+              </div>
+
+              <div class="mt-4">
+                <button class="toggle-derivation-btn w-full text-left py-2 px-3 rounded-lg bg-slate-100/70 dark:bg-slate-800/70 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center justify-between transition">
+                  <span>查看四步构造法与几何意义</span>
+                  <svg class="w-4 h-4 transform transition-transform chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                </button>
+                <div class="derivation-panel hidden mt-3 p-4 rounded-xl bg-slate-50/50 dark:bg-slate-950/40 border border-slate-100 dark:border-slate-800/50 text-sm space-y-3 leading-relaxed">
+                  <p><strong>黎曼积分的经典四步法：</strong></p>
+                  <ol class="list-decimal list-inside space-y-1 text-slate-600 dark:text-slate-300 pl-2">
+                    <li><strong>分割：</strong>在区间 $[a, b]$ 中插入分点 $a = x_0 < x_1 < \dots < x_n = b$，分成 $n$ 个小区段，记 $\Delta x_i = x_i - x_{i-1}$，取模长 $\lambda = \max\{\Delta x_i\}$。</li>
+                    <li><strong>近似：</strong>在每个小区间 $[x_{i-1}, x_i]$ 上任取一点 $\xi_i$，以矩形面积 $f(\xi_i)\Delta x_i$ 近似曲边小条面积。</li>
+                    <li><strong>求和：</strong>构建积分和式 $S_n = \sum_{i=1}^n f(\xi_i)\Delta x_i$。</li>
+                    <li><strong>取极限：</strong>令 $\lambda \to 0$，若极限与分割及 $\xi_i$ 选取无关且恒存在，此极限即为定积分 $\int_a^b f(x)dx$。</li>
+                  </ol>
+                  <p><strong>几何意义：</strong>当 $f(x) \ge 0$ 时，$\int_a^b f(x)dx$ 表示由曲线 $y=f(x)$、直线 $x=a$、$x=b$ 与 $x$ 轴所围成的<strong>曲边梯形的面积</strong>；一般情况下为 $x$ 轴上方与下方区域面积的代数和。</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- 牛顿-莱布尼茨公式推导 -->
+            <div id="def-newton-leibniz" class="formula-card bg-white dark:bg-slate-900 rounded-2xl border-2 border-indigo-200 dark:border-indigo-900/60 p-6 shadow-sm hover:shadow-md transition duration-200" data-category="concept" data-keywords="牛顿莱布尼茨公式 微积分基本定理 Newton-Leibniz 变上限积分 拉格朗日中值定理">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+                <div class="flex items-center gap-2">
+                  <span class="px-2.5 py-1 text-xs font-semibold bg-indigo-50 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300 rounded-md">核心定理</span>
+                  <h3 class="font-bold text-base sm:text-lg text-slate-900 dark:text-white">1.4 微积分基本定理（牛顿 - 莱布尼茨公式）</h3>
+                </div>
+                <button onclick="copyLatex(this)" data-latex="\int_a^b f(x)\,dx = F(b) - F(a) = \left. F(x) \right|_a^b" class="copy-btn text-xs font-medium text-slate-500 hover:text-brand-600 dark:text-slate-400 dark:hover:text-brand-300 flex items-center gap-1 border border-slate-200 dark:border-slate-700 px-2.5 py-1 rounded-lg transition">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                  复制 LaTeX
+                </button>
+              </div>
+
+              <div class="bg-indigo-50/50 dark:bg-indigo-950/30 rounded-xl p-4 my-3 text-center border border-indigo-100 dark:border-indigo-800/50">
+                $$\int_a^b f(x)\,dx = F(b) - F(a) = \Big[ F(x) \Big]_a^b \quad \left(\text{其中 } F'(x) = f(x)\right)$$
+              </div>
+
+              <div class="mt-4">
+                <button class="toggle-derivation-btn w-full text-left py-2 px-3 rounded-lg bg-indigo-100/70 dark:bg-indigo-900/40 hover:bg-indigo-100 dark:hover:bg-indigo-900 text-xs sm:text-sm font-medium text-indigo-950 dark:text-indigo-200 flex items-center justify-between transition">
+                  <span class="font-semibold text-indigo-700 dark:text-indigo-300">展开完整严格数学推导（变上限积分引理）</span>
+                  <svg class="w-4 h-4 transform transition-transform chevron text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                </button>
+                <div class="derivation-panel hidden mt-3 p-5 rounded-xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800 text-sm space-y-4 leading-relaxed">
+                  <div class="border-l-4 border-indigo-500 pl-3">
+                    <p class="font-semibold text-indigo-900 dark:text-indigo-300">引理：变上限积分的求导定理</p>
+                    <p class="text-slate-600 dark:text-slate-300 text-xs sm:text-sm">设 $f(x)$ 在 $[a, b]$ 上连续，定义变上限积分函数 $\Phi(x) = \int_a^x f(t)\,dt$（$x \in [a, b]$），则 $\Phi(x)$ 在 $[a, b]$ 上可导，且：$$\Phi'(x) = \frac{d}{dx}\left(\int_a^x f(t)\,dt\right) = f(x)$$</p>
+                  </div>
+                  
+                  <div class="space-y-2">
+                    <p><strong>步骤 1：由导数定义计算 $\Phi'(x)$</strong></p>
+                    <p>给自变量 $x$ 一个增量 $\Delta x$，使得 $x + \Delta x \in [a, b]$，对应的函数增量为：</p>
+                    $$\Delta \Phi = \Phi(x+\Delta x) - \Phi(x) = \int_a^{x+\Delta x} f(t)\,dt - \int_a^x f(t)\,dt = \int_x^{x+\Delta x} f(t)\,dt$$
+                  </div>
+
+                  <div class="space-y-2">
+                    <p><strong>步骤 2：应用定积分第一中值定理</strong></p>
+                    <p>因为 $f(t)$ 在闭区间 $[x, x+\Delta x]$ 上连续，由积分第一中值定理，必存在介于 $x$ 与 $x + \Delta x$ 之间的点 $\xi$，使得：</p>
+                    $$\int_x^{x+\Delta x} f(t)\,dt = f(\xi)\,\Delta x \quad (\xi \text{ 介于 } x \text{ 与 } x+\Delta x \text{ 之间})$$
+                    <p>因此差商为：$\frac{\Delta \Phi}{\Delta x} = \frac{f(\xi)\Delta x}{\Delta x} = f(\xi)$。</p>
+                  </div>
+
+                  <div class="space-y-2">
+                    <p><strong>步骤 3：取极限 $\Delta x \to 0$</strong></p>
+                    <p>当 $\Delta x \to 0$ 时，必有 $\xi \to x$。又因 $f(x)$ 在点 $x$ 处连续，故：</p>
+                    $$\Phi'(x) = \lim_{\Delta x \to 0} \frac{\Delta \Phi}{\Delta x} = \lim_{\Delta x \to 0} f(\xi) = \lim_{\xi \to x} f(\xi) = f(x)$$
+                    <p class="text-slate-600 dark:text-slate-400">这表明 $\Phi(x)$ 是 $f(x)$ 在区间 $[a, b]$ 上的一个原函数。</p>
+                  </div>
+
+                  <div class="space-y-2 border-t border-slate-200 dark:border-slate-800 pt-3">
+                    <p><strong>步骤 4：引入任意原函数 $F(x)$ 完成证明</strong></p>
+                    <p>设 $F(x)$ 是 $f(x)$ 的任意一个原函数，由于同一个函数的任意两个原函数只相差一个常数，故存在常数 $C$，使得：</p>
+                    $$\Phi(x) = F(x) + C$$
+                    <p>在等式两边令 $x = a$，由于 $\Phi(a) = \int_a^a f(t)\,dt = 0$，得：</p>
+                    $$0 = F(a) + C \implies C = -F(a)$$
+                    <p>因此，$\Phi(x) = F(x) - F(a)$。再令 $x = b$，即得：</p>
+                    $$\Phi(b) = \int_a^b f(t)\,dt = F(b) - F(a)$$
+                    <p class="text-emerald-600 dark:text-emerald-400 font-semibold">证毕。该定理将求定积分的极限求和问题，彻底转化为求被积函数的原函数运算，是整个微积分学的基石。</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- 二、求导法则与常用导数公式 -->
+        <div class="pt-6">
+          <div class="flex items-center gap-3 mb-6">
+            <span class="w-2.5 h-7 bg-brand-600 rounded-full"></span>
+            <h2 class="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 dark:text-white">第二部分：求导法则与常用导数公式（附逐一推导）</h2>
+          </div>
+
+          <!-- 求导基本法则 -->
+          <div id="diff-rules" class="space-y-6 mb-8">
+            <h3 class="text-lg font-bold text-slate-800 dark:text-slate-200 flex items-center gap-2">
+              <span>2.1 求导四则运算、链式法则与反函数求导法则</span>
+            </h3>
+
+            <!-- 乘积法则与商法则 -->
+            <div class="formula-card bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-6 shadow-sm hover:shadow-md transition duration-200" data-category="diff-rule" data-keywords="乘积法则 商法则 uv u/v 求导法则 乘法 差商">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+                <div class="flex items-center gap-2">
+                  <span class="px-2.5 py-1 text-xs font-semibold bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300 rounded-md">求导法则</span>
+                  <h4 class="font-bold text-base text-slate-900 dark:text-white">乘积法则与商的求导法则</h4>
+                </div>
+                <button onclick="copyLatex(this)" data-latex="(uv)' = u'v + uv', \quad \left(\frac{u}{v}\right)' = \frac{u'v - uv'}{v^2}" class="copy-btn text-xs font-medium text-slate-500 hover:text-brand-600 dark:text-slate-400 dark:hover:text-brand-300 flex items-center gap-1 border border-slate-200 dark:border-slate-700 px-2.5 py-1 rounded-lg transition">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                  复制 LaTeX
+                </button>
+              </div>
+
+              <div class="bg-slate-50 dark:bg-slate-950/60 rounded-xl p-4 my-3 text-center border border-slate-100 dark:border-slate-800/80">
+                $$(u \cdot v)' = u'v + u v' \qquad\text{及}\qquad \left(\frac{u}{v}\right)' = \frac{u'v - uv'}{v^2} \quad (v \neq 0)$$
+              </div>
+
+              <div class="mt-4">
+                <button class="toggle-derivation-btn w-full text-left py-2 px-3 rounded-lg bg-slate-100/70 dark:bg-slate-800/70 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center justify-between transition">
+                  <span>查看两者的详细极限推导过程</span>
+                  <svg class="w-4 h-4 transform transition-transform chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                </button>
+                <div class="derivation-panel hidden mt-3 p-4 rounded-xl bg-slate-50/50 dark:bg-slate-950/40 border border-slate-100 dark:border-slate-800/50 text-sm space-y-4 leading-relaxed">
+                  <div>
+                    <p class="font-semibold text-brand-600 dark:text-brand-400">1. 乘积法则 $(uv)' = u'v + uv'$ 推导：</p>
+                    <p>设 $y = u(x)v(x)$，对自变量 $x$ 施加增量 $\Delta x$：</p>
+                    $$\Delta y = u(x+\Delta x)v(x+\Delta x) - u(x)v(x)$$
+                    <p>在分子中巧妙地<strong>“减一项再加一项”</strong> $u(x)v(x+\Delta x)$：</p>
+                    $$\Delta y = [u(x+\Delta x)v(x+\Delta x) - u(x)v(x+\Delta x)] + [u(x)v(x+\Delta x) - u(x)v(x)]$$
+                    $$= [u(x+\Delta x) - u(x)]v(x+\Delta x) + u(x)[v(x+\Delta x) - v(x)] = \Delta u \cdot v(x+\Delta x) + u(x)\cdot \Delta v$$
+                    <p>两端同除以 $\Delta x$ 并取极限 $\Delta x \to 0$（由 $v(x)$ 可导必连续知 $\lim_{\Delta x\to 0} v(x+\Delta x) = v(x)$）：</p>
+                    $$(uv)' = \lim_{\Delta x \to 0} \frac{\Delta y}{\Delta x} = \lim_{\Delta x \to 0} \left[ \frac{\Delta u}{\Delta x} v(x+\Delta x) + u(x) \frac{\Delta v}{\Delta x} \right] = u'(x)v(x) + u(x)v'(x)$$
+                  </div>
+                  <div class="border-t border-slate-200 dark:border-slate-800 pt-3">
+                    <p class="font-semibold text-brand-600 dark:text-brand-400">2. 商法则 $(u/v)' = \frac{u'v - uv'}{v^2}$ 推导：</p>
+                    <p>同理，设 $y = \frac{u(x)}{v(x)}$，计算差商：</p>
+                    $$\frac{\Delta y}{\Delta x} = \frac{\frac{u(x+\Delta x)}{v(x+\Delta x)} - \frac{u(x)}{v(x)}}{\Delta x} = \frac{u(x+\Delta x)v(x) - u(x)v(x+\Delta x)}{v(x+\Delta x)v(x)\Delta x}$$
+                    <p>分子同样加入中间项：$[u(x+\Delta x) - u(x)]v(x) - u(x)[v(x+\Delta x) - v(x)]$，则：</p>
+                    $$\lim_{\Delta x\to 0} \frac{\Delta y}{\Delta x} = \lim_{\Delta x\to 0}\frac{\frac{\Delta u}{\Delta x}v(x) - u(x)\frac{\Delta v}{\Delta x}}{v(x+\Delta x)v(x)} = \frac{u'(x)v(x) - u(x)v'(x)}{v(x)^2}$$
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 链式法则与反函数求导法则 -->
+            <div class="formula-card bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-6 shadow-sm hover:shadow-md transition duration-200" data-category="diff-rule" data-keywords="链式法则 反函数求导 复合函数求导 chain rule inverse">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+                <div class="flex items-center gap-2">
+                  <span class="px-2.5 py-1 text-xs font-semibold bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300 rounded-md">求导法则</span>
+                  <h4 class="font-bold text-base text-slate-900 dark:text-white">复合函数链式法则与反函数求导法则</h4>
+                </div>
+                <button onclick="copyLatex(this)" data-latex="\frac{dy}{dx} = \frac{dy}{du}\cdot\frac{du}{dx}, \quad \frac{dy}{dx} = \frac{1}{\frac{dx}{dy}}" class="copy-btn text-xs font-medium text-slate-500 hover:text-brand-600 dark:text-slate-400 dark:hover:text-brand-300 flex items-center gap-1 border border-slate-200 dark:border-slate-700 px-2.5 py-1 rounded-lg transition">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                  复制 LaTeX
+                </button>
+              </div>
+
+              <div class="bg-slate-50 dark:bg-slate-950/60 rounded-xl p-4 my-3 text-center border border-slate-100 dark:border-slate-800/80">
+                $$(f(g(x)))' = f'(g(x)) \cdot g'(x) \qquad\text{及}\qquad \frac{dy}{dx} = \frac{1}{\frac{dx}{dy}} \quad \left(\frac{dx}{dy} \neq 0\right)$$
+              </div>
+
+              <div class="mt-4">
+                <button class="toggle-derivation-btn w-full text-left py-2 px-3 rounded-lg bg-slate-100/70 dark:bg-slate-800/70 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center justify-between transition">
+                  <span>查看链式法则与反函数求导推导</span>
+                  <svg class="w-4 h-4 transform transition-transform chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                </button>
+                <div class="derivation-panel hidden mt-3 p-4 rounded-xl bg-slate-50/50 dark:bg-slate-950/40 border border-slate-100 dark:border-slate-800/50 text-sm space-y-4 leading-relaxed">
+                  <div>
+                    <p class="font-semibold text-brand-600 dark:text-brand-400">1. 链式法则推导：</p>
+                    <p>设 $y = f(u)$，$u = g(x)$。当 $x$ 获得增量 $\Delta x$ 时，中间变量 $u$ 获得增量 $\Delta u = g(x+\Delta x) - g(x)$，进而 $y$ 获得增量 $\Delta y = f(u+\Delta u) - f(u)$。</p>
+                    <p>由 $f(u)$ 可导性，$\Delta y = f'(u)\Delta u + \alpha \Delta u$，其中当 $\Delta u \to 0$ 时无穷小量 $\alpha \to 0$。两边同除以 $\Delta x$：</p>
+                    $$\frac{\Delta y}{\Delta x} = f'(u)\frac{\Delta u}{\Delta x} + \alpha \frac{\Delta u}{\Delta x}$$
+                    <p>因为 $g(x)$ 可导必连续，当 $\Delta x \to 0$ 时必有 $\Delta u \to 0$，进而 $\alpha \to 0$。两边取极限即得：</p>
+                    $$\frac{dy}{dx} = \lim_{\Delta x \to 0} \frac{\Delta y}{\Delta x} = f'(u) \lim_{\Delta x\to 0}\frac{\Delta u}{\Delta x} + 0 = f'(g(x)) \cdot g'(x)$$
+                  </div>
+                  <div class="border-t border-slate-200 dark:border-slate-800 pt-3">
+                    <p class="font-semibold text-brand-600 dark:text-brand-400">2. 反函数求导法则推导：</p>
+                    <p>设函数 $y = f(x)$ 在区间内单调可导，且 $f'(x) \neq 0$，则其存在单调反函数 $x = f^{-1}(y)$。对反函数的自变量 $y$ 给予增量 $\Delta y \neq 0$，由反函数严格单调性，对应 $\Delta x \neq 0$：</p>
+                    $$\frac{\Delta x}{\Delta y} = \frac{1}{\frac{\Delta y}{\Delta x}}$$
+                    <p>因反函数连续，当 $\Delta y \to 0$ 时 $\Delta x \to 0$。两边取极限：</p>
+                    $$\frac{dx}{dy} = \lim_{\Delta y \to 0} \frac{\Delta x}{\Delta y} = \frac{1}{\lim_{\Delta x \to 0} \frac{\Delta y}{\Delta x}} = \frac{1}{f'(x)} \implies \frac{dy}{dx} = \frac{1}{\frac{dx}{dy}}$$
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 初等函数导数公式及推导 -->
+          <div id="diff-power-exp-log" class="space-y-6 mb-8">
+            <h3 class="text-lg font-bold text-slate-800 dark:text-slate-200">
+              2.2 幂函数、指数函数与对数函数的导数及推导
+            </h3>
+
+            <!-- 幂函数求导 -->
+            <div class="formula-card bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-6 shadow-sm hover:shadow-md transition duration-200" data-category="diff-elem" data-keywords="幂函数求导 x^n 二项式定理">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 text-xs font-semibold bg-indigo-50 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300 rounded">导数公式 1</span>
+                  <h4 class="font-bold text-base text-slate-900 dark:text-white">幂函数求导公式 $(x^n)' = n x^{n-1}$</h4>
+                </div>
+                <button onclick="copyLatex(this)" data-latex="\frac{d}{dx}(x^n) = n x^{n-1}" class="copy-btn text-xs font-medium text-slate-500 hover:text-brand-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 px-2.5 py-1 rounded-lg">复制 LaTeX</button>
+              </div>
+              <div class="bg-slate-50 dark:bg-slate-950/60 rounded-xl p-4 my-3 text-center border border-slate-100 dark:border-slate-800/80">
+                $$\frac{d}{dx}\big(x^n\big) = n x^{n-1} \quad (n \in \mathbb{R})$$
+              </div>
+              <div class="mt-4">
+                <button class="toggle-derivation-btn w-full text-left py-2 px-3 rounded-lg bg-slate-100/70 dark:bg-slate-800/70 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center justify-between transition">
+                  <span>展开详细推导（二项式定理 / 对数求导法）</span>
+                  <svg class="w-4 h-4 transform transition-transform chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                </button>
+                <div class="derivation-panel hidden mt-3 p-4 rounded-xl bg-slate-50/50 dark:bg-slate-950/40 border border-slate-100 dark:border-slate-800/50 text-sm space-y-3 leading-relaxed">
+                  <p><strong>证法 1（正整数 $n$ 时利用二项式定理）：</strong></p>
+                  $$\lim_{\Delta x \to 0} \frac{(x+\Delta x)^n - x^n}{\Delta x} = \lim_{\Delta x \to 0} \frac{\left[x^n + n x^{n-1}\Delta x + \frac{n(n-1)}{2}x^{n-2}(\Delta x)^2 + \dots + (\Delta x)^n\right] - x^n}{\Delta x}$$
+                  $$= \lim_{\Delta x \to 0} \left[ n x^{n-1} + \frac{n(n-1)}{2}x^{n-2}\Delta x + \dots + (\Delta x)^{n-1} \right] = n x^{n-1}$$
+                  <p><strong>证法 2（推广到任意实数 $\alpha$）：</strong>利用对数求导法，设 $y = x^\alpha = e^{\alpha \ln x}$，由链式法则：</p>
+                  $$y' = e^{\alpha \ln x} \cdot (\alpha \ln x)' = x^\alpha \cdot \frac{\alpha}{x} = \alpha x^{\alpha - 1}$$
+                </div>
+              </div>
+            </div>
+
+            <!-- 指数函数求导 -->
+            <div class="formula-card bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-6 shadow-sm hover:shadow-md transition duration-200" data-category="diff-elem" data-keywords="指数函数求导 a^x e^x 重要极限">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 text-xs font-semibold bg-indigo-50 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300 rounded">导数公式 2</span>
+                  <h4 class="font-bold text-base text-slate-900 dark:text-white">指数函数求导公式 $(a^x)' = a^x \ln a$ 与 $(e^x)' = e^x$</h4>
+                </div>
+                <button onclick="copyLatex(this)" data-latex="\frac{d}{dx}(a^x) = a^x \ln a, \quad \frac{d}{dx}(e^x) = e^x" class="copy-btn text-xs font-medium text-slate-500 hover:text-brand-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 px-2.5 py-1 rounded-lg">复制 LaTeX</button>
+              </div>
+              <div class="bg-slate-50 dark:bg-slate-950/60 rounded-xl p-4 my-3 text-center border border-slate-100 dark:border-slate-800/80">
+                $$\frac{d}{dx}\big(a^x\big) = a^x \ln a \quad (a > 0, a \neq 1) \qquad\text{特别地，}\qquad \frac{d}{dx}\big(e^x\big) = e^x$$
+              </div>
+              <div class="mt-4">
+                <button class="toggle-derivation-btn w-full text-left py-2 px-3 rounded-lg bg-slate-100/70 dark:bg-slate-800/70 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center justify-between transition">
+                  <span>展开基于重要极限的严格推导</span>
+                  <svg class="w-4 h-4 transform transition-transform chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                </button>
+                <div class="derivation-panel hidden mt-3 p-4 rounded-xl bg-slate-50/50 dark:bg-slate-950/40 border border-slate-100 dark:border-slate-800/50 text-sm space-y-3 leading-relaxed">
+                  <p>由导数的极限定义：</p>
+                  $$(a^x)' = \lim_{\Delta x \to 0} \frac{a^{x+\Delta x} - a^x}{\Delta x} = a^x \cdot \lim_{\Delta x \to 0} \frac{a^{\Delta x} - 1}{\Delta x}$$
+                  <p>令 $t = a^{\Delta x} - 1$，则 $a^{\Delta x} = 1 + t$，两边取对数得 $\Delta x \ln a = \ln(1 + t) \implies \Delta x = \frac{\ln(1+t)}{\ln a}$。当 $\Delta x \to 0$ 时 $t \to 0$：</p>
+                  $$\lim_{\Delta x \to 0} \frac{a^{\Delta x} - 1}{\Delta x} = \lim_{t \to 0} \frac{t}{\frac{\ln(1+t)}{\ln a}} = \ln a \cdot \lim_{t \to 0} \frac{1}{\ln(1+t)^{1/t}} = \ln a \cdot \frac{1}{\ln e} = \ln a$$
+                  <p>代回原式即得：$(a^x)' = a^x \ln a$。当 $a = e$ 时，$\ln e = 1$，故 $(e^x)' = e^x$。</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- 对数函数求导 -->
+            <div class="formula-card bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-6 shadow-sm hover:shadow-md transition duration-200" data-category="diff-elem" data-keywords="对数函数求导 log lnx 自然对数">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 text-xs font-semibold bg-indigo-50 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300 rounded">导数公式 3</span>
+                  <h4 class="font-bold text-base text-slate-900 dark:text-white">对数函数求导公式 $(\log_a x)' = \frac{1}{x\ln a}$ 与 $(\ln x)' = \frac{1}{x}$</h4>
+                </div>
+                <button onclick="copyLatex(this)" data-latex="\frac{d}{dx}(\ln x) = \frac{1}{x}, \quad \frac{d}{dx}(\log_a x) = \frac{1}{x \ln a}" class="copy-btn text-xs font-medium text-slate-500 hover:text-brand-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 px-2.5 py-1 rounded-lg">复制 LaTeX</button>
+              </div>
+              <div class="bg-slate-50 dark:bg-slate-950/60 rounded-xl p-4 my-3 text-center border border-slate-100 dark:border-slate-800/80">
+                $$\frac{d}{dx}\big(\log_a x\big) = \frac{1}{x \ln a} \qquad\text{特别地，}\qquad \frac{d}{dx}\big(\ln x\big) = \frac{1}{x}$$
+              </div>
+              <div class="mt-4">
+                <button class="toggle-derivation-btn w-full text-left py-2 px-3 rounded-lg bg-slate-100/70 dark:bg-slate-800/70 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center justify-between transition">
+                  <span>展开基于自然对数底极限 $\lim_{t\to 0}(1+t)^{1/t}=e$ 的推导</span>
+                  <svg class="w-4 h-4 transform transition-transform chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                </button>
+                <div class="derivation-panel hidden mt-3 p-4 rounded-xl bg-slate-50/50 dark:bg-slate-950/40 border border-slate-100 dark:border-slate-800/50 text-sm space-y-3 leading-relaxed">
+                  <p>对 $y = \ln x$，利用对数的运算性质 $\ln A - \ln B = \ln(A/B)$：</p>
+                  $$\frac{\Delta y}{\Delta x} = \frac{\ln(x+\Delta x) - \ln x}{\Delta x} = \frac{1}{\Delta x}\ln\left(1 + \frac{\Delta x}{x}\right) = \frac{1}{x} \cdot \frac{x}{\Delta x}\ln\left(1 + \frac{\Delta x}{x}\right) = \frac{1}{x}\ln\left[\left(1 + \frac{\Delta x}{x}\right)^{\frac{x}{\Delta x}}\right]$$
+                  <p>令 $t = \frac{\Delta x}{x}$，当 $\Delta x \to 0$ 时 $t \to 0$。根据重要极限 $\lim_{t\to 0}(1+t)^{1/t} = e$ 及对数函数连续性：</p>
+                  $$(\ln x)' = \lim_{\Delta x \to 0} \frac{\Delta y}{\Delta x} = \frac{1}{x} \ln\left[ \lim_{t\to 0}(1+t)^{1/t} \right] = \frac{1}{x}\ln e = \frac{1}{x}$$
+                  <p>对于一般对数：$\log_a x = \frac{\ln x}{\ln a}$，由常数倍性质即得 $(\log_a x)' = \frac{1}{x\ln a}$。</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 三角与反三角函数求导 -->
+          <div id="diff-trig" class="space-y-6 mb-8">
+            <h3 class="text-lg font-bold text-slate-800 dark:text-slate-200">
+              2.3 三角函数导数公式及推导
+            </h3>
+
+            <!-- 正弦与余弦求导 -->
+            <div class="formula-card bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-6 shadow-sm hover:shadow-md transition duration-200" data-category="diff-elem" data-keywords="三角函数求导 sin cos 正弦 余弦 和差化积">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 text-xs font-semibold bg-indigo-50 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300 rounded">导数公式 4</span>
+                  <h4 class="font-bold text-base text-slate-900 dark:text-white">正弦与余弦函数求导公式</h4>
+                </div>
+                <button onclick="copyLatex(this)" data-latex="(\sin x)' = \cos x, \quad (\cos x)' = -\sin x" class="copy-btn text-xs font-medium text-slate-500 hover:text-brand-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 px-2.5 py-1 rounded-lg">复制 LaTeX</button>
+              </div>
+              <div class="bg-slate-50 dark:bg-slate-950/60 rounded-xl p-4 my-3 text-center border border-slate-100 dark:border-slate-800/80">
+                $$\frac{d}{dx}(\sin x) = \cos x \qquad\text{及}\qquad \frac{d}{dx}(\cos x) = -\sin x$$
+              </div>
+              <div class="mt-4">
+                <button class="toggle-derivation-btn w-full text-left py-2 px-3 rounded-lg bg-slate-100/70 dark:bg-slate-800/70 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center justify-between transition">
+                  <span>展开基于“和差化积”与极限 $\lim_{t\to 0}\frac{\sin t}{t}=1$ 的推导</span>
+                  <svg class="w-4 h-4 transform transition-transform chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                </button>
+                <div class="derivation-panel hidden mt-3 p-4 rounded-xl bg-slate-50/50 dark:bg-slate-950/40 border border-slate-100 dark:border-slate-800/50 text-sm space-y-3 leading-relaxed">
+                  <p><strong>1. 推导 $(\sin x)' = \cos x$：</strong>运用三角函数和差化积公式 $\sin\alpha - \sin\beta = 2\sin\frac{\alpha-\beta}{2}\cos\frac{\alpha+\beta}{2}$：</p>
+                  $$\Delta y = \sin(x+\Delta x) - \sin x = 2 \sin\frac{\Delta x}{2} \cos\left(x + \frac{\Delta x}{2}\right)$$
+                  $$\lim_{\Delta x \to 0} \frac{\Delta y}{\Delta x} = \lim_{\Delta x \to 0} \left[ \frac{\sin(\Delta x / 2)}{\Delta x / 2} \cdot \cos\left(x + \frac{\Delta x}{2}\right) \right] = 1 \cdot \cos x = \cos x$$
+                  <p><strong>2. 推导 $(\cos x)' = -\sin x$：</strong>由诱导公式 $\cos x = \sin\left(\frac{\pi}{2} - x\right)$ 与复合函数链式法则：</p>
+                  $$(\cos x)' = \left[\sin\left(\frac{\pi}{2} - x\right)\right]' = \cos\left(\frac{\pi}{2} - x\right) \cdot \left(\frac{\pi}{2} - x\right)' = (\sin x) \cdot (-1) = -\sin x$$
+                </div>
+              </div>
+            </div>
+
+            <!-- 正切、余切、正割、余割 -->
+            <div class="formula-card bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-6 shadow-sm hover:shadow-md transition duration-200" data-category="diff-elem" data-keywords="tan cot sec csc 正切 余切 正割 余割 商法则">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 text-xs font-semibold bg-indigo-50 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300 rounded">导数公式 5</span>
+                  <h4 class="font-bold text-base text-slate-900 dark:text-white">$\tan x, \cot x, \sec x, \csc x$ 的导数</h4>
+                </div>
+                <button onclick="copyLatex(this)" data-latex="(\tan x)'=\sec^2 x, \ (\cot x)'=-\csc^2 x, \ (\sec x)'=\sec x\tan x, \ (\csc x)'=-\csc x\cot x" class="copy-btn text-xs font-medium text-slate-500 hover:text-brand-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 px-2.5 py-1 rounded-lg">复制 LaTeX</button>
+              </div>
+              <div class="bg-slate-50 dark:bg-slate-950/60 rounded-xl p-4 my-3 text-center border border-slate-100 dark:border-slate-800/80">
+                $$(\tan x)' = \sec^2 x, \quad (\cot x)' = -\csc^2 x, \quad (\sec x)' = \sec x\tan x, \quad (\csc x)' = -\csc x\cot x$$
+              </div>
+              <div class="mt-4">
+                <button class="toggle-derivation-btn w-full text-left py-2 px-3 rounded-lg bg-slate-100/70 dark:bg-slate-800/70 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center justify-between transition">
+                  <span>展开基于商法则的推导</span>
+                  <svg class="w-4 h-4 transform transition-transform chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                </button>
+                <div class="derivation-panel hidden mt-3 p-4 rounded-xl bg-slate-50/50 dark:bg-slate-950/40 border border-slate-100 dark:border-slate-800/50 text-sm space-y-3 leading-relaxed">
+                  <p><strong>1. $(\tan x)'$ 推导：</strong> $\tan x = \frac{\sin x}{\cos x}$，由商法则：</p>
+                  $$(\tan x)' = \frac{(\sin x)'\cos x - \sin x(\cos x)'}{\cos^2 x} = \frac{\cos x \cdot \cos x - \sin x(-\sin x)}{\cos^2 x} = \frac{\cos^2 x + \sin^2 x}{\cos^2 x} = \frac{1}{\cos^2 x} = \sec^2 x$$
+                  <p><strong>2. $(\sec x)'$ 推导：</strong> $\sec x = \frac{1}{\cos x} = (\cos x)^{-1}$：</p>
+                  $$(\sec x)' = -(\cos x)^{-2} \cdot (\cos x)' = -\frac{1}{\cos^2 x} \cdot (-\sin x) = \frac{1}{\cos x} \cdot \frac{\sin x}{\cos x} = \sec x \tan x$$
+                  <p>同理可推得 $(\cot x)' = -\csc^2 x$ 与 $(\csc x)' = -\csc x\cot x$。</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 反三角函数求导 -->
+          <div id="diff-inv-trig" class="space-y-6 mb-8">
+            <h3 class="text-lg font-bold text-slate-800 dark:text-slate-200">
+              2.4 反三角函数导数公式及推导
+            </h3>
+
+            <!-- 反正弦与反余弦 -->
+            <div class="formula-card bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-6 shadow-sm hover:shadow-md transition duration-200" data-category="diff-elem" data-keywords="arcsin arccos 反三角求导 反函数求导法则">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 text-xs font-semibold bg-indigo-50 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300 rounded">导数公式 6</span>
+                  <h4 class="font-bold text-base text-slate-900 dark:text-white">$(\arcsin x)' = \frac{1}{\sqrt{1-x^2}}$ 与 $(\arccos x)' = -\frac{1}{\sqrt{1-x^2}}$</h4>
+                </div>
+                <button onclick="copyLatex(this)" data-latex="(\arcsin x)' = \frac{1}{\sqrt{1-x^2}}, \quad (\arccos x)' = -\frac{1}{\sqrt{1-x^2}}" class="copy-btn text-xs font-medium text-slate-500 hover:text-brand-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 px-2.5 py-1 rounded-lg">复制 LaTeX</button>
+              </div>
+              <div class="bg-slate-50 dark:bg-slate-950/60 rounded-xl p-4 my-3 text-center border border-slate-100 dark:border-slate-800/80">
+                $$\frac{d}{dx}(\arcsin x) = \frac{1}{\sqrt{1-x^2}} \qquad\text{及}\qquad \frac{d}{dx}(\arccos x) = -\frac{1}{\sqrt{1-x^2}} \quad (|x| < 1)$$
+              </div>
+              <div class="mt-4">
+                <button class="toggle-derivation-btn w-full text-left py-2 px-3 rounded-lg bg-slate-100/70 dark:bg-slate-800/70 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center justify-between transition">
+                  <span>展开基于反函数求导法则的推导</span>
+                  <svg class="w-4 h-4 transform transition-transform chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                </button>
+                <div class="derivation-panel hidden mt-3 p-4 rounded-xl bg-slate-50/50 dark:bg-slate-950/40 border border-slate-100 dark:border-slate-800/50 text-sm space-y-3 leading-relaxed">
+                  <p><strong>推导 $(\arcsin x)'$：</strong>设 $y = \arcsin x$（$x \in (-1, 1), y \in (-\frac{\pi}{2}, \frac{\pi}{2})$），则其反函数为 $x = \sin y$。由反函数求导法则：</p>
+                  $$\frac{dy}{dx} = \frac{1}{\frac{dx}{dy}} = \frac{1}{(\sin y)'} = \frac{1}{\cos y}$$
+                  <p>因为当 $y \in (-\frac{\pi}{2}, \frac{\pi}{2})$ 时，$\cos y > 0$，所以 $\cos y = \sqrt{1 - \sin^2 y} = \sqrt{1 - x^2}$，代回得：</p>
+                  $$(\arcsin x)' = \frac{1}{\sqrt{1 - x^2}}$$
+                  <p><strong>推导 $(\arccos x)'$：</strong>因为 $\arcsin x + \arccos x = \frac{\pi}{2}$，两端直接对 $x$ 求导：</p>
+                  $$(\arccos x)' = \left(\frac{\pi}{2} - \arcsin x\right)' = 0 - \frac{1}{\sqrt{1 - x^2}} = -\frac{1}{\sqrt{1 - x^2}}$$
+                </div>
+              </div>
+            </div>
+
+            <!-- 反正切与反余切 -->
+            <div class="formula-card bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-6 shadow-sm hover:shadow-md transition duration-200" data-category="diff-elem" data-keywords="arctan arccot 反正切 反余切 反三角求导">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 text-xs font-semibold bg-indigo-50 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300 rounded">导数公式 7</span>
+                  <h4 class="font-bold text-base text-slate-900 dark:text-white">$(\arctan x)' = \frac{1}{1+x^2}$ 与 $(\text{arccot}\,x)' = -\frac{1}{1+x^2}$</h4>
+                </div>
+                <button onclick="copyLatex(this)" data-latex="(\arctan x)' = \frac{1}{1+x^2}, \quad (\operatorname{arccot} x)' = -\frac{1}{1+x^2}" class="copy-btn text-xs font-medium text-slate-500 hover:text-brand-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 px-2.5 py-1 rounded-lg">复制 LaTeX</button>
+              </div>
+              <div class="bg-slate-50 dark:bg-slate-950/60 rounded-xl p-4 my-3 text-center border border-slate-100 dark:border-slate-800/80">
+                $$\frac{d}{dx}(\arctan x) = \frac{1}{1+x^2} \qquad\text{及}\qquad \frac{d}{dx}(\text{arccot}\,x) = -\frac{1}{1+x^2}$$
+              </div>
+              <div class="mt-4">
+                <button class="toggle-derivation-btn w-full text-left py-2 px-3 rounded-lg bg-slate-100/70 dark:bg-slate-800/70 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center justify-between transition">
+                  <span>展开反函数求导推导</span>
+                  <svg class="w-4 h-4 transform transition-transform chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                </button>
+                <div class="derivation-panel hidden mt-3 p-4 rounded-xl bg-slate-50/50 dark:bg-slate-950/40 border border-slate-100 dark:border-slate-800/50 text-sm space-y-3 leading-relaxed">
+                  <p><strong>推导 $(\arctan x)'$：</strong>设 $y = \arctan x$（$x \in \mathbb{R}, y \in (-\frac{\pi}{2}, \frac{\pi}{2})$），反函数为 $x = \tan y$。根据反函数求导法则：</p>
+                  $$\frac{dy}{dx} = \frac{1}{\frac{dx}{dy}} = \frac{1}{(\tan y)'} = \frac{1}{\sec^2 y}$$
+                  <p>利用三角恒等式 $\sec^2 y = 1 + \tan^2 y$：</p>
+                  $$(\arctan x)' = \frac{1}{1 + \tan^2 y} = \frac{1}{1 + x^2}$$
+                  <p>同理，因 $\arctan x + \text{arccot}\,x = \frac{\pi}{2}$，求导即得 $(\text{arccot}\,x)' = -\frac{1}{1+x^2}$。</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 第三部分：积分法则与常用不定积分公式 -->
+        <div class="pt-6">
+          <div class="flex items-center gap-3 mb-6">
+            <span class="w-2.5 h-7 bg-brand-600 rounded-full"></span>
+            <h2 class="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 dark:text-white">第三部分：积分法则与常用不定积分公式（附逐一推导）</h2>
+          </div>
+
+          <!-- 积分基本法则 -->
+          <div id="integ-rules" class="space-y-6 mb-8">
+            <h3 class="text-lg font-bold text-slate-800 dark:text-slate-200">
+              3.1 积分运算法则：换元积分法与分部积分法
+            </h3>
+
+            <!-- 第一、第二类换元法 -->
+            <div class="formula-card bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-6 shadow-sm hover:shadow-md transition duration-200" data-category="integ-rule" data-keywords="第一类换元法 第二类换元法 凑微分 三角代换 substitution">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+                <div class="flex items-center gap-2">
+                  <span class="px-2.5 py-1 text-xs font-semibold bg-amber-50 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300 rounded-md">积分法则</span>
+                  <h4 class="font-bold text-base text-slate-900 dark:text-white">第一与第二类换元积分法</h4>
+                </div>
+                <button onclick="copyLatex(this)" data-latex="\int f(\varphi(x))\varphi'(x)dx = \int f(u)du, \quad \int f(x)dx = \int f(\psi(t))\psi'(t)dt" class="copy-btn text-xs font-medium text-slate-500 hover:text-brand-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 px-2.5 py-1 rounded-lg">复制 LaTeX</button>
+              </div>
+              <div class="bg-slate-50 dark:bg-slate-950/60 rounded-xl p-4 my-3 text-center border border-slate-100 dark:border-slate-800/80">
+                $$\int f(\varphi(x))\varphi'(x)\,dx = \left[ \int f(u)\,du \right]_{u=\varphi(x)} \qquad\text{及}\qquad \int f(x)\,dx = \left[ \int f(\psi(t))\psi'(t)\,dt \right]_{t=\psi^{-1}(x)}$$
+              </div>
+              <div class="mt-4">
+                <button class="toggle-derivation-btn w-full text-left py-2 px-3 rounded-lg bg-slate-100/70 dark:bg-slate-800/70 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center justify-between transition">
+                  <span>查看换元法则的数学原理</span>
+                  <svg class="w-4 h-4 transform transition-transform chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                </button>
+                <div class="derivation-panel hidden mt-3 p-4 rounded-xl bg-slate-50/50 dark:bg-slate-950/40 border border-slate-100 dark:border-slate-800/50 text-sm space-y-3 leading-relaxed">
+                  <p><strong>1. 第一类换元积分法（凑微分法）：</strong> 实质上是<strong>复合函数求导法则的逆运算</strong>。若 $F'(u) = f(u)$，由链式法则 $\frac{d}{dx}[F(\varphi(x))] = F'(\varphi(x))\varphi'(x) = f(\varphi(x))\varphi'(x)$。根据不定积分定义：$\int f(\varphi(x))\varphi'(x)dx = F(\varphi(x)) + C = \left.\int f(u)du\right|_{u=\varphi(x)}$。</p>
+                  <p><strong>2. 第二类换元积分法（变量置换法）：</strong> 当被积函数含有复杂式子（如 $\sqrt{a^2-x^2}$）难以直接凑微分时，令 $x = \psi(t)$（$\psi'(t) \neq 0$ 且存在反函数 $t = \psi^{-1}(x)$），则 $dx = \psi'(t)dt$，求出积分后再用反函数回代。</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- 分部积分法 -->
+            <div class="formula-card bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-6 shadow-sm hover:shadow-md transition duration-200" data-category="integ-rule" data-keywords="分部积分法 u dv udv 反导数乘积法则 integration by parts">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+                <div class="flex items-center gap-2">
+                  <span class="px-2.5 py-1 text-xs font-semibold bg-amber-50 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300 rounded-md">积分法则</span>
+                  <h4 class="font-bold text-base text-slate-900 dark:text-white">分部积分法公式</h4>
+                </div>
+                <button onclick="copyLatex(this)" data-latex="\int u\,dv = uv - \int v\,du" class="copy-btn text-xs font-medium text-slate-500 hover:text-brand-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 px-2.5 py-1 rounded-lg">复制 LaTeX</button>
+              </div>
+              <div class="bg-slate-50 dark:bg-slate-950/60 rounded-xl p-4 my-3 text-center border border-slate-100 dark:border-slate-800/80">
+                $$\int u\,dv = uv - \int v\,du \quad \Longleftrightarrow \quad \int u(x)v'(x)\,dx = u(x)v(x) - \int v(x)u'(x)\,dx$$
+              </div>
+              <div class="mt-4">
+                <button class="toggle-derivation-btn w-full text-left py-2 px-3 rounded-lg bg-slate-100/70 dark:bg-slate-800/70 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center justify-between transition">
+                  <span>展开由导数乘积法则反推的推导</span>
+                  <svg class="w-4 h-4 transform transition-transform chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                </button>
+                <div class="derivation-panel hidden mt-3 p-4 rounded-xl bg-slate-50/50 dark:bg-slate-950/40 border border-slate-100 dark:border-slate-800/50 text-sm space-y-3 leading-relaxed">
+                  <p>由两个可导函数乘积的微分公式：</p>
+                  $$d(uv) = u\,dv + v\,du$$
+                  <p>移项整理得：</p>
+                  $$u\,dv = d(uv) - v\,du$$
+                  <p>两边同时取不定积分，由不定积分的线性性质：</p>
+                  $$\int u\,dv = \int d(uv) - \int v\,du = uv - \int v\,du$$
+                  <p class="text-xs text-slate-500 dark:text-slate-400">💡 选 $u$ 的常用口诀：“反对幂指三”（反三角、对数、幂函数、指数、三角），排在前面的优先选作 $u$。</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 16个经典不定积分公式及详细推导 -->
+          <div id="integ-basic" class="space-y-6 mb-8">
+            <h3 class="text-lg font-bold text-slate-800 dark:text-slate-200">
+              3.2 常用不定积分公式及逐个推导过程（1 ~ 16）
+            </h3>
+
+            <!-- 1. 幂函数与倒数积分 -->
+            <div class="formula-card bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-6 shadow-sm hover:shadow-md transition duration-200" data-category="integ-elem" data-keywords="x^mu 幂函数积分 1/x 对数积分">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 text-xs font-semibold bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300 rounded">公式 1 ~ 3</span>
+                  <h4 class="font-bold text-base text-slate-900 dark:text-white">常数、幂函数与 $\frac{1}{x}$ 的积分</h4>
+                </div>
+                <button onclick="copyLatex(this)" data-latex="\int x^\mu dx = \frac{x^{\mu+1}}{\mu+1} + C, \quad \int \frac{1}{x}dx = \ln|x| + C" class="copy-btn text-xs font-medium text-slate-500 hover:text-brand-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 px-2.5 py-1 rounded-lg">复制 LaTeX</button>
+              </div>
+              <div class="bg-slate-50 dark:bg-slate-950/60 rounded-xl p-4 my-3 text-center border border-slate-100 dark:border-slate-800/80">
+                $$\int k\,dx = kx + C, \qquad \int x^\mu\,dx = \frac{x^{\mu+1}}{\mu+1} + C \quad (\mu \neq -1), \qquad \int \frac{1}{x}\,dx = \ln|x| + C$$
+              </div>
+              <div class="mt-4">
+                <button class="toggle-derivation-btn w-full text-left py-2 px-3 rounded-lg bg-slate-100/70 dark:bg-slate-800/70 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center justify-between transition">
+                  <span>展开推导过程（特别是绝对值 $\ln|x|$ 的来历）</span>
+                  <svg class="w-4 h-4 transform transition-transform chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                </button>
+                <div class="derivation-panel hidden mt-3 p-4 rounded-xl bg-slate-50/50 dark:bg-slate-950/40 border border-slate-100 dark:border-slate-800/50 text-sm space-y-3 leading-relaxed">
+                  <p><strong>1. 幂函数推导：</strong>由求导公式 $\left(\frac{x^{\mu+1}}{\mu+1}\right)' = \frac{1}{\mu+1} \cdot (\mu+1)x^\mu = x^\mu$（当 $\mu \neq -1$），故其原函数即为 $\frac{x^{\mu+1}}{\mu+1} + C$。</p>
+                  <p><strong>2. $\int \frac{1}{x}dx = \ln|x| + C$ 推导：</strong></p>
+                  <ul class="list-disc list-inside pl-2 space-y-1">
+                    <li>当 $x > 0$ 时，$|x| = x$，$(\ln x)' = \frac{1}{x}$；</li>
+                    <li>当 $x < 0$ 时，$|x| = -x$，利用复合函数求导：$[\ln(-x)]' = \frac{1}{-x} \cdot (-1) = \frac{1}{x}$。</li>
+                  </ul>
+                  <p>综上，无论 $x > 0$ 还是 $x < 0$，均有 $(\ln|x|)' = \frac{1}{x}$，故积分结果统一表示为 $\ln|x| + C$。</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- 2. 指数函数与正余弦积分 -->
+            <div class="formula-card bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-6 shadow-sm hover:shadow-md transition duration-200" data-category="integ-elem" data-keywords="e^x a^x 指数积分 三角积分 cos sin">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 text-xs font-semibold bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300 rounded">公式 4 ~ 7</span>
+                  <h4 class="font-bold text-base text-slate-900 dark:text-white">指数函数与基本三角函数的积分</h4>
+                </div>
+                <button onclick="copyLatex(this)" data-latex="\int a^x dx = \frac{a^x}{\ln a} + C, \quad \int \sin x dx = -\cos x + C, \quad \int \cos x dx = \sin x + C" class="copy-btn text-xs font-medium text-slate-500 hover:text-brand-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 px-2.5 py-1 rounded-lg">复制 LaTeX</button>
+              </div>
+              <div class="bg-slate-50 dark:bg-slate-950/60 rounded-xl p-4 my-3 text-center border border-slate-100 dark:border-slate-800/80">
+                $$\int a^x\,dx = \frac{a^x}{\ln a} + C, \quad \int e^x\,dx = e^x + C, \quad \int \cos x\,dx = \sin x + C, \quad \int \sin x\,dx = -\cos x + C$$
+                $$\int \sec^2 x\,dx = \tan x + C, \qquad \int \csc^2 x\,dx = -\cot x + C$$
+              </div>
+              <div class="mt-4">
+                <button class="toggle-derivation-btn w-full text-left py-2 px-3 rounded-lg bg-slate-100/70 dark:bg-slate-800/70 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center justify-between transition">
+                  <span>展开推导说明</span>
+                  <svg class="w-4 h-4 transform transition-transform chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                </button>
+                <div class="derivation-panel hidden mt-3 p-4 rounded-xl bg-slate-50/50 dark:bg-slate-950/40 border border-slate-100 dark:border-slate-800/50 text-sm space-y-2 leading-relaxed">
+                  <p>上述公式全部直接对应导数基本公式的逆运算：</p>
+                  <p>• 因 $\left(\frac{a^x}{\ln a}\right)' = \frac{a^x\ln a}{\ln a} = a^x \implies \int a^x dx = \frac{a^x}{\ln a} + C$。</p>
+                  <p>• 因 $(-\cos x)' = -(-\sin x) = \sin x \implies \int \sin x dx = -\cos x + C$。</p>
+                  <p>• 因 $(\tan x)' = \sec^2 x \implies \int \sec^2 x dx = \tan x + C$；$(-\cot x)' = \csc^2 x \implies \int \csc^2 x dx = -\cot x + C$。</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- 3. 正切、余切、正割、余割积分 -->
+            <div id="integ-trig" class="formula-card bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-6 shadow-sm hover:shadow-md transition duration-200" data-category="integ-elem" data-keywords="tan cot sec csc 正切积分 正割积分 余割积分 凑微分">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 text-xs font-semibold bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300 rounded">公式 8 ~ 11</span>
+                  <h4 class="font-bold text-base text-slate-900 dark:text-white">$\tan x, \cot x, \sec x, \csc x$ 的不定积分</h4>
+                </div>
+                <button onclick="copyLatex(this)" data-latex="\int \tan x\,dx = -\ln|\cos x|+C, \quad \int \sec x\,dx = \ln|\sec x + \tan x| + C" class="copy-btn text-xs font-medium text-slate-500 hover:text-brand-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 px-2.5 py-1 rounded-lg">复制 LaTeX</button>
+              </div>
+              <div class="bg-slate-50 dark:bg-slate-950/60 rounded-xl p-4 my-3 text-center border border-slate-100 dark:border-slate-800/80">
+                $$\int \tan x\,dx = -\ln|\cos x| + C = \ln|\sec x| + C \qquad\qquad \int \cot x\,dx = \ln|\sin x| + C$$
+                $$\int \sec x\,dx = \ln|\sec x + \tan x| + C \qquad\qquad \int \csc x\,dx = \ln|\csc x - \cot x| + C$$
+              </div>
+              <div class="mt-4">
+                <button class="toggle-derivation-btn w-full text-left py-2 px-3 rounded-lg bg-slate-100/70 dark:bg-slate-800/70 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center justify-between transition">
+                  <span>展开正割与正切的经典凑微分推导</span>
+                  <svg class="w-4 h-4 transform transition-transform chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                </button>
+                <div class="derivation-panel hidden mt-3 p-4 rounded-xl bg-slate-50/50 dark:bg-slate-950/40 border border-slate-100 dark:border-slate-800/50 text-sm space-y-4 leading-relaxed">
+                  <div>
+                    <p class="font-semibold text-brand-600 dark:text-brand-400">1. $\int \tan x\,dx$ 推导：</p>
+                    $$\int \tan x\,dx = \int \frac{\sin x}{\cos x}\,dx = -\int \frac{d(\cos x)}{\cos x} = -\ln|\cos x| + C = \ln|\cos x|^{-1} + C = \ln|\sec x| + C$$
+                  </div>
+                  <div class="border-t border-slate-200 dark:border-slate-800 pt-3">
+                    <p class="font-semibold text-brand-600 dark:text-brand-400">2. $\int \sec x\,dx$ 经典分子分母同乘推导：</p>
+                    <p>分子分母同时乘以 $(\sec x + \tan x)$：</p>
+                    $$\int \sec x\,dx = \int \frac{\sec x(\sec x + \tan x)}{\sec x + \tan x}\,dx = \int \frac{\sec^2 x + \sec x \tan x}{\sec x + \tan x}\,dx$$
+                    <p>观察分子：$d(\sec x + \tan x) = (\sec x \tan x + \sec^2 x)dx$，分子恰为分母的微分！</p>
+                    $$= \int \frac{d(\sec x + \tan x)}{\sec x + \tan x} = \ln|\sec x + \tan x| + C$$
+                  </div>
+                  <div class="border-t border-slate-200 dark:border-slate-800 pt-3">
+                    <p class="font-semibold text-brand-600 dark:text-brand-400">3. $\int \csc x\,dx$ 推导：</p>
+                    <p>分子分母同乘 $(\csc x - \cot x)$：</p>
+                    $$\int \csc x\,dx = \int \frac{\csc x(\csc x - \cot x)}{\csc x - \cot x}\,dx = \int \frac{\csc^2 x - \csc x \cot x}{\csc x - \cot x}\,dx$$
+                    <p>因 $d(\csc x - \cot x) = (-\csc x \cot x - (-\csc^2 x))dx = (\csc^2 x - \csc x \cot x)dx$：</p>
+                    $$= \int \frac{d(\csc x - \cot x)}{\csc x - \cot x} = \ln|\csc x - \cot x| + C$$
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 4. 有理分式与经典无理根式积分 -->
+            <div id="integ-rational-irrational" class="space-y-6">
+
+              <!-- 公式 12: 1/(x^2 + a^2) -->
+              <div class="formula-card bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-6 shadow-sm hover:shadow-md transition duration-200" data-category="integ-elem" data-keywords="1/(x^2+a^2) 反正切积分 三角代换 arctan">
+                <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+                  <div class="flex items-center gap-2">
+                    <span class="px-2 py-0.5 text-xs font-semibold bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300 rounded">公式 12</span>
+                    <h4 class="font-bold text-base text-slate-900 dark:text-white">$\int \frac{1}{x^2+a^2}\,dx = \frac{1}{a}\arctan\frac{x}{a} + C$</h4>
+                  </div>
+                  <button onclick="copyLatex(this)" data-latex="\int \frac{1}{x^2+a^2}\,dx = \frac{1}{a}\arctan\frac{x}{a} + C" class="copy-btn text-xs font-medium text-slate-500 hover:text-brand-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 px-2.5 py-1 rounded-lg">复制 LaTeX</button>
+                </div>
+                <div class="bg-slate-50 dark:bg-slate-950/60 rounded-xl p-4 my-3 text-center border border-slate-100 dark:border-slate-800/80">
+                  $$\int \frac{1}{x^2+a^2}\,dx = \frac{1}{a}\arctan\left(\frac{x}{a}\right) + C \quad (a > 0)$$
+                </div>
+                <div class="mt-4">
+                  <button class="toggle-derivation-btn w-full text-left py-2 px-3 rounded-lg bg-slate-100/70 dark:bg-slate-800/70 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center justify-between transition">
+                    <span>展开三角代换 $x = a\tan\theta$ 详细推导</span>
+                    <svg class="w-4 h-4 transform transition-transform chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                  </button>
+                  <div class="derivation-panel hidden mt-3 p-4 rounded-xl bg-slate-50/50 dark:bg-slate-950/40 border border-slate-100 dark:border-slate-800/50 text-sm space-y-3 leading-relaxed">
+                    <p><strong>推导：</strong>提取常数 $a^2$ 凑微分（或使用三角代换 $x = a \tan\theta$）：</p>
+                    $$\int \frac{1}{x^2+a^2}\,dx = \frac{1}{a^2}\int \frac{1}{\left(\frac{x}{a}\right)^2 + 1}\,dx = \frac{1}{a}\int \frac{1}{\left(\frac{x}{a}\right)^2 + 1}\,d\left(\frac{x}{a}\right)$$
+                    <p>因为 $\int \frac{1}{u^2+1}du = \arctan u + C$，令 $u = \frac{x}{a}$，即得：</p>
+                    $$= \frac{1}{a}\arctan\left(\frac{x}{a}\right) + C$$
+                  </div>
+                </div>
+              </div>
+
+              <!-- 公式 13: 1/sqrt(a^2 - x^2) -->
+              <div class="formula-card bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-6 shadow-sm hover:shadow-md transition duration-200" data-category="integ-elem" data-keywords="1/sqrt(a^2-x^2) 反正弦积分 arcsin 三角代换">
+                <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+                  <div class="flex items-center gap-2">
+                    <span class="px-2 py-0.5 text-xs font-semibold bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300 rounded">公式 13</span>
+                    <h4 class="font-bold text-base text-slate-900 dark:text-white">$\int \frac{1}{\sqrt{a^2-x^2}}\,dx = \arcsin\frac{x}{a} + C$</h4>
+                  </div>
+                  <button onclick="copyLatex(this)" data-latex="\int \frac{1}{\sqrt{a^2-x^2}}\,dx = \arcsin\frac{x}{a} + C" class="copy-btn text-xs font-medium text-slate-500 hover:text-brand-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 px-2.5 py-1 rounded-lg">复制 LaTeX</button>
+                </div>
+                <div class="bg-slate-50 dark:bg-slate-950/60 rounded-xl p-4 my-3 text-center border border-slate-100 dark:border-slate-800/80">
+                  $$\int \frac{1}{\sqrt{a^2-x^2}}\,dx = \arcsin\left(\frac{x}{a}\right) + C \quad (a > 0, |x| < a)$$
+                </div>
+                <div class="mt-4">
+                  <button class="toggle-derivation-btn w-full text-left py-2 px-3 rounded-lg bg-slate-100/70 dark:bg-slate-800/70 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center justify-between transition">
+                    <span>展开三角置换 $x = a\sin\theta$ 推导</span>
+                    <svg class="w-4 h-4 transform transition-transform chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                  </button>
+                  <div class="derivation-panel hidden mt-3 p-4 rounded-xl bg-slate-50/50 dark:bg-slate-950/40 border border-slate-100 dark:border-slate-800/50 text-sm space-y-3 leading-relaxed">
+                    <p><strong>第二类换元法推导：</strong>设 $x = a\sin\theta$（$\theta \in (-\frac{\pi}{2}, \frac{\pi}{2})$），则 $dx = a\cos\theta\,d\theta$，$a^2 - x^2 = a^2\cos^2\theta$：</p>
+                    $$\int \frac{1}{\sqrt{a^2-x^2}}\,dx = \int \frac{a\cos\theta}{\sqrt{a^2\cos^2\theta}}\,d\theta = \int \frac{a\cos\theta}{a\cos\theta}\,d\theta = \int 1\,d\theta = \theta + C$$
+                    <p>回代 $\theta = \arcsin\left(\frac{x}{a}\right)$ 即得：$\arcsin\left(\frac{x}{a}\right) + C$。</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 公式 14: 1/(x^2 - a^2) -->
+              <div class="formula-card bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-6 shadow-sm hover:shadow-md transition duration-200" data-category="integ-elem" data-keywords="1/(x^2-a^2) 部分分式拆分法 有理分式积分">
+                <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+                  <div class="flex items-center gap-2">
+                    <span class="px-2 py-0.5 text-xs font-semibold bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300 rounded">公式 14</span>
+                    <h4 class="font-bold text-base text-slate-900 dark:text-white">$\int \frac{1}{x^2-a^2}\,dx = \frac{1}{2a}\ln\left|\frac{x-a}{x+a}\right| + C$</h4>
+                  </div>
+                  <button onclick="copyLatex(this)" data-latex="\int \frac{1}{x^2-a^2}\,dx = \frac{1}{2a}\ln\left|\frac{x-a}{x+a}\right| + C" class="copy-btn text-xs font-medium text-slate-500 hover:text-brand-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 px-2.5 py-1 rounded-lg">复制 LaTeX</button>
+                </div>
+                <div class="bg-slate-50 dark:bg-slate-950/60 rounded-xl p-4 my-3 text-center border border-slate-100 dark:border-slate-800/80">
+                  $$\int \frac{1}{x^2-a^2}\,dx = \frac{1}{2a}\ln\left|\frac{x-a}{x+a}\right| + C \quad (a \neq 0)$$
+                </div>
+                <div class="mt-4">
+                  <button class="toggle-derivation-btn w-full text-left py-2 px-3 rounded-lg bg-slate-100/70 dark:bg-slate-800/70 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center justify-between transition">
+                    <span>展开部分分式法拆分推导</span>
+                    <svg class="w-4 h-4 transform transition-transform chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                  </button>
+                  <div class="derivation-panel hidden mt-3 p-4 rounded-xl bg-slate-50/50 dark:bg-slate-950/40 border border-slate-100 dark:border-slate-800/50 text-sm space-y-3 leading-relaxed">
+                    <p><strong>部分分式拆解：</strong>利用恒等式 $\frac{1}{x^2-a^2} = \frac{1}{(x-a)(x+a)} = \frac{1}{2a}\left[\frac{1}{x-a} - \frac{1}{x+a}\right]$：</p>
+                    $$\int \frac{1}{x^2-a^2}\,dx = \frac{1}{2a} \int \left( \frac{1}{x-a} - \frac{1}{x+a} \right) dx = \frac{1}{2a} \left[ \ln|x-a| - \ln|x+a| \right] + C$$
+                    <p>由对数运算法则 $\ln A - \ln B = \ln(A/B)$，化简即得：</p>
+                    $$= \frac{1}{2a}\ln\left|\frac{x-a}{x+a}\right| + C$$
+                  </div>
+                </div>
+              </div>
+
+              <!-- 公式 15: 1/sqrt(x^2 \pm a^2) -->
+              <div class="formula-card bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-6 shadow-sm hover:shadow-md transition duration-200" data-category="integ-elem" data-keywords="1/sqrt(x^2 \pm a^2) 欧拉代换 双曲代换 ln|x+sqrt|">
+                <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+                  <div class="flex items-center gap-2">
+                    <span class="px-2 py-0.5 text-xs font-semibold bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300 rounded">公式 15</span>
+                    <h4 class="font-bold text-base text-slate-900 dark:text-white">$\int \frac{1}{\sqrt{x^2\pm a^2}}\,dx = \ln\left|x + \sqrt{x^2\pm a^2}\right| + C$</h4>
+                  </div>
+                  <button onclick="copyLatex(this)" data-latex="\int \frac{1}{\sqrt{x^2 \pm a^2}}\,dx = \ln\left|x + \sqrt{x^2 \pm a^2}\right| + C" class="copy-btn text-xs font-medium text-slate-500 hover:text-brand-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 px-2.5 py-1 rounded-lg">复制 LaTeX</button>
+                </div>
+                <div class="bg-slate-50 dark:bg-slate-950/60 rounded-xl p-4 my-3 text-center border border-slate-100 dark:border-slate-800/80">
+                  $$\int \frac{1}{\sqrt{x^2 \pm a^2}}\,dx = \ln\left|x + \sqrt{x^2 \pm a^2}\right| + C \quad (a > 0)$$
+                </div>
+                <div class="mt-4">
+                  <button class="toggle-derivation-btn w-full text-left py-2 px-3 rounded-lg bg-slate-100/70 dark:bg-slate-800/70 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center justify-between transition">
+                    <span>展开欧拉第一代换（极简优雅推导）</span>
+                    <svg class="w-4 h-4 transform transition-transform chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                  </button>
+                  <div class="derivation-panel hidden mt-3 p-4 rounded-xl bg-slate-50/50 dark:bg-slate-950/40 border border-slate-100 dark:border-slate-800/50 text-sm space-y-3 leading-relaxed">
+                    <p><strong>欧拉代换法：</strong>令 $t = x + \sqrt{x^2 \pm a^2}$，两边求微分：</p>
+                    $$dt = \left( 1 + \frac{2x}{2\sqrt{x^2 \pm a^2}} \right) dx = \left( \frac{\sqrt{x^2 \pm a^2} + x}{\sqrt{x^2 \pm a^2}} \right) dx = \frac{t}{\sqrt{x^2 \pm a^2}}\,dx$$
+                    <p>两边除以 $t$：</p>
+                    $$\frac{dt}{t} = \frac{dx}{\sqrt{x^2 \pm a^2}}$$
+                    <p>原本复杂的无理式积分奇迹般化为简单的倒数积分：</p>
+                    $$\int \frac{1}{\sqrt{x^2 \pm a^2}}\,dx = \int \frac{1}{t}\,dt = \ln|t| + C = \ln\left|x + \sqrt{x^2 \pm a^2}\right| + C$$
+                  </div>
+                </div>
+              </div>
+
+              <!-- 公式 16: sqrt(a^2 - x^2) -->
+              <div class="formula-card bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-6 shadow-sm hover:shadow-md transition duration-200" data-category="integ-elem" data-keywords="sqrt(a^2-x^2) 圆的积分 分部积分 三角代换">
+                <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+                  <div class="flex items-center gap-2">
+                    <span class="px-2 py-0.5 text-xs font-semibold bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300 rounded">公式 16</span>
+                    <h4 class="font-bold text-base text-slate-900 dark:text-white">$\int \sqrt{a^2-x^2}\,dx = \frac{x}{2}\sqrt{a^2-x^2} + \frac{a^2}{2}\arcsin\frac{x}{a} + C$</h4>
+                  </div>
+                  <button onclick="copyLatex(this)" data-latex="\int \sqrt{a^2-x^2}\,dx = \frac{x}{2}\sqrt{a^2-x^2} + \frac{a^2}{2}\arcsin\frac{x}{a} + C" class="copy-btn text-xs font-medium text-slate-500 hover:text-brand-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 px-2.5 py-1 rounded-lg">复制 LaTeX</button>
+                </div>
+                <div class="bg-slate-50 dark:bg-slate-950/60 rounded-xl p-4 my-3 text-center border border-slate-100 dark:border-slate-800/80">
+                  $$\int \sqrt{a^2-x^2}\,dx = \frac{x}{2}\sqrt{a^2-x^2} + \frac{a^2}{2}\arcsin\left(\frac{x}{a}\right) + C \quad (a > 0)$$
+                </div>
+                <div class="mt-4">
+                  <button class="toggle-derivation-btn w-full text-left py-2 px-3 rounded-lg bg-slate-100/70 dark:bg-slate-800/70 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center justify-between transition">
+                    <span>展开分部积分结合代数循环整理推导</span>
+                    <svg class="w-4 h-4 transform transition-transform chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                  </button>
+                  <div class="derivation-panel hidden mt-3 p-4 rounded-xl bg-slate-50/50 dark:bg-slate-950/40 border border-slate-100 dark:border-slate-800/50 text-sm space-y-3 leading-relaxed">
+                    <p><strong>分部积分法推导：</strong>设待求积分为 $I = \int \sqrt{a^2-x^2}\,dx$，令 $u = \sqrt{a^2-x^2}$，$dv = dx$，则 $v = x$，$du = \frac{-x}{\sqrt{a^2-x^2}}dx$：</p>
+                    $$I = x\sqrt{a^2-x^2} - \int x \cdot \frac{-x}{\sqrt{a^2-x^2}}\,dx = x\sqrt{a^2-x^2} + \int \frac{x^2}{\sqrt{a^2-x^2}}\,dx$$
+                    <p>对后项分子的 $x^2$ 进行<strong>“加上 $a^2$ 再减去 $a^2$”</strong>的拆项处理：</p>
+                    $$\int \frac{x^2}{\sqrt{a^2-x^2}}\,dx = \int \frac{-(a^2 - x^2) + a^2}{\sqrt{a^2-x^2}}\,dx = -\int \sqrt{a^2-x^2}\,dx + a^2\int \frac{1}{\sqrt{a^2-x^2}}\,dx$$
+                    <p>注意到出现了待求积分本身 $-I$ 以及公式 13 的已知积分：</p>
+                    $$I = x\sqrt{a^2-x^2} - I + a^2 \arcsin\left(\frac{x}{a}\right)$$
+                    <p>移项合并同类项 $2I$：</p>
+                    $$2I = x\sqrt{a^2-x^2} + a^2 \arcsin\left(\frac{x}{a}\right)$$
+                    <p>两边同除以 $2$ 并加上任意常数 $C$：</p>
+                    $$I = \frac{x}{2}\sqrt{a^2-x^2} + \frac{a^2}{2}\arcsin\left(\frac{x}{a}\right) + C$$
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+
+      </section>
+
+      <div id="noResultsNotice" class="hidden text-center py-16">
+        <div class="inline-flex p-4 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400 mb-3">
+          <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        </div>
+        <p class="text-base font-semibold text-slate-700 dark:text-slate-200">未找到匹配的公式或推导</p>
+        <p class="text-xs text-slate-400 mt-1">请尝试更换检索关键词，如：“链式法则”、“反函数”、“sec”、“arctan”等</p>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- Toast 提示框容器 -->
+  <div id="toast" class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none flex items-center gap-2 bg-slate-900 text-white dark:bg-white dark:text-slate-900 px-4 py-2.5 rounded-xl shadow-xl text-sm font-medium">
+    <svg class="w-4 h-4 text-emerald-400 dark:text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+    <span id="toastMsg">LaTeX 源码已复制到剪贴板！</span>
+  </div>
+
+  <!-- 页脚 -->
+  <footer class="mt-auto border-t border-slate-200 dark:border-slate-800 py-6 bg-white dark:bg-slate-900 text-center text-xs text-slate-500 no-print">
+    <div class="max-w-7xl mx-auto px-4">
+      <p>高等数学（微积分）公式推导研读手册 • 采用 KaTeX 进行数学渲染与排版</p>
+    </div>
+  </footer>
+
+  <script>
+    // 1. 初始化 KaTeX 数学公式渲染
+    document.addEventListener("DOMContentLoaded", function() {
+      if (typeof renderMathInElement === 'function') {
+        renderMathInElement(document.body, {
+          delimiters: [
+            {left: '$$', right: '$$', display: true},
+            {left: '$', right: '$', display: false}
+          ],
+          throwOnError: false
+        });
+      }
+    });
+
+    // 2. 主题切换 (Light / Dark Mode)
+    const themeToggleBtn = document.getElementById('themeToggleBtn');
+    function applyTheme(isDark) {
+      if (isDark) {
+        document.documentElement.classList.add('dark');
+        localStorage.setItem('theme', 'dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+        localStorage.setItem('theme', 'light');
+      }
+    }
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      applyTheme(true);
+    } else {
+      applyTheme(false);
+    }
+    themeToggleBtn.addEventListener('click', () => {
+      const isDark = document.documentElement.classList.contains('dark');
+      applyTheme(!isDark);
+    });
+
+    // 3. 移动端侧边栏切换
+    const sidebar = document.getElementById('sidebar');
+    const sidebarOverlay = document.getElementById('sidebarOverlay');
+    const sidebarToggleBtn = document.getElementById('sidebarToggleBtn');
+    const sidebarCloseBtn = document.getElementById('sidebarCloseBtn');
+
+    function openSidebar() {
+      sidebar.classList.remove('-translate-x-full');
+      sidebarOverlay.classList.remove('hidden');
+    }
+    function closeSidebar() {
+      sidebar.classList.add('-translate-x-full');
+      sidebarOverlay.classList.add('hidden');
+    }
+    sidebarToggleBtn?.addEventListener('click', openSidebar);
+    sidebarCloseBtn?.addEventListener('click', closeSidebar);
+    sidebarOverlay?.addEventListener('click', closeSidebar);
+
+    // 4. 单个推导折叠/展开交互
+    document.querySelectorAll('.toggle-derivation-btn').forEach(button => {
+      button.addEventListener('click', () => {
+        const panel = button.nextElementSibling;
+        const chevron = button.querySelector('.chevron');
+        if (panel.classList.contains('hidden')) {
+          panel.classList.remove('hidden');
+          chevron?.classList.add('rotate-180');
+        } else {
+          panel.classList.add('hidden');
+          chevron?.classList.remove('rotate-180');
+        }
+      });
+    });
+
+    // 5. 一键展开 / 收起全部推导
+    const toggleAllBtn = document.getElementById('toggleAllBtn');
+    const toggleAllText = document.getElementById('toggleAllText');
+    let allExpanded = false;
+
+    toggleAllBtn.addEventListener('click', () => {
+      allExpanded = !allExpanded;
+      document.querySelectorAll('.derivation-panel').forEach(panel => {
+        const btn = panel.previousElementSibling;
+        const chevron = btn ? btn.querySelector('.chevron') : null;
+        if (allExpanded) {
+          panel.classList.remove('hidden');
+          chevron?.classList.add('rotate-180');
+        } else {
+          panel.classList.add('hidden');
+          chevron?.classList.remove('rotate-180');
+        }
+      });
+      toggleAllText.textContent = allExpanded ? '收起全部推导' : '展开全部推导';
+    });
+
+    // 6. 复制 LaTeX 源码机制 (使用 document.execCommand 避免 iframe 限制)
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      const toastMsg = document.getElementById('toastMsg');
+      toastMsg.textContent = message;
+      toast.classList.remove('translate-y-20', 'opacity-0');
+      toast.classList.add('translate-y-0', 'opacity-100');
+      setTimeout(() => {
+        toast.classList.remove('translate-y-0', 'opacity-100');
+        toast.classList.add('translate-y-20', 'opacity-0');
+      }, 2200);
+    }
+
+    function copyLatex(btn) {
+      const latex = btn.getAttribute('data-latex');
+      if (!latex) return;
+      const textarea = document.createElement('textarea');
+      textarea.value = latex;
+      textarea.style.position = 'fixed';
+      textarea.style.opacity = '0';
+      document.body.appendChild(textarea);
+      textarea.select();
+      try {
+        const successful = document.execCommand('copy');
+        if (successful) {
+          showToast('LaTeX 公式代码已复制到剪贴板！');
+        } else {
+          showToast('复制失败，请手动选取代码。');
+        }
+      } catch (err) {
+        showToast('复制出错，请手动选取代码。');
+      }
+      document.body.removeChild(textarea);
+    }
+
+    // 7. 搜索与类别标签筛选逻辑
+    const searchInput = document.getElementById('searchInput');
+    const clearSearchBtn = document.getElementById('clearSearchBtn');
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    const formulaCards = document.querySelectorAll('.formula-card');
+    const noResultsNotice = document.getElementById('noResultsNotice');
+
+    let currentCategory = 'all';
+
+    function filterCards() {
+      const query = searchInput.value.trim().toLowerCase();
+      let visibleCount = 0;
+
+      formulaCards.forEach(card => {
+        const cardCat = card.getAttribute('data-category');
+        const keywords = (card.getAttribute('data-keywords') || '').toLowerCase();
+        const textContent = card.innerText.toLowerCase();
+
+        const matchesCat = (currentCategory === 'all') || (cardCat === currentCategory);
+        const matchesQuery = !query || keywords.includes(query) || textContent.includes(query);
+
+        if (matchesCat && matchesQuery) {
+          card.classList.remove('hidden');
+          visibleCount++;
+        } else {
+          card.classList.add('hidden');
+        }
+      });
+
+      if (visibleCount === 0) {
+        noResultsNotice.classList.remove('hidden');
+      } else {
+        noResultsNotice.classList.add('hidden');
+      }
+
+      if (query.length > 0) {
+        clearSearchBtn.classList.remove('hidden');
+      } else {
+        clearSearchBtn.classList.add('hidden');
+      }
+    }
+
+    searchInput.addEventListener('input', filterCards);
+    clearSearchBtn.addEventListener('click', () => {
+      searchInput.value = '';
+      filterCards();
+      searchInput.focus();
+    });
+
+    filterBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        filterBtns.forEach(b => {
+          b.classList.remove('active', 'bg-brand-600', 'text-white');
+          b.classList.add('bg-white', 'dark:bg-slate-900', 'text-slate-600', 'dark:text-slate-300');
+        });
+        btn.classList.add('active', 'bg-brand-600', 'text-white');
+        btn.classList.remove('bg-white', 'dark:bg-slate-900', 'text-slate-600', 'dark:text-slate-300');
+        currentCategory = btn.getAttribute('data-cat');
+        filterCards();
+      });
+    });
+  </script>
+</body>
+</html>
