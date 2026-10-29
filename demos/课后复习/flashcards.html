@@ -1,0 +1,1657 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>《力学》智慧课程 · 课后复习 3D 互动闪卡播放器</title>
+  <!-- KaTeX 公式渲染（经 CDN 引入） -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" crossorigin="anonymous" />
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --bg2: #1e293b;
+      --accent-blue: #38bdf8;
+      --accent-indigo: #818cf8;
+      --accent-emerald: #34d399;
+      --accent-amber: #fbbf24;
+      --accent-rose: #fb7185;
+      --text: #f8fafc;
+      --text-secondary: #e2e8f0;
+      --muted: #94a3b8;
+      --card-bg: rgba(30, 41, 59, 0.55);
+      --border: rgba(148, 163, 184, 0.18);
+      --card-front-bg: linear-gradient(145deg, #1e293b 0%, #0f172a 100%);
+      --card-back-bg: linear-gradient(145deg, #172554 0%, #0f172a 100%);
+      --formula-bg: rgba(15, 23, 42, 0.72);
+      --hint-bg: rgba(15, 23, 42, 0.55);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      background: radial-gradient(circle at top right, #1e1b4b, #0f172a 60%);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    /* 顶部导航栏 */
+    header {
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 26px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .brand { display: flex; align-items: center; gap: 14px; }
+
+    .brand-badge {
+      width: 42px; height: 42px; border-radius: 12px;
+      background: linear-gradient(135deg, var(--accent-blue), var(--accent-indigo));
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 20px; color: #0f172a;
+      box-shadow: 0 4px 15px rgba(56, 189, 248, 0.35);
+    }
+
+    .brand-title h1 { font-size: 18px; font-weight: 700; letter-spacing: 0.5px; }
+    .brand-title p { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+    .header-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+
+    .btn {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 8px 13px; border-radius: 8px;
+      font-size: 13px; font-weight: 500; cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex; align-items: center; gap: 6px;
+    }
+    .btn:hover { border-color: var(--accent-blue); background: rgba(56, 189, 248, 0.14); transform: translateY(-1px); }
+    .btn-primary { background: linear-gradient(135deg, #0284c7, #4f46e5); border-color: transparent; }
+    .btn-primary:hover { background: linear-gradient(135deg, #0369a1, #4338ca); border-color: transparent; }
+
+    .btn-home {
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid var(--accent-rose);
+      color: var(--accent-rose);
+      padding: 8px 14px; border-radius: 8px;
+      font-size: 13px; font-weight: 600; cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex; align-items: center; gap: 6px; text-decoration: none;
+    }
+    .btn-home:hover { background: rgba(251, 113, 133, 0.15); color: #fda4af; transform: translateY(-1px); }
+
+    .chapter-select {
+      background: var(--card-bg); border: 1px solid var(--border); color: var(--text);
+      padding: 8px 12px; border-radius: 8px; font-size: 13px; outline: none; cursor: pointer;
+    }
+    .chapter-select:focus { border-color: var(--accent-blue); }
+
+    /* 控制与筛选栏 */
+    .control-bar {
+      max-width: 1120px; width: 100%; margin: 18px auto 0; padding: 0 20px;
+      display: flex; flex-direction: column; gap: 14px;
+    }
+
+    .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
+
+    .stat-card {
+      background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px;
+      padding: 12px 16px; display: flex; align-items: center; justify-content: space-between;
+    }
+    .stat-label { font-size: 12px; color: var(--muted); }
+    .stat-value { font-size: 20px; font-weight: 700; margin-top: 2px; }
+
+    .filter-row {
+      display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between;
+      background: var(--card-bg); padding: 12px 16px; border-radius: 12px; border: 1px solid var(--border);
+    }
+    .search-box { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .search-input, .status-select {
+      background: var(--formula-bg); border: 1px solid var(--border); color: var(--text);
+      padding: 7px 12px; border-radius: 8px; font-size: 13px; outline: none;
+    }
+    .search-input:focus, .status-select:focus { border-color: var(--accent-blue); }
+
+    /* 进度条 */
+    .progress-wrapper {
+      width: 100%; background: var(--card-bg); height: 8px; border-radius: 4px;
+      overflow: hidden; display: flex; border: 1px solid var(--border);
+    }
+    .progress-segment { height: 100%; transition: width 0.35s ease; }
+    .prog-mastered { background: var(--accent-emerald); }
+    .prog-hard { background: var(--accent-amber); }
+    .prog-again { background: var(--accent-rose); }
+
+    /* 主舞台：3D闪卡区 */
+    main {
+      flex: 1; max-width: 1120px; width: 100%; margin: 14px auto 32px; padding: 0 20px;
+      display: flex; flex-direction: column; align-items: center;
+    }
+
+    .stage-container { width: 100%; max-width: 840px; perspective: 1600px; margin: 8px 0 22px; }
+
+    .flashcard {
+      width: 100%; min-height: 450px; position: relative;
+      transform-style: preserve-3d;
+      transition: transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+      cursor: pointer; user-select: none;
+    }
+    .flashcard.is-flipped { transform: rotateY(180deg); }
+
+    .card-face {
+      position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden;
+      border-radius: 20px; padding: 30px 36px; display: flex; flex-direction: column;
+      justify-content: space-between;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      border: 1px solid var(--border); overflow-y: auto;
+    }
+    .card-front { background: var(--card-front-bg); }
+    .card-back { background: var(--card-back-bg); transform: rotateY(180deg); border-color: rgba(56, 189, 248, 0.4); }
+
+    .card-header {
+      display: flex; justify-content: space-between; align-items: center; gap: 12px;
+      border-bottom: 1px solid var(--border); padding-bottom: 12px;
+    }
+    .card-tags { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .badge { font-size: 12px; padding: 4px 10px; border-radius: 6px; font-weight: 600; }
+    .badge-module { background: rgba(56, 189, 248, 0.15); color: var(--accent-blue); border: 1px solid rgba(56, 189, 248, 0.3); }
+    .badge-side { background: rgba(129, 140, 248, 0.18); color: var(--accent-indigo); }
+    .badge-status { font-size: 11px; padding: 3px 8px; border-radius: 4px; font-weight: 600; }
+    .status-unseen { background: rgba(148, 163, 184, 0.2); color: #cbd5e1; }
+    .status-again { background: rgba(251, 113, 133, 0.2); color: var(--accent-rose); }
+    .status-hard { background: rgba(251, 191, 36, 0.2); color: var(--accent-amber); }
+    .status-mastered { background: rgba(52, 211, 153, 0.2); color: var(--accent-emerald); }
+
+    .card-body { padding: 20px 0; display: flex; flex-direction: column; justify-content: center; gap: 14px; flex: 1; }
+    .question-text { font-size: 21px; line-height: 1.55; font-weight: 600; color: var(--text); text-align: center; }
+    .question-hint {
+      margin-top: 10px; font-size: 14px; color: var(--muted); text-align: center;
+      background: var(--hint-bg); padding: 10px 16px; border-radius: 10px;
+      border-left: 3px solid var(--accent-blue); align-self: center; max-width: 92%;
+    }
+    .answer-content { font-size: 16px; line-height: 1.72; color: var(--text-secondary); }
+    .answer-content ul { padding-left: 20px; margin-top: 6px; }
+    .answer-content li { margin-bottom: 6px; }
+    .formula-box {
+      background: var(--formula-bg); border: 1px solid rgba(56, 189, 248, 0.28);
+      border-radius: 12px; padding: 10px 16px; margin: 8px 0; text-align: center; overflow-x: auto;
+    }
+    .key-point { color: var(--accent-blue); font-weight: 600; }
+    .card-footer {
+      display: flex; justify-content: space-between; align-items: center;
+      border-top: 1px solid var(--border); padding-top: 12px; font-size: 12px; color: var(--muted);
+    }
+
+    /* 底部操控按钮与自评栏 */
+    .action-panel { width: 100%; max-width: 840px; display: flex; flex-direction: column; gap: 14px; }
+    .nav-controls { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+    .nav-btn {
+      padding: 12px 22px; font-size: 14px; font-weight: 600; border-radius: 12px;
+      background: var(--card-bg); border: 1px solid var(--border); color: var(--text);
+      cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 8px;
+    }
+    .nav-btn:hover { border-color: var(--accent-blue); background: rgba(56, 189, 248, 0.16); }
+    .flip-btn {
+      flex: 1; max-width: 280px; justify-content: center;
+      background: linear-gradient(135deg, rgba(56, 189, 248, 0.2), rgba(129, 140, 248, 0.2));
+      border-color: rgba(56, 189, 248, 0.45);
+    }
+    .rating-controls { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    .rate-btn {
+      padding: 12px; border-radius: 12px; border: 1px solid var(--border); font-size: 14px; font-weight: 600;
+      cursor: pointer; transition: all 0.2s; display: flex; flex-direction: column; align-items: center; gap: 4px;
+      background: var(--card-bg); color: var(--text);
+    }
+    .rate-btn span.sub { font-size: 11px; font-weight: 400; opacity: 0.8; }
+    .rate-again:hover { background: rgba(251, 113, 133, 0.2); border-color: var(--accent-rose); color: var(--accent-rose); }
+    .rate-hard:hover { background: rgba(251, 191, 36, 0.2); border-color: var(--accent-amber); color: var(--accent-amber); }
+    .rate-mastered:hover { background: rgba(52, 211, 153, 0.2); border-color: var(--accent-emerald); color: var(--accent-emerald); }
+
+    /* 网格总览模式 */
+    .grid-view {
+      display: none; width: 100%; grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+      gap: 16px; margin-top: 12px;
+    }
+    .grid-view.active { display: grid; }
+    .grid-item {
+      background: var(--card-bg); border: 1px solid var(--border); border-radius: 14px; padding: 18px;
+      cursor: pointer; transition: all 0.2s; display: flex; flex-direction: column;
+      justify-content: space-between; gap: 10px;
+    }
+    .grid-item:hover { border-color: var(--accent-blue); transform: translateY(-3px); box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3); }
+    .grid-item h4 { font-size: 15px; line-height: 1.45; color: #f1f5f9; }
+    .grid-item p { font-size: 13px; color: var(--muted); line-height: 1.5; }
+
+    /* 模态弹窗（导出/导入 Anki） */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(4px);
+      display: none; align-items: center; justify-content: center; z-index: 200; padding: 20px;
+    }
+    .modal-overlay.active { display: flex; }
+    .modal-box {
+      background: var(--bg); border: 1px solid var(--border); border-radius: 16px; max-width: 740px; width: 100%;
+      padding: 24px; display: flex; flex-direction: column; gap: 14px; box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
+    }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; }
+    .modal-textarea {
+      width: 100%; height: 240px; background: var(--formula-bg); border: 1px solid var(--border);
+      border-radius: 10px; color: var(--text-secondary); padding: 12px; font-family: monospace;
+      font-size: 13px; line-height: 1.5; resize: vertical;
+    }
+
+    .shortcut-bar {
+      margin-top: 18px; font-size: 12px; color: var(--muted); text-align: center;
+      display: flex; flex-wrap: wrap; justify-content: center; gap: 14px;
+    }
+    kbd {
+      background: var(--card-bg); border: 1px solid rgba(148, 163, 184, 0.35); border-radius: 4px;
+      padding: 2px 6px; font-size: 11px; color: var(--accent-blue);
+    }
+
+    @media (max-width: 680px) {
+      .card-face { padding: 22px 18px; }
+      .question-text { font-size: 18px; }
+      .answer-content { font-size: 14.5px; }
+      .flashcard { min-height: 480px; }
+    }
+
+    /* 打印时隐藏返回主页等非必要元素 */
+    @media print {
+      .no-print { display: none !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 顶部导航 -->
+  <header>
+    <div class="brand">
+      <div class="brand-badge">力</div>
+      <div class="brand-title">
+        <h1 id="brandTitle">《力学》智慧课程 · 课后复习 3D 闪卡</h1>
+        <p id="brandSub">统一播放器 · 覆盖全部 12 章核心概念与公式</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <a class="btn-home no-print" href="../../index.html" title="返回《力学》AI 智慧课程主页">🏠 返回课程主页</a>
+      <label class="no-print" style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);">
+        章节：
+        <select class="chapter-select" id="chapterSelect" onchange="onChapterChange()"></select>
+      </label>
+      <button class="btn no-print" id="btnToggleView" onclick="toggleViewMode()">📋 全部卡片总览 (G)</button>
+      <button class="btn no-print" onclick="shuffleCards()">🔀 随机乱序 (S)</button>
+      <button class="btn no-print" onclick="resetProgress()">🔄 重置进度</button>
+      <button class="btn btn-primary no-print" onclick="openModal()">📥 导出 Anki / 导入</button>
+    </div>
+  </header>
+
+  <!-- 统计与筛选控制栏 -->
+  <section class="control-bar">
+    <div class="stats-row">
+      <div class="stat-card">
+        <div>
+          <div class="stat-label">当前卡片进度</div>
+          <div class="stat-value" id="statCurrent">1 / 1</div>
+        </div>
+        <span style="font-size: 24px;">🗂️</span>
+      </div>
+      <div class="stat-card">
+        <div>
+          <div class="stat-label">🟢 已掌握 (Mastered)</div>
+          <div class="stat-value" style="color: var(--accent-emerald);" id="statMastered">0</div>
+        </div>
+        <span style="font-size: 24px;">✅</span>
+      </div>
+      <div class="stat-card">
+        <div>
+          <div class="stat-label">🟡 有点模糊 (Hard)</div>
+          <div class="stat-value" style="color: var(--accent-amber);" id="statHard">0</div>
+        </div>
+        <span style="font-size: 24px;">🤔</span>
+      </div>
+      <div class="stat-card">
+        <div>
+          <div class="stat-label">🔴 需重来 (Again)</div>
+          <div class="stat-value" style="color: var(--accent-rose);" id="statAgain">0</div>
+        </div>
+        <span style="font-size: 24px;">🔁</span>
+      </div>
+    </div>
+
+    <div class="progress-wrapper" title="掌握度实时分布">
+      <div class="progress-segment prog-mastered" id="progMastered" style="width: 0%"></div>
+      <div class="progress-segment prog-hard" id="progHard" style="width: 0%"></div>
+      <div class="progress-segment prog-again" id="progAgain" style="width: 0%"></div>
+    </div>
+
+    <div class="filter-row">
+      <div class="search-box">
+        <input type="text" class="search-input" id="searchInput" placeholder="搜索公式、概念或关键词..." oninput="applyFilters()" />
+      </div>
+      <div class="search-box">
+        <select class="status-select" id="statusFilter" onchange="applyFilters()">
+          <option value="all">所有状态</option>
+          <option value="unseen">⚪ 未学习</option>
+          <option value="again">🔴 需重来</option>
+          <option value="hard">🟡 有点模糊</option>
+          <option value="mastered">🟢 已掌握</option>
+        </select>
+      </div>
+    </div>
+  </section>
+
+  <!-- 主舞台 -->
+  <main>
+    <!-- 单卡 3D 翻转模式 -->
+    <div class="stage-container" id="singleCardStage">
+      <div class="flashcard" id="flashcard" onclick="flipCard()">
+        <!-- 正面：问题 -->
+        <div class="card-face card-front">
+          <div class="card-header">
+            <div class="card-tags">
+              <span class="badge badge-module" id="frontModule">第 1 章</span>
+              <span class="badge badge-side">正面 · 思考提问</span>
+            </div>
+            <span class="badge-status status-unseen" id="frontStatus">未学习</span>
+          </div>
+          <div class="card-body">
+            <div class="question-text" id="frontQuestion">加载中...</div>
+            <div class="question-hint" id="frontHint">💡 提示：点击卡片或按空格键翻转查看解析</div>
+          </div>
+          <div class="card-footer">
+            <span id="frontIndex">Card #1</span>
+            <span>👆 点击卡片或按 <kbd>Space</kbd> 翻转背面</span>
+          </div>
+        </div>
+
+        <!-- 背面：答案与公式 -->
+        <div class="card-face card-back">
+          <div class="card-header">
+            <div class="card-tags">
+              <span class="badge badge-module" id="backModule">第 1 章</span>
+              <span class="badge badge-side" style="background: rgba(52,211,153,0.18); color: var(--accent-emerald);">背面 · 详解与公式</span>
+            </div>
+            <span class="badge-status status-unseen" id="backStatus">未学习</span>
+          </div>
+          <div class="card-body">
+            <div class="answer-content" id="backAnswer">加载中...</div>
+          </div>
+          <div class="card-footer">
+            <span id="backIndex">Card #1</span>
+            <span>请根据掌握程度点击下方自评按钮（快捷键 <kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd>）</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 操控面板 -->
+    <div class="action-panel" id="actionPanel">
+      <div class="nav-controls">
+        <button class="nav-btn no-print" onclick="prevCard()">⬅️ 上一张 (<kbd>←</kbd>)</button>
+        <button class="nav-btn flip-btn" onclick="flipCard()">🔄 翻转卡片 (<kbd>Space</kbd>)</button>
+        <button class="nav-btn no-print" onclick="nextCard()">下一张 (<kbd>→</kbd>) ➡️</button>
+      </div>
+      <div class="rating-controls">
+        <button class="rate-btn rate-again" onclick="rateCard('again')">
+          <span>🔴 需重来 (快捷键 1)</span>
+          <span class="sub">概念或公式推导尚不熟悉，稍后重点复习</span>
+        </button>
+        <button class="rate-btn rate-hard" onclick="rateCard('hard')">
+          <span>🟡 有点模糊 (快捷键 2)</span>
+          <span class="sub">知道大致思路，但细节或矢量方向易错</span>
+        </button>
+        <button class="rate-btn rate-mastered" onclick="rateCard('mastered')">
+          <span>🟢 已掌握 (快捷键 3)</span>
+          <span class="sub">物理图像清晰，能独立完成数理推演</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- 网格总览视图 -->
+    <div class="grid-view" id="gridView"></div>
+
+    <div class="shortcut-bar no-print">
+      <span>⌨️ 快捷键支持：</span>
+      <span><kbd>Space</kbd> 翻转正反面</span>
+      <span><kbd>←</kbd> / <kbd>→</kbd> 切换卡片</span>
+      <span><kbd>1</kbd> 需重来</span>
+      <span><kbd>2</kbd> 有点模糊</span>
+      <span><kbd>3</kbd> 已掌握</span>
+      <span><kbd>S</kbd> 随机洗牌</span>
+      <span><kbd>G</kbd> 切换网格总览</span>
+    </div>
+  </main>
+
+  <!-- 导入/导出模态弹窗 -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>📥 导出 Anki 格式 / 批量导入自定义闪卡</h3>
+        <button class="btn" onclick="closeModal()">✖ 关闭</button>
+      </div>
+      <p style="font-size: 13px; color: var(--muted);">
+        下方文本框为标准 <code>正面问题 | 背面解析</code> 格式，可直接复制保存为 <code>.txt</code> 导入 <strong>Anki / Quizlet</strong>，也可以粘贴新行并点击“应用修改到播放器”动态扩充题库：
+      </p>
+      <textarea class="modal-textarea" id="modalTextarea"></textarea>
+      <div style="display: flex; justify-content: flex-end; gap: 10px;">
+        <button class="btn" onclick="copyAnkiText()">📋 一键复制全部文本</button>
+        <button class="btn" onclick="downloadAnkiFile()">💾 下载 Anki 导入文件 (.txt)</button>
+        <button class="btn btn-primary" onclick="importFromTextarea()">✅ 应用修改到播放器</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ============================================================
+    // 统一课后闪卡数据：12 章，每章 8-12 张核心闪卡
+    // 内容严格对标大学物理《力学》教学大纲，front 为概念/问题，
+    // back 为解释/公式（含 KaTeX 数学公式）。
+    // ============================================================
+    const CHAPTER_DATA = {
+      1: {
+        title: "质点运动学",
+        cards: [
+          {
+            front: "在什么条件下可以把物体抽象为「质点」模型？",
+            hint: "从理想化模型的定义与研究问题的尺度出发",
+            back: `<p><span class="key-point">质点</span>：忽略大小和形状、只保留质量的理想化模型。</p>
+            <ul>
+              <li>当物体的大小、形状对所研究运动的影响可忽略时（如地球绕日公转），可视为质点。</li>
+              <li>质点并非「体积极小的物体」，而是一种科学抽象；能否视为质点取决于研究问题的尺度，而非物体本身大小。</li>
+            </ul>`
+          },
+          {
+            front: "位移 $\\Delta\\vec r$ 与路程 $\\Delta s$ 有何本质区别？何时两者大小相等？",
+            hint: "区分矢量与标量，注意微元极限与运动方向",
+            back: `<ul>
+              <li><strong>位移</strong>是矢量，描述位置变化；<strong>路程</strong>是标量，描述轨迹总长，一般有 $|\\Delta\\vec r|\\le \\Delta s$。</li>
+              <li>当过程为<strong>无限小位移</strong>或质点做<strong>单向直线运动</strong>时，两者大小相等。</li>
+            </ul>
+            <div class="formula-box">$$|d\\vec r|=ds,\\qquad |\\Delta\\vec r|\\le\\Delta s$$</div>`
+          },
+          {
+            front: "瞬时速度的大小是否等于瞬时速率？平均情况呢？",
+            hint: "注意矢量求导与标量弧长求导的区别",
+            back: `<div class="formula-box">$$\\vec v=\\frac{d\\vec r}{dt},\\qquad v=|\\vec v|=\\frac{ds}{dt}$$</div>
+            <ul>
+              <li>瞬时极限下 $|d\\vec r|=ds$，故<strong>瞬时速率严格等于瞬时速度大小</strong>。</li>
+              <li>有限时间内 $|\\Delta\\vec r|\\le\\Delta s$，故<strong>平均速度大小一般不等于平均速率</strong>。</li>
+            </ul>`
+          },
+          {
+            front: "$\\frac{dv}{dt}$ 与 $\\left|\\frac{d\\vec v}{dt}\\right|$ 的物理意义有何不同？",
+            hint: "前者是加速度矢量的模，后者仅是速率对时间的变化率",
+            back: `<ul>
+              <li>$\\left|\\frac{d\\vec v}{dt}\\right|=|\\vec a|$ 是<strong>总加速度大小</strong>，含速度大小与方向的变化。</li>
+              <li>$\\frac{dv}{dt}=a_\\tau$ 仅是<strong>速率变化率（切向加速度）</strong>。例如匀速圆周运动中 $\\frac{dv}{dt}=0$，但 $|\\vec a|=v^2/R\\ne0$。</li>
+            </ul>`
+          },
+          {
+            front: "写出三维直角坐标系中位置、速度、加速度的分量式。",
+            hint: "利用直角坐标基矢的常矢量特性",
+            back: `<div class="formula-box">$$\\vec r=x\\vec i+y\\vec j+z\\vec k$$$$\\vec v=\\dot x\\vec i+\\dot y\\vec j+\\dot z\\vec k,\\qquad \\vec a=\\ddot x\\vec i+\\ddot y\\vec j+\\ddot z\\vec k$$</div>`
+          },
+          {
+            front: "由 $a=\\text{常量}$ 推导匀加速直线运动的三个基本公式。",
+            hint: "取初速度 v₀、初位置 x₀，分步积分",
+            back: `<p>由 $\\frac{dv}{dt}=a$ 积分得 $v=v_0+at$；再积分得 $x=x_0+v_0t+\\frac12at^2$；利用 $a=v\\frac{dv}{dx}$ 消去 $t$ 得：</p>
+            <div class="formula-box">$$v^2-v_0^2=2a(x-x_0)$$</div>`
+          },
+          {
+            front: "在自然坐标系（本征坐标系）中，加速度如何分解为切向与法向分量？",
+            hint: "利用曲率半径 ρ 与切向/法向单位矢量",
+            back: `<div class="formula-box">$$\\vec a=a_\\tau\\vec e_\\tau+a_n\\vec e_n,\\qquad a_\\tau=\\frac{dv}{dt},\\quad a_n=\\frac{v^2}{\\rho}$$</div>
+            <ul>
+              <li>$a_\\tau$ 反映速率变化，$a_n$ 反映速度方向变化（指向曲率中心）。</li>
+              <li>$\\rho$ 为轨迹曲率半径。</li>
+            </ul>`
+          },
+          {
+            front: "质点做半径为 $R$ 的匀速圆周运动时，向心加速度为何指向圆心？",
+            hint: "速度大小不变，仅方向改变",
+            back: `<p>匀速圆周运动中 $\\omega$ 恒定，切向加速度为零，仅有法向（向心）加速度：</p>
+            <div class="formula-box">$$\\vec a=-\\frac{v^2}{R}\\vec e_r=-\\omega^2R\\vec e_r$$</div>
+            <p>方向始终指向圆心，只改变速度方向、不改变速度大小。</p>`
+          },
+          {
+            front: "平面极坐标系中径向与横向速度、加速度的表达式是什么？",
+            hint: "对位矢 r·e_r 关于时间求导",
+            back: `<div class="formula-box">$$\\vec v=\\dot r\\vec e_r+r\\dot\\theta\\vec e_\\theta$$$$\\vec a=(\\ddot r-r\\dot\\theta^2)\\vec e_r+(r\\ddot\\theta+2\\dot r\\dot\\theta)\\vec e_\\theta$$</div>
+            <p>横向加速度中的 $2\\dot r\\dot\\theta$ 项对应转动参考系中的科里奥利效应。</p>`
+          },
+          {
+            front: "平动参考系中的速度合成定理如何表述？",
+            hint: "绝对速度 = 牵连速度 + 相对速度",
+            back: `<div class="formula-box">$$\\vec v=\\vec v_e+\\vec v'$$</div>
+            <ul>
+              <li>绝对速度 = 牵连速度 + 相对速度。</li>
+              <li>当动系相对静系以速度 $\\vec u$ 平动时，$\\vec v'=\\vec v-\\vec u$。</li>
+            </ul>`
+          }
+        ]
+      },
+
+      2: {
+        title: "牛顿运动定律",
+        cards: [
+          {
+            front: "牛顿第一定律（惯性定律）的内容及其在理论体系中的作用？",
+            hint: "思考它如何定义惯性参考系",
+            back: `<p>任何物体都保持静止或匀速直线运动状态，除非外力迫使它改变。</p>
+            <ul>
+              <li>它<strong>定义了惯性参考系</strong>——定律成立的参考系。</li>
+              <li>宇宙中不存在绝对惯性系，常取地心系、日心系等近似惯性系。</li>
+            </ul>`
+          },
+          {
+            front: "牛顿第二定律的矢量形式及其分量含义？",
+            hint: "仅在惯性系中成立",
+            back: `<div class="formula-box">$$\\vec F=m\\vec a,\\qquad F_x=ma_x,\\;F_y=ma_y,\\;F_z=ma_z$$</div>
+            <ul>
+              <li>仅在惯性参考系中成立。</li>
+              <li>更一般的形式为 $\\vec F=\\frac{d\\vec p}{dt}$（当质量变化时）。</li>
+            </ul>`
+          },
+          {
+            front: "牛顿第三定律（作用力与反作用力）的三大特征？",
+            hint: "注意它们作用在不同物体上",
+            back: `<ul>
+              <li>① 作用力与反作用力是<strong>同种性质的力</strong>。</li>
+              <li>② 分别作用在<strong>两个不同物体</strong>上，不能合成抵消。</li>
+              <li>③ 大小相等、方向相反、共线，且同时产生同时消失：$\\vec F_{12}=-\\vec F_{21}$。</li>
+            </ul>`
+          },
+          {
+            front: "常见的三种接触力（重力、弹力、摩擦力）各有什么特点？",
+            hint: "区分其产生条件与方向",
+            back: `<ul>
+              <li><strong>重力</strong>：地球对物体的引力（近似），$\\vec G=m\\vec g$，竖直向下。</li>
+              <li><strong>弹力</strong>：物体形变产生，弹簧弹力满足胡克定律 $F=-kx$。</li>
+              <li><strong>摩擦力</strong>：分静摩擦 $0\\le f_0\\le \\mu_0N$ 与滑动摩擦 $f=\\mu N$，方向沿相对运动（趋势）反方向。</li>
+            </ul>`
+          },
+          {
+            front: "万有引力定律的表达式及其适用条件？",
+            hint: "注意 G 的数值与适用对象",
+            back: `<div class="formula-box">$$\\vec F=-G\\frac{m_1m_2}{r^2}\\vec e_r,\\qquad G\\approx6.67\\times10^{-11}\\,\\text{N·m}^2/\\text{kg}^2$$</div>
+            <ul>
+              <li>适用于两质点；对均匀球壳/球体可视为质量集中于球心。</li>
+              <li>是长程吸引力，力程无限。</li>
+            </ul>`
+          },
+          {
+            front: "惯性质量与引力质量有何区别？实验如何验证二者等价？",
+            hint: "回顾厄特沃什扭秤实验",
+            back: `<ul>
+              <li><strong>惯性质量 $m_i$</strong>：出现在 $\\vec F=m_i\\vec a$，度量惯性。</li>
+              <li><strong>引力质量 $m_g$</strong>：出现在万有引力公式，度量引力荷。</li>
+              <li>厄特沃什（Eötvös）扭秤实验在极高精度下验证 $m_i=m_g$，成为等效原理基石。</li>
+            </ul>`
+          },
+          {
+            front: "牛顿运动定律的适用范围是什么？",
+            hint: "宏观、低速、惯性系",
+            back: `<ul>
+              <li>仅在<strong>惯性参考系</strong>中成立。</li>
+              <li>适用于<strong>宏观、低速（远小于光速）</strong>物体；</li>
+              <li>高速需用狭义相对论，微观需用量子力学，其均为更普遍理论在相应极限下的近似。</li>
+            </ul>`
+          },
+          {
+            front: "在非惯性系中如何仍形式上使用牛顿第二定律？",
+            hint: "引入惯性力",
+            back: `<p>引入<strong>惯性力</strong> $\\vec F_\\text{惯}=-m\\vec a_0$（平动非惯性系）或离心力、科里奥利力，使方程恢复：</p>
+            <div class="formula-box">$$m\\vec a'=\\vec F+\\vec F_\\text{惯}$$</div>
+            <p>惯性力无反作用力，并非真实相互作用。</p>`
+          },
+          {
+            front: "如何从牛顿第二定律导出动量定理？",
+            hint: "对时间积分",
+            back: `<div class="formula-box">$$\\vec F=\\frac{d\\vec p}{dt}\\implies \\int_{t_1}^{t_2}\\vec F\\,dt=\\vec p_2-\\vec p_1=\\vec I$$</div>
+            <p>合外力的冲量等于质点动量的增量。</p>`
+          },
+          {
+            front: "处理连接体（多个相互作用物体）问题的基本方法是什么？",
+            hint: "隔离法与整体法",
+            back: `<ul>
+              <li><strong>隔离法</strong>：把每个物体单独隔离，分别列牛顿方程。</li>
+              <li><strong>整体法</strong>：当各物体加速度相同时，可把系统作为整体求合外力。</li>
+              <li>内力在整体法中相互抵消，只有外力改变系统总动量。</li>
+            </ul>`
+          }
+        ]
+      },
+
+      3: {
+        title: "动量守恒",
+        cards: [
+          {
+            front: "动量与动能有什么不同？",
+            hint: "矢量 vs 标量",
+            back: `<div class="formula-box">$$\\vec p=m\\vec v\\quad(\\text{矢量}),\\qquad E_k=\\frac12mv^2\\quad(\\text{标量})$$</div>
+            <ul>
+              <li>动量是矢量，与速度同向；动能是标量，只与速率有关。</li>
+              <li>动量变化由冲量引起，动能变化由功引起。</li>
+            </ul>`
+          },
+          {
+            front: "质点的动量定理（冲量定理）表达式？",
+            back: `<div class="formula-box">$$\\vec I=\\int\\vec F\\,dt=\\Delta\\vec p=m\\vec v_2-m\\vec v_1$$</div>
+            <p>合外力的冲量等于质点动量的增量。适用于惯性系。</p>`
+          },
+          {
+            front: "质点系动量定理如何表述？",
+            hint: "只有外力改变总动量",
+            back: `<div class="formula-box">$$\\frac{d}{dt}\\sum_i\\vec p_i=\\sum_i\\vec F_i^{\\text{外}}$$</div>
+            <p>系统总动量的变化率等于<strong>外力的矢量和</strong>；内力只使动量在系统内部转移，不改变总动量。</p>`
+          },
+          {
+            front: "动量守恒定律成立的条件是什么？",
+            hint: "合外力为零或某一方向为零",
+            back: `<ul>
+              <li>当系统所受<strong>合外力为零</strong>：$\\sum\\vec F^{\\text{外}}=0$，总动量守恒。</li>
+              <li>若某一方向合外力为零，则该方向动量分量守恒。</li>
+              <li>在微观与宏观、低速与高速（相对论）均成立，是比牛顿定律更普遍的定律。</li>
+            </ul>`
+          },
+          {
+            front: "质心与质心运动定理的内容？",
+            hint: "质心运动如同全部质量集中于质心的质点",
+            back: `<div class="formula-box">$$\\vec r_c=\\frac{\\sum m_i\\vec r_i}{M},\\qquad M\\vec a_c=\\sum\\vec F^{\\text{外}}$$</div>
+            <p>质心的运动如同质量全部集中于质心、并受全部外力作用的质点运动。</p>`
+          },
+          {
+            front: "碰撞可分为哪几类？恢复系数 $e$ 如何界定？",
+            hint: "看动能是否守恒",
+            back: `<ul>
+              <li><strong>完全弹性碰撞</strong>：$e=1$，动能守恒。</li>
+              <li><strong>非弹性碰撞</strong>：$0<e<1$，动能有损失。</li>
+              <li><strong>完全非弹性碰撞</strong>：$e=0$，碰后共速，动能损失最大。</li>
+            </ul>
+            <div class="formula-box">$$e=\\frac{v_2'-v_1'}{v_1-v_2}$$</div>`
+          },
+          {
+            front: "一维完全弹性碰撞中两小球碰后的速度？",
+            back: `<div class="formula-box">$$v_1'=\\frac{m_1-m_2}{m_1+m_2}v_1+\\frac{2m_2}{m_1+m_2}v_2$$$$v_2'=\\frac{2m_1}{m_1+m_2}v_1+\\frac{m_2-m_1}{m_1+m_2}v_2$$</div>`
+          },
+          {
+            front: "完全非弹性碰撞前后动能损失多少？",
+            hint: "碰后共速",
+            back: `<p>两物体碰后共速 $v=\\frac{m_1v_1+m_2v_2}{m_1+m_2}$，动能损失：</p>
+            <div class="formula-box">$$\\Delta E_k=\\frac{m_1m_2}{2(m_1+m_2)}(v_1-v_2)^2$$</div>`
+          },
+          {
+            front: "变质量系统（如火箭）的动力学方程（密歇尔斯基方程）？",
+            hint: "考虑喷出物质相对速度",
+            back: `<div class="formula-box">$$m\\frac{d\\vec v}{dt}=\\vec F_\\text{外}+\\vec u\\frac{dm}{dt}$$</div>
+            <p>其中 $\\vec u$ 为喷出物质相对火箭的速度。忽略外力、初速为零时火箭末速 $v=u\\ln\\frac{m_0}{m}$。</p>`
+          },
+          {
+            front: "反冲现象的物理本质是什么？",
+            hint: "系统动量守恒",
+            back: `<p>系统在内力作用下，一部分向某方向运动时，另一部分向相反方向运动，以保持总动量守恒（如炮弹出膛后炮身后退）。</p>
+            <div class="formula-box">$$m_1\\vec v_1+m_2\\vec v_2=0\\quad(\\text{初始静止、无外力})$$</div>`
+          }
+        ]
+      },
+
+      4: {
+        title: "动能定理与功能原理",
+        cards: [
+          {
+            front: "功的定义式？什么情况下力不做功？",
+            hint: "力与位移的标积",
+            back: `<div class="formula-box">$$W=\\int_A^B\\vec F\\cdot d\\vec r=\\int F\\cos\\theta\\,ds$$</div>
+            <ul>
+              <li>力与位移垂直时不做功（如向心力）。</li>
+              <li>功是标量，可正可负，取决于 $\\cos\\theta$。</li>
+            </ul>`
+          },
+          {
+            front: "功率的表达式？",
+            back: `<div class="formula-box">$$P=\\frac{dW}{dt}=\\vec F\\cdot\\vec v$$</div>
+            <p>功率等于力与速度的标积；当力与速度同向时 $P=Fv$ 最大。</p>`
+          },
+          {
+            front: "质点动能定理的表达式？",
+            back: `<div class="formula-box">$$W_{\\text{合}}=\\Delta E_k=\\frac12mv_2^2-\\frac12mv_1^2$$</div>
+            <p>合外力对质点所做的功等于质点动能的增量。</p>`
+          },
+          {
+            front: "保守力的特征是什么？",
+            hint: "做功与路径无关",
+            back: `<ul>
+              <li>做功与路径无关，只与初末位置有关：$\\oint\\vec F\\cdot d\\vec r=0$。</li>
+              <li>重力、弹力、万有引力、静电力均为保守力；摩擦力是非保守力。</li>
+            </ul>`
+          },
+          {
+            front: "势能的定义及与保守力的关系？",
+            hint: "势能梯度与力反向",
+            back: `<div class="formula-box">$$E_p(A)=-\\int_{\\text{参考}}^{A}\\vec F\\cdot d\\vec r,\\qquad \\vec F=-\\nabla E_p$$</div>
+            <ul>
+              <li>重力势能 $E_p=mgh$；弹性势能 $E_p=\\frac12kx^2$；引力势能 $E_p=-G\\frac{Mm}{r}$。</li>
+            </ul>`
+          },
+          {
+            front: "质点系动能定理与功能原理有何区别？",
+            hint: "引入势能后内保守力做功被吸收",
+            back: `<ul>
+              <li><strong>质点系动能定理</strong>：$W_{\\text{外}}+W_{\\text{内}}=\\Delta E_k$。</li>
+              <li><strong>功能原理</strong>：引入势能后，$W_{\\text{外}}+W_{\\text{非保内}}=\\Delta(E_k+E_p)=\\Delta E_{\\text{机}}$。</li>
+            </ul>`
+          },
+          {
+            front: "机械能守恒定律成立的条件？",
+            hint: "只有保守内力做功",
+            back: `<div class="formula-box">$$E_k+E_p=\\text{常量}\\quad(\\text{当 }W_{\\text{外}}=0\\text{ 且 }W_{\\text{非保内}}=0)$$</div>
+            <p>只有保守内力做功时，系统机械能守恒。</p>`
+          },
+          {
+            front: "如何由势能曲线判断平衡的稳定性？",
+            hint: "看 E_p 的极值",
+            back: `<ul>
+              <li>平衡点：$F=-\\frac{dE_p}{dx}=0$。</li>
+              <li>$E_p$ 极小值 → <strong>稳定平衡</strong>；极大值 → <strong>不稳定平衡</strong>；平坦段 → 随遇平衡。</li>
+            </ul>`
+          },
+          {
+            front: "一对内力做功的特点？",
+            hint: "只与相对位移有关",
+            back: `<p>一对内力做功之和只与两质点的<strong>相对位移</strong>有关，与参考系无关：</p>
+            <div class="formula-box">$$W_{12}+W_{21}=\\int\\vec f_{12}\\cdot d\\vec r_{12}$$</div>
+            <p>其中 $d\\vec r_{12}$ 为两质点间的相对位移。</p>`
+          },
+          {
+            front: "能量守恒定律的地位？",
+            back: `<p>自然界最基本的定律之一：能量既不能创生也不能消灭，只能从一种形式转化为另一种形式，或从一个物体转移到另一些物体，总量保持不变。</p>`
+          }
+        ]
+      },
+
+      5: {
+        title: "角动量与力矩",
+        cards: [
+          {
+            front: "力矩的定义及其与力的关系？",
+            hint: "矢量叉乘",
+            back: `<div class="formula-box">$$\\vec M=\\vec r\\times\\vec F,\\qquad |\\vec M|=rF\\sin\\theta$$</div>
+            <p>力矩是矢量，方向由右手定则确定；它描述力对物体绕某点转动效应的强弱。</p>`
+          },
+          {
+            front: "质点对某参考点的角动量定义？",
+            back: `<div class="formula-box">$$\\vec L=\\vec r\\times\\vec p=\\vec r\\times m\\vec v$$</div>
+            <p>角动量是矢量，与位置矢量、动量共同决定质点绕参考点的转动状态。</p>`
+          },
+          {
+            front: "质点的角动量定理？",
+            back: `<div class="formula-box">$$\\frac{d\\vec L}{dt}=\\vec M\\quad(\\text{合外力矩})$$</div>
+            <p>质点角动量对时间的变化率等于所受合外力矩。</p>`
+          },
+          {
+            front: "角动量守恒定律的条件与例子？",
+            hint: "合外力矩为零",
+            back: `<ul>
+              <li>当合外力矩 $\\vec M=0$ 时，$\\vec L=\\text{恒矢量}$。</li>
+              <li>有心力场中（如行星绕日）力矩为零，角动量守恒，对应开普勒第二定律。</li>
+            </ul>`
+          },
+          {
+            front: "为什么开普勒第二定律是角动量守恒的体现？",
+            back: `<div class="formula-box">$$\\frac{dS}{dt}=\\frac{L}{2m}=\\text{常量}$$</div>
+            <p>太阳对行星的引力为有心力，$\\vec M=0$，故角动量守恒，径矢在单位时间内扫过面积恒定。</p>`
+          },
+          {
+            front: "质点系角动量定理？",
+            hint: "内力矩相互抵消",
+            back: `<div class="formula-box">$$\\frac{d}{dt}\\sum_i\\vec L_i=\\sum_i\\vec M_i^{\\text{外}}$$</div>
+            <p>系统总角动量变化率等于<strong>外力矩的矢量和</strong>；内力矩相互抵消。</p>`
+          },
+          {
+            front: "力矩的功与刚体转动动能的关系？",
+            back: `<div class="formula-box">$$W=\\int M\\,d\\theta,\\qquad E_k^{\\text{转}}=\\frac12J\\omega^2$$</div>
+            <p>力矩的空间累积（功）改变转动动能。</p>`
+          },
+          {
+            front: "冲量矩定理？",
+            back: `<div class="formula-box">$$\\int_{t_1}^{t_2}\\vec M\\,dt=\\Delta\\vec L$$</div>
+            <p>合外力矩对时间的积分（冲量矩）等于角动量的增量。</p>`
+          },
+          {
+            front: "对称性与守恒律（诺特定理）简述？",
+            hint: "空间与时间对称性对应守恒量",
+            back: `<ul>
+              <li>空间平移对称性 → 动量守恒。</li>
+              <li>空间旋转对称性 → 角动量守恒。</li>
+              <li>时间平移对称性 → 能量守恒。</li>
+            </ul>
+            <p>对称即守恒，是近代物理的深刻联系。</p>`
+          },
+          {
+            front: "陀螺的进动现象如何用角动量解释？",
+            hint: "高速自转 + 重力力矩",
+            back: `<p>高速自转的陀螺受重力力矩 $\\vec M$ 作用，由 $\\frac{d\\vec L}{dt}=\\vec M$，$\\vec L$ 方向不断变化而形成<strong>进动</strong>，而非倾倒。进动角速度 $\\Omega=\\frac{M}{L\\sin\\theta}$。</p>`
+          }
+        ]
+      },
+
+      6: {
+        title: "刚体定轴转动",
+        cards: [
+          {
+            front: "刚体模型的含义？",
+            back: `<p>刚体是<strong>形状和大小在运动中保持不变</strong>的理想物体，其上任意两点的距离恒定。</p>`
+          },
+          {
+            front: "定轴转动的角量与线量的关系？",
+            hint: "v=ωr, a_τ=αr, a_n=ω²r",
+            back: `<div class="formula-box">$$v=\\omega r,\\qquad a_\\tau=\\alpha r,\\qquad a_n=\\omega^2 r$$</div>
+            <p>其中 $\\omega$ 为角速度，$\\alpha=\\dot\\omega$ 为角加速度。</p>`
+          },
+          {
+            front: "转动惯量的定义？",
+            hint: "转动惯性的量度",
+            back: `<div class="formula-box">$$J=\\int r^2\\,dm$$</div>
+            <ul>
+              <li>转动惯量度量刚体转动惯性，与质量分布和转轴位置有关。</li>
+              <li>质量离轴越远，转动惯量越大。</li>
+            </ul>`
+          },
+          {
+            front: "平行轴定理与垂直轴定理？",
+            hint: "J = Jc + md²",
+            back: `<div class="formula-box">$$J=J_c+md^2\\quad(\\text{平行轴})$$$$J_z=J_x+J_y\\quad(\\text{垂直轴，薄板})$$</div>
+            <p>$J_c$ 为过质心平行轴的转动惯量，$d$ 为两轴间距。</p>`
+          },
+          {
+            front: "刚体定轴转动定律？",
+            hint: "类比牛顿第二定律",
+            back: `<div class="formula-box">$$M=J\\alpha=J\\frac{d\\omega}{dt}$$</div>
+            <p>合外力矩等于转动惯量乘以角加速度。</p>`
+          },
+          {
+            front: "常见形状刚体的转动惯量（举例）？",
+            back: `<ul>
+              <li>均匀细杆（绕中心垂直轴）：$J=\\frac{1}{12}ml^2$；绕端点：$J=\\frac13ml^2$。</li>
+              <li>均匀圆盘（绕中心轴）：$J=\\frac12mR^2$。</li>
+              <li>均匀球（绕直径）：$J=\\frac25mR^2$。</li>
+            </ul>`
+          },
+          {
+            front: "刚体定轴转动的动能定理？",
+            back: `<div class="formula-box">$$W=\\int M\\,d\\theta=\\frac12J\\omega_2^2-\\frac12J\\omega_1^2$$</div>
+            <p>合外力矩的功等于转动动能的增量。</p>`
+          },
+          {
+            front: "刚体角动量定理与守恒？",
+            hint: "收臂转速增大",
+            back: `<div class="formula-box">$$\\frac{dL}{dt}=M,\\qquad L=J\\omega$$</div>
+            <p>当合外力矩为零时，$J\\omega=\\text{常量}$。例如花样滑冰收臂转速增大。</p>`
+          },
+          {
+            front: "刚体定轴转动中的机械能守恒？",
+            hint: "只有重力矩做功",
+            back: `<p>若只有重力（保守力）矩做功，则：</p>
+            <div class="formula-box">$$\\frac12J\\omega^2+mgh_c=\\text{常量}$$</div>`
+          },
+          {
+            front: "如何用转动定律与平动定律联立处理「滑轮+重物」问题？",
+            hint: "约束关系 a = αr",
+            back: `<ul>
+              <li>对平动物体列 $m\\vec a=\\sum\\vec F$。</li>
+              <li>对转动物体（滑轮）列 $M=J\\alpha$。</li>
+              <li>由约束关系 $a=\\alpha r$ 联立求解。</li>
+            </ul>`
+          }
+        ]
+      },
+
+      7: {
+        title: "刚体平面运动",
+        cards: [
+          {
+            front: "刚体平面运动可分解为什么？",
+            hint: "平动 + 转动",
+            back: `<p>任一平面运动可分解为：随<strong>基点的平动</strong> + 绕基点的<strong>转动</strong>。转动角速度与基点选取无关。</p>`
+          },
+          {
+            front: "速度基点法（平面运动速度关系）？",
+            back: `<div class="formula-box">$$\\vec v_P=\\vec v_A+\\vec\\omega\\times\\vec r_{AP}$$</div>
+            <p>任一点速度 = 基点速度 + 绕基点转动速度。</p>`
+          },
+          {
+            front: "加速度基点法？",
+            hint: "含切向项与向心项",
+            back: `<div class="formula-box">$$\\vec a_P=\\vec a_A+\\vec\\alpha\\times\\vec r_{AP}+\\vec\\omega\\times(\\vec\\omega\\times\\vec r_{AP})$$</div>
+            <p>含切向项与向心（法向）项。</p>`
+          },
+          {
+            front: "什么是瞬心（瞬时转动中心）？",
+            hint: "瞬时速度为零的点",
+            back: `<p>平面运动某瞬时，刚体上（或延长线上）速度为零的点称为<strong>瞬时速度中心（瞬心）</strong>。该瞬时刚体可看作绕瞬心纯转动，各点速度 $v=\\omega r$。</p>`
+          },
+          {
+            front: "纯滚动（无滑动）的运动学条件？",
+            hint: "接触点瞬时速度为零",
+            back: `<div class="formula-box">$$v_c=\\omega R,\\qquad a_c=\\alpha R$$</div>
+            <p>接触点瞬时速度为零（瞬心），是纯滚动的判据。</p>`
+          },
+          {
+            front: "平面运动刚体的动能（柯尼希定理）？",
+            back: `<div class="formula-box">$$E_k=\\frac12mv_c^2+\\frac12J_c\\omega^2$$</div>
+            <p>动能 = 质心平动动能 + 绕质心转动动能。</p>`
+          },
+          {
+            front: "平面运动中对瞬心的转动动能是否等于总动能？",
+            hint: "用对瞬心的转动惯量",
+            back: `<p>对瞬心 $P$（速度为零但一般非质心）有：</p>
+            <div class="formula-box">$$E_k=\\frac12J_P\\omega^2$$</div>
+            <p>这与柯尼希定理等价，但须用对瞬心的转动惯量 $J_P$（注意瞬心一般非质心且瞬时变动）。</p>`
+          },
+          {
+            front: "平面运动动力学方程（对质心）？",
+            hint: "平动与转动相互独立",
+            back: `<div class="formula-box">$$m\\vec a_c=\\sum\\vec F,\\qquad J_c\\alpha=\\sum M_c$$</div>
+            <p>平动与转动方程相互独立，再辅以运动学约束求解。</p>`
+          },
+          {
+            front: "滚动摩擦的成因？",
+            hint: "接触面形变的阻力矩",
+            back: `<p>实际接触面形变产生一阻力矩，等效为<strong>滚动摩擦力偶</strong>，其力矩最大值 $M_{\\max}=\\delta N$（$\\delta$ 为滚动摩擦系数，量纲为长度）。</p>`
+          },
+          {
+            front: "回转半径与撞击中心？",
+            hint: "打击时不引起支点冲击反力",
+            back: `<div class="formula-box">$$k=\\sqrt{\\frac{J_c}{m}},\\qquad h=\\frac{k^2}{d}+d$$</div>
+            <p>撞击中心为打击时不引起支点冲击反作用力的点，用于设计棒、锤等。</p>`
+          }
+        ]
+      },
+
+      8: {
+        title: "机械振动",
+        cards: [
+          {
+            front: "简谐振动的定义与特征量？",
+            hint: "A, ω, φ 三要素",
+            back: `<div class="formula-box">$$x=A\\cos(\\omega t+\\varphi)$$</div>
+            <ul>
+              <li>振幅 $A$、角频率 $\\omega$、初相 $\\varphi$ 为三要素。</li>
+              <li>$\\omega$ 由系统本身决定，$T=2\\pi/\\omega$，$f=1/T$。</li>
+            </ul>`
+          },
+          {
+            front: "弹簧振子的角频率与周期？",
+            hint: "等时性",
+            back: `<div class="formula-box">$$\\omega=\\sqrt{\\frac{k}{m}},\\qquad T=2\\pi\\sqrt{\\frac{m}{k}}$$</div>
+            <p>周期与振幅无关（等时性）。</p>`
+          },
+          {
+            front: "单摆小角度近似下的周期？",
+            hint: "θ ≪ 1",
+            back: `<div class="formula-box">$$\\omega=\\sqrt{\\frac{g}{l}},\\qquad T=2\\pi\\sqrt{\\frac{l}{g}}\\quad(\\theta\\ll1)$$</div>
+            <p>小角度下单摆作简谐振动。</p>`
+          },
+          {
+            front: "旋转矢量法如何表示简谐振动？",
+            back: `<p>以角速度 $\\omega$ 逆时针旋转的矢量 $\\vec A$，其端点在 $x$ 轴上的投影即为简谐振动。相位差对应矢量夹角，便于比较多个振动的超前/滞后。</p>`
+          },
+          {
+            front: "简谐振动的能量？",
+            back: `<div class="formula-box">$$E=E_k+E_p=\\frac12kA^2=\\text{常量}$$$$E_k=\\frac12kA^2\\sin^2(\\omega t+\\varphi),\\quad E_p=\\frac12kA^2\\cos^2(\\omega t+\\varphi)$$</div>`
+          },
+          {
+            front: "阻尼振动的特点？",
+            hint: "振幅衰减",
+            back: `<ul>
+              <li>振幅随时间指数衰减：$A(t)=A_0e^{-\\beta t}$。</li>
+              <li>欠阻尼振动角频率 $\\omega'=\\sqrt{\\omega_0^2-\\beta^2}<\\omega_0$。</li>
+              <li>过阻尼、临界阻尼不振荡。</li>
+            </ul>`
+          },
+          {
+            front: "受迫振动与共振？",
+            back: `<div class="formula-box">$$\\omega_{\\text{共振}}=\\sqrt{\\omega_0^2-2\\beta^2}$$</div>
+            <p>驱动力频率接近系统固有频率时振幅显著增大，即<strong>共振</strong>。</p>`
+          },
+          {
+            front: "同方向、同频率两简谐振动的合成？",
+            hint: "相干叠加",
+            back: `<div class="formula-box">$$A=\\sqrt{A_1^2+A_2^2+2A_1A_2\\cos\\Delta\\varphi}$$</div>
+            <p>同相加强，反相抵消。</p>`
+          },
+          {
+            front: "相互垂直的同频率简谐振动合成得到什么图形？",
+            back: `<p>一般合成为椭圆；当相位差为 $0$ 或 $\\pi$ 时退化为直线；为 $\\pm\\pi/2$ 且振幅相等时为圆。不同频率时形成<strong>李萨如图形</strong>。</p>`
+          },
+          {
+            front: "拍现象是如何产生的？",
+            hint: "两频率相近",
+            back: `<div class="formula-box">$$\\nu_{\\text{拍}}=|\\nu_1-\\nu_2|$$</div>
+            <p>两频率相近的同方向振动合成时，振幅周期性缓慢变化，称为拍。</p>`
+          }
+        ]
+      },
+
+      9: {
+        title: "机械波",
+        cards: [
+          {
+            front: "机械波产生的两个条件？",
+            hint: "波源与介质",
+            back: `<ul>
+              <li><strong>波源</strong>：做机械振动的物体。</li>
+              <li><strong>介质</strong>：能传播机械振动的弹性物质。</li>
+            </ul>
+            <p>机械波传播的是<strong>振动形式与能量</strong>，介质质元并不随波迁移。</p>`
+          },
+          {
+            front: "横波与纵波的区别？",
+            hint: "振动方向与传播方向的关系",
+            back: `<ul>
+              <li><strong>横波</strong>：质元振动方向垂直于波传播方向（如绳波），靠切变弹性传播，只能存在于固体。</li>
+              <li><strong>纵波</strong>：质元振动方向平行于传播方向（如声波），靠体变弹性传播，固液气均可。</li>
+            </ul>`
+          },
+          {
+            front: "波速、波长、频率的关系？",
+            back: `<div class="formula-box">$$v=\\lambda f=\\frac{\\lambda}{T}$$</div>
+            <p>波速由介质性质决定，频率由波源决定，波长随介质而变。</p>`
+          },
+          {
+            front: "平面简谐波的波函数？",
+            hint: "沿 +x 传播",
+            back: `<div class="formula-box">$$y(x,t)=A\\cos\\left[\\omega\\left(t-\\frac{x}{v}\\right)+\\varphi_0\\right]=A\\cos(\\omega t-kx+\\varphi_0)$$</div>
+            <p>其中波数 $k=2\\pi/\\lambda$。</p>`
+          },
+          {
+            front: "波的能量与能流密度（波强）？",
+            back: `<div class="formula-box">$$w=\\rho A^2\\omega^2\\sin^2(\\cdots),\\qquad I=\\frac12\\rho v\\omega^2 A^2$$</div>
+            <p>平均能流密度（波强）$I$ 与振幅平方、频率平方成正比。</p>`
+          },
+          {
+            front: "惠更斯原理的内容？",
+            back: `<p>介质中波前上的每一点都可看作发射子波的波源，其后任意时刻新的波前是这些子波的包络。</p>
+            <p>可解释波的反射、折射与衍射。</p>`
+          },
+          {
+            front: "波的相干条件与干涉加强/减弱条件？",
+            hint: "相位差恒定",
+            back: `<div class="formula-box">$$\\Delta\\varphi=2k\\pi\\Rightarrow\\text{加强},\\qquad \\Delta\\varphi=(2k+1)\\pi\\Rightarrow\\text{减弱}$$</div>
+            <p>相干条件：频率相同、振动方向相同、相位差恒定。</p>`
+          },
+          {
+            front: "驻波的形成与节点、腹点？",
+            back: `<p>两列振幅相同、反向传播的相干波叠加形成驻波：</p>
+            <div class="formula-box">$$y=2A\\cos kx\\cos\\omega t$$</div>
+            <p>波节（不动点）间隔 $\\lambda/2$，波腹（最大振幅点）间隔 $\\lambda/2$。</p>`
+          },
+          {
+            front: "多普勒效应公式（波源与观察者运动）？",
+            hint: "靠近时频率升高",
+            back: `<div class="formula-box">$$\\nu'=\\nu\\frac{v\\pm v_o}{v\\mp v_s}$$</div>
+            <p>观察者向着波源运动取 $+v_o$，波源向着观察者运动取 $-v_s$。</p>`
+          },
+          {
+            front: "波的衍射现象？",
+            back: `<p>波遇到障碍物或狭缝时偏离直线传播的现象。障碍/缝的尺寸与波长相近时衍射最明显。这是波动的重要特征。</p>`
+          }
+        ]
+      },
+
+      10: {
+        title: "流体力学",
+        cards: [
+          {
+            front: "理想流体与定常流动的定义？",
+            hint: "不可压缩、无粘滞",
+            back: `<ul>
+              <li><strong>理想流体</strong>：不可压缩、无粘滞性的流体模型。</li>
+              <li><strong>定常流动</strong>：流场中各点流速不随时间变化（$\\vec v=\\vec v(\\vec r)$）。</li>
+            </ul>`
+          },
+          {
+            front: "连续性方程？",
+            back: `<div class="formula-box">$$S_1v_1=S_2v_2=\\text{常量}\\quad(\\text{不可压缩})$$</div>
+            <p>截面积小处流速大，截面积大处流速小。</p>`
+          },
+          {
+            front: "伯努利方程及其物理意义？",
+            hint: "沿同一流线",
+            back: `<div class="formula-box">$$p+\\frac12\\rho v^2+\\rho gh=\\text{常量}$$</div>
+            <p>沿同一流线，<strong>压强能 + 动能 + 重力势能</strong>之和守恒。</p>`
+          },
+          {
+            front: "静止流体内部的压强分布？",
+            back: `<div class="formula-box">$$p=p_0+\\rho gh$$</div>
+            <p>压强随深度线性增加，与容器形状无关。</p>`
+          },
+          {
+            front: "伯努利方程的应用举例（空吸、文丘里）？",
+            hint: "流速大处压强小",
+            back: `<ul>
+              <li><strong>空吸作用</strong>：流速大处压强小，可把周围流体吸入（喷雾器、射流泵）。</li>
+              <li><strong>文丘里管</strong>：由缩窄处流速与压强变化可测流量。</li>
+            </ul>`
+          },
+          {
+            front: "牛顿粘滞定律？",
+            back: `<div class="formula-box">$$f=\\eta S\\frac{dv}{dy}$$</div>
+            <p>粘滞力与速度梯度、接触面积成正比，$\\eta$ 为粘度系数。</p>`
+          },
+          {
+            front: "泊肃叶定律（圆管层流流量）？",
+            hint: "与半径四次方成正比",
+            back: `<div class="formula-box">$$Q=\\frac{\\pi R^4\\Delta p}{8\\eta L}$$</div>
+            <p>流量与半径四次方成正比——半径为关键控制量。</p>`
+          },
+          {
+            front: "斯托克斯定律（小球在粘滞流体中阻力）？",
+            back: `<div class="formula-box">$$F_d=6\\pi\\eta r v$$</div>
+            <p>终端速度 $v_t=\\frac{2r^2(\\rho-\\rho_0)g}{9\\eta}$。</p>`
+          },
+          {
+            front: "雷诺数与其意义？",
+            back: `<div class="formula-box">$$Re=\\frac{\\rho v d}{\\eta}$$</div>
+            <p>$Re$ 较小为层流，较大则转为湍流。$Re\\sim 2000$ 为典型临界区。</p>`
+          },
+          {
+            front: "阿基米德原理？",
+            back: `<div class="formula-box">$$F_\\text{浮}=\\rho_{\\text{液}} g V_{\\text{排}}$$</div>
+            <p>浮力等于物体排开液体的重力，方向竖直向上。</p>`
+          }
+        ]
+      },
+
+      11: {
+        title: "万有引力与天体运动",
+        cards: [
+          {
+            front: "万有引力定律表达式？",
+            back: `<div class="formula-box">$$\\vec F=-G\\frac{m_1m_2}{r^2}\\vec e_r$$</div>
+            <p>$G\\approx6.674\\times10^{-11}\\,\\text{N·m}^2/\\text{kg}^2$；两均匀球体可视为质量集中于球心。</p>`
+          },
+          {
+            front: "引力势能与引力势？",
+            hint: "以无穷远为零点",
+            back: `<div class="formula-box">$$E_p=-G\\frac{Mm}{r},\\qquad V=-G\\frac{M}{r}$$</div>
+            <p>以无穷远为零势能点，引力势能恒为负。</p>`
+          },
+          {
+            front: "引力场强定义？",
+            back: `<div class="formula-box">$$\\vec g=\\frac{\\vec F}{m}=-\\nabla V=-G\\frac{M}{r^2}\\vec e_r$$</div>
+            <p>单位质量所受引力。</p>`
+          },
+          {
+            front: "开普勒三定律内容？",
+            back: `<ul>
+              <li>第一定律：行星沿椭圆轨道运动，太阳在焦点。</li>
+              <li>第二定律：径矢等时扫过等面积（角动量守恒）。</li>
+              <li>第三定律：$\\frac{T^2}{a^3}=\\text{常量}$。</li>
+            </ul>`
+          },
+          {
+            front: "三个宇宙速度数值与意义？",
+            back: `<div class="formula-box">$$v_1=7.9\\,\\text{km/s},\\;v_2=11.2\\,\\text{km/s},\\;v_3=16.7\\,\\text{km/s}$$</div>
+            <ul>
+              <li>$v_1$ 环绕速度（圆轨道）；$v_2$ 脱离地球引力；$v_3$ 脱离太阳引力。</li>
+            </ul>`
+          },
+          {
+            front: "引力势能零点的选择与重力势能的关系？",
+            hint: "地表附近近似",
+            back: `<p>在地球表面附近，由 $E_p=-GMm/r$ 展开，取地表为零点得：</p>
+            <div class="formula-box">$$\\Delta E_p\\approx mg h\\quad(h\\ll R)$$</div>`
+          },
+          {
+            front: "卫星圆轨道速度与周期？",
+            back: `<div class="formula-box">$$v=\\sqrt{\\frac{GM}{r}},\\qquad T=2\\pi\\sqrt{\\frac{r^3}{GM}}$$</div>
+            <p>轨道越低速度越大、周期越短。</p>`
+          },
+          {
+            front: "潮汐力是如何产生的？",
+            back: `<p>月球（及太阳）引力在地球不同部位的差异产生<strong>引潮力</strong>，造成海水周期性涨落；差异引力 $\\propto 2GM R/r^3$。</p>`
+          },
+          {
+            front: "等效原理的内容？",
+            hint: "广义相对论基石",
+            back: `<p>在局部范围内，<strong>引力的效应与加速参考系的惯性力效应不可区分</strong>，即惯性质量等于引力质量。这是广义相对论的基石。</p>`
+          },
+          {
+            front: "广义相对论的几个经典验证？",
+            back: `<ul>
+              <li>水星近日点进动。</li>
+              <li>光线在引力场中偏折（日全食观测）。</li>
+              <li>引力红移（光从引力场逃逸频率降低）。</li>
+              <li>引力时间延迟（雷达回波延迟）。</li>
+            </ul>`
+          }
+        ]
+      },
+
+      12: {
+        title: "狭义相对论基础",
+        cards: [
+          {
+            front: "伽利略变换与经典绝对时空观？",
+            hint: "时间绝对、空间绝对",
+            back: `<div class="formula-box">$$x'=x-ut,\\quad t'=t$$</div>
+            <p>经典认为时间绝对、空间绝对，速度相加 $\\vec v'=\\vec v-\\vec u$。</p>`
+          },
+          {
+            front: "迈克尔逊-莫雷实验的结论？",
+            back: `<p>实验未观测到预期的「以太风」引起的光速变化（零结果），表明<strong>不存在绝对静止的以太</strong>，光速与参考系无关。</p>`
+          },
+          {
+            front: "狭义相对论的两条基本假设？",
+            hint: "相对性原理 + 光速不变",
+            back: `<ul>
+              <li><strong>相对性原理</strong>：所有惯性系物理定律等价。</li>
+              <li><strong>光速不变原理</strong>：真空中光速 $c$ 对所有惯性系相同，与光源/观察者运动无关。</li>
+            </ul>`
+          },
+          {
+            front: "洛伦兹变换？",
+            hint: "γ = 1/√(1-u²/c²)",
+            back: `<div class="formula-box">$$x'=\\gamma(x-ut),\\quad t'=\\gamma\\left(t-\\frac{ux}{c^2}\\right),\\quad \\gamma=\\frac1{\\sqrt{1-u^2/c^2}}$$</div>`
+          },
+          {
+            front: "同时的相对性？",
+            back: `<p>在一个惯性系中同时发生的两个异地事件，在另一相对运动的惯性系中一般<strong>不再同时</strong>。同时性依赖于参考系。</p>`
+          },
+          {
+            front: "时间膨胀（钟慢效应）？",
+            hint: "固有时最短",
+            back: `<div class="formula-box">$$\\Delta t=\\gamma\\Delta\\tau$$</div>
+            <p>运动的钟变慢：固有时 $\\Delta\\tau$ 最短，测得坐标时 $\\Delta t$ 更长。</p>`
+          },
+          {
+            front: "长度收缩（尺缩效应）？",
+            hint: "运动方向收缩",
+            back: `<div class="formula-box">$$L=L_0\\sqrt{1-u^2/c^2}=\\frac{L_0}{\\gamma}$$</div>
+            <p>运动方向上长度收缩，垂直于运动方向不变。</p>`
+          },
+          {
+            front: "相对论质速关系？",
+            hint: "速度趋近光速时质量发散",
+            back: `<div class="formula-box">$$m=\\frac{m_0}{\\sqrt{1-v^2/c^2}}=\\gamma m_0$$</div>
+            <p>速度趋近光速时质量发散，故有质量物体无法达到光速。</p>`
+          },
+          {
+            front: "质能关系 $E=mc^2$？",
+            back: `<div class="formula-box">$$E=mc^2=\\gamma m_0c^2,\\qquad E_0=m_0c^2$$</div>
+            <p>质量与能量等价；静止能量 $E_0$ 巨大，核反应释放即来自质量亏损。</p>`
+          },
+          {
+            front: "相对论动量-能量关系？",
+            hint: "光子 m₀=0 时 E=pc",
+            back: `<div class="formula-box">$$E^2=p^2c^2+m_0^2c^4,\\qquad \\vec p=\\gamma m_0\\vec v$$</div>
+            <p>对光子 $m_0=0$，有 $E=pc$。</p>`
+          }
+        ]
+      }
+    };
+
+    // ===== 章节读取（URL 参数 ?ch=N） =====
+    const ch = new URLSearchParams(location.search).get('ch') || '1';
+    let currentChapter = (CHAPTER_DATA[ch] ? ch : '1');
+
+    // ===== 状态管理 =====
+    let allCards = [];
+    let filteredCards = [];
+    let currentIndex = 0;
+    let isFlipped = false;
+    let isGridView = false;
+    let currentKeyword = '';
+    let currentStatus = 'all';
+
+    function storageKey() {
+      return 'mechanics_flashcards_ch_' + currentChapter + '_v1';
+    }
+
+    // ===== 初始化章节下拉框 =====
+    function initChapterSelect() {
+      const sel = document.getElementById('chapterSelect');
+      sel.innerHTML = '';
+      Object.keys(CHAPTER_DATA).forEach(k => {
+        const opt = document.createElement('option');
+        opt.value = k;
+        opt.textContent = '第 ' + k + ' 章 · ' + CHAPTER_DATA[k].title;
+        if (k === currentChapter) opt.selected = true;
+        sel.appendChild(opt);
+      });
+    }
+
+    function onChapterChange() {
+      const sel = document.getElementById('chapterSelect');
+      currentChapter = sel.value;
+      const newUrl = location.pathname + '?ch=' + currentChapter;
+      history.replaceState(null, '', newUrl);
+      loadChapter();
+    }
+
+    // ===== 加载当前章节 =====
+    function loadChapter() {
+      const data = CHAPTER_DATA[currentChapter];
+      const chapterTitle = '第 ' + currentChapter + ' 章 · ' + data.title;
+      document.getElementById('brandTitle').textContent = '《力学》智慧课程 · ' + chapterTitle + ' 3D 闪卡';
+      document.getElementById('brandSub').textContent = '本章共 ' + data.cards.length + ' 张核心闪卡 · 覆盖概念、公式与典型模型';
+
+      const savedStatus = JSON.parse(localStorage.getItem(storageKey()) || '{}');
+      allCards = data.cards.map((c, i) => ({
+        ...c,
+        id: i + 1,
+        module: chapterTitle,
+        status: savedStatus[i + 1] || 'unseen'
+      }));
+
+      // 重置筛选
+      currentKeyword = '';
+      currentStatus = 'all';
+      document.getElementById('searchInput').value = '';
+      document.getElementById('statusFilter').value = 'all';
+      currentIndex = 0;
+      filteredCards = [...allCards];
+
+      updateStats();
+      renderCurrentCard();
+      renderGridView();
+    }
+
+    function saveProgress() {
+      const map = {};
+      allCards.forEach(c => { map[c.id] = c.status; });
+      localStorage.setItem(storageKey(), JSON.stringify(map));
+    }
+
+    function statusLabel(status) {
+      switch (status) {
+        case 'again': return { text: '🔴 需重来', cls: 'badge-status status-again' };
+        case 'hard': return { text: '🟡 有点模糊', cls: 'badge-status status-hard' };
+        case 'mastered': return { text: '🟢 已掌握', cls: 'badge-status status-mastered' };
+        default: return { text: '⚪ 未学习', cls: 'badge-status status-unseen' };
+      }
+    }
+
+    // ===== 公式渲染（KaTeX） =====
+    function typesetMath() {
+      if (window.renderMathInElement) {
+        try {
+          renderMathInElement(document.getElementById('flashcard'), {
+            delimiters: [
+              { left: '$$', right: '$$', display: true },
+              { left: '$', right: '$', display: false },
+              { left: '\\[', right: '\\]', display: true },
+              { left: '\\(', right: '\\)', display: false }
+            ],
+            throwOnError: false
+          });
+        } catch (e) { console.warn('KaTeX 渲染出错:', e); }
+      }
+    }
+
+    // ===== 渲染当前卡片 =====
+    function renderCurrentCard() {
+      const cardEl = document.getElementById('flashcard');
+      isFlipped = false;
+      cardEl.classList.remove('is-flipped');
+
+      if (filteredCards.length === 0) {
+        document.getElementById('frontModule').textContent = '无匹配卡片';
+        document.getElementById('frontQuestion').innerHTML = '当前筛选条件下没有找到匹配的闪卡，请清空搜索词或切换状态筛选。';
+        document.getElementById('frontHint').style.display = 'none';
+        document.getElementById('statCurrent').textContent = '0 / 0';
+        return;
+      }
+
+      if (currentIndex >= filteredCards.length) currentIndex = 0;
+      if (currentIndex < 0) currentIndex = filteredCards.length - 1;
+
+      const card = filteredCards[currentIndex];
+      const st = statusLabel(card.status);
+
+      document.getElementById('frontModule').textContent = card.module;
+      document.getElementById('backModule').textContent = card.module;
+
+      const fSt = document.getElementById('frontStatus');
+      const bSt = document.getElementById('backStatus');
+      fSt.textContent = st.text; fSt.className = st.cls;
+      bSt.textContent = st.text; bSt.className = st.cls;
+
+      document.getElementById('frontQuestion').innerHTML = card.front;
+      const hintEl = document.getElementById('frontHint');
+      if (card.hint) {
+        hintEl.style.display = 'block';
+        hintEl.innerHTML = '💡 思考提示：' + card.hint;
+      } else {
+        hintEl.style.display = 'none';
+      }
+
+      document.getElementById('backAnswer').innerHTML = card.back;
+      document.getElementById('frontIndex').textContent = `卡片 #${card.id} （${currentIndex + 1} / ${filteredCards.length}）`;
+      document.getElementById('backIndex').textContent = `卡片 #${card.id} （${currentIndex + 1} / ${filteredCards.length}）`;
+      document.getElementById('statCurrent').textContent = `${currentIndex + 1} / ${filteredCards.length}`;
+
+      typesetMath();
+    }
+
+    function flipCard() {
+      if (filteredCards.length === 0) return;
+      isFlipped = !isFlipped;
+      document.getElementById('flashcard').classList.toggle('is-flipped', isFlipped);
+    }
+
+    function nextCard() {
+      if (filteredCards.length === 0) return;
+      currentIndex = (currentIndex + 1) % filteredCards.length;
+      renderCurrentCard();
+    }
+
+    function prevCard() {
+      if (filteredCards.length === 0) return;
+      currentIndex = (currentIndex - 1 + filteredCards.length) % filteredCards.length;
+      renderCurrentCard();
+    }
+
+    function rateCard(level) {
+      if (filteredCards.length === 0) return;
+      const card = filteredCards[currentIndex];
+      card.status = level;
+      const origin = allCards.find(c => c.id === card.id);
+      if (origin) origin.status = level;
+
+      saveProgress();
+      updateStats();
+      renderGridView();
+
+      if (currentIndex < filteredCards.length - 1) currentIndex++;
+      else currentIndex = 0;
+      renderCurrentCard();
+    }
+
+    function updateStats() {
+      const total = allCards.length || 1;
+      const mastered = allCards.filter(c => c.status === 'mastered').length;
+      const hard = allCards.filter(c => c.status === 'hard').length;
+      const again = allCards.filter(c => c.status === 'again').length;
+
+      document.getElementById('statMastered').textContent = mastered;
+      document.getElementById('statHard').textContent = hard;
+      document.getElementById('statAgain').textContent = again;
+
+      document.getElementById('progMastered').style.width = ((mastered / total) * 100).toFixed(1) + '%';
+      document.getElementById('progHard').style.width = ((hard / total) * 100).toFixed(1) + '%';
+      document.getElementById('progAgain').style.width = ((again / total) * 100).toFixed(1) + '%';
+    }
+
+    function applyFilters() {
+      currentKeyword = document.getElementById('searchInput').value.trim().toLowerCase();
+      currentStatus = document.getElementById('statusFilter').value;
+
+      filteredCards = allCards.filter(c => {
+        const matchStatus = currentStatus === 'all' || c.status === currentStatus;
+        const matchKey = !currentKeyword ||
+          c.front.toLowerCase().includes(currentKeyword) ||
+          c.back.toLowerCase().includes(currentKeyword) ||
+          (c.hint && c.hint.toLowerCase().includes(currentKeyword));
+        return matchStatus && matchKey;
+      });
+
+      currentIndex = 0;
+      renderCurrentCard();
+      renderGridView();
+    }
+
+    function shuffleCards() {
+      for (let i = filteredCards.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [filteredCards[i], filteredCards[j]] = [filteredCards[j], filteredCards[i]];
+      }
+      currentIndex = 0;
+      renderCurrentCard();
+      renderGridView();
+    }
+
+    function resetProgress() {
+      if (!confirm('确定要清空本章所有卡片的掌握度标记吗？')) return;
+      allCards.forEach(c => c.status = 'unseen');
+      localStorage.removeItem(storageKey());
+      applyFilters();
+      updateStats();
+    }
+
+    function toggleViewMode() {
+      isGridView = !isGridView;
+      document.getElementById('singleCardStage').style.display = isGridView ? 'none' : 'block';
+      document.getElementById('actionPanel').style.display = isGridView ? 'none' : 'flex';
+      document.getElementById('gridView').classList.toggle('active', isGridView);
+      document.getElementById('btnToggleView').textContent = isGridView ? '🎴 返回单卡学习 (G)' : '📋 全部卡片总览 (G)';
+      if (isGridView) {
+        renderGridView();
+        typesetMath();
+      }
+    }
+
+    function renderGridView() {
+      const container = document.getElementById('gridView');
+      if (!container) return;
+      container.innerHTML = filteredCards.map((c, idx) => {
+        const st = statusLabel(c.status);
+        return `
+          <div class="grid-item" onclick="jumpToCard(${idx})">
+            <div style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
+              <span class="badge badge-module" style="font-size:11px;">#${c.id}</span>
+              <span class="${st.cls}">${st.text}</span>
+            </div>
+            <h4>${c.front}</h4>
+            <p>👆 点击进入 3D 卡片详解</p>
+          </div>
+        `;
+      }).join('');
+      if (isGridView) typesetMath();
+    }
+
+    function jumpToCard(idx) {
+      currentIndex = idx;
+      if (isGridView) toggleViewMode();
+      renderCurrentCard();
+    }
+
+    // ===== 导出与批量导入 =====
+    function openModal() {
+      const lines = allCards.map(c => {
+        const cleanQ = c.front.replace(/\s+/g, ' ').trim();
+        const cleanA = c.back.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+        return `${cleanQ} | ${cleanA}`;
+      });
+      document.getElementById('modalTextarea').value = lines.join('\n');
+      document.getElementById('modalOverlay').classList.add('active');
+    }
+
+    function closeModal() {
+      document.getElementById('modalOverlay').classList.remove('active');
+    }
+
+    function copyAnkiText() {
+      const textarea = document.getElementById('modalTextarea');
+      textarea.select();
+      document.execCommand('copy');
+      alert('已复制本章全部闪卡内容！可直接粘贴至 Anki 或笔记软件。');
+    }
+
+    function downloadAnkiFile() {
+      const content = document.getElementById('modalTextarea').value;
+      const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = '力学_第' + currentChapter + '章_' + CHAPTER_DATA[currentChapter].title + '_闪卡.txt';
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function importFromTextarea() {
+      const raw = document.getElementById('modalTextarea').value.trim();
+      if (!raw) return;
+      const lines = raw.split('\n').filter(l => l.trim().includes('|'));
+      const newCards = lines.map((line, i) => {
+        const parts = line.split('|').map(p => p.trim());
+        return {
+          id: i + 1,
+          front: parts[0] || `问题 #${i + 1}`,
+          back: parts[1] || '',
+          hint: '点击卡片翻转查看解析',
+          status: 'unseen'
+        };
+      });
+      if (newCards.length > 0) {
+        allCards = newCards;
+        filteredCards = [...allCards];
+        currentIndex = 0;
+        updateStats();
+        renderCurrentCard();
+        renderGridView();
+        closeModal();
+      }
+    }
+
+    // ===== 键盘快捷键 =====
+    window.addEventListener('keydown', (e) => {
+      if (['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement.tagName)) return;
+      if (document.getElementById('modalOverlay').classList.contains('active')) {
+        if (e.key === 'Escape') closeModal();
+        return;
+      }
+      if (e.code === 'Space') { e.preventDefault(); flipCard(); }
+      else if (e.key === 'ArrowRight') { e.preventDefault(); nextCard(); }
+      else if (e.key === 'ArrowLeft') { e.preventDefault(); prevCard(); }
+      else if (e.key === '1') { rateCard('again'); }
+      else if (e.key === '2') { rateCard('hard'); }
+      else if (e.key === '3') { rateCard('mastered'); }
+      else if (e.key.toLowerCase() === 's') { shuffleCards(); }
+      else if (e.key.toLowerCase() === 'g') { toggleViewMode(); }
+    });
+
+    // ===== 启动 =====
+    window.addEventListener('DOMContentLoaded', () => {
+      initChapterSelect();
+      loadChapter();
+    });
+  </script>
+</body>
+</html>
