@@ -1,0 +1,1863 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>《力学》智慧课程 · 第二章 惯性系下质点动力学 3D互动闪卡播放器</title>
+  <!-- MathJax 3 配置与加载 -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true
+      },
+      svg: {
+        fontCache: 'global'
+      },
+      startup: {
+        typeset: true
+      }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <style>
+    :root {
+      --bg-gradient: radial-gradient(circle at top right, #1e1b4b, #0f172a 65%);
+      --bg-solid: #0f172a;
+      --header-bg: rgba(15, 23, 42, 0.85);
+      --panel-bg: rgba(30, 41, 59, 0.65);
+      --card-front-bg: linear-gradient(145deg, #1e293b 0%, #0f172a 100%);
+      --card-back-bg: linear-gradient(145deg, #172554 0%, #0f172a 100%);
+      --formula-bg: rgba(15, 23, 42, 0.75);
+      --hint-bg: rgba(15, 23, 42, 0.55);
+      --accent-blue: #38bdf8;
+      --accent-indigo: #818cf8;
+      --accent-emerald: #34d399;
+      --accent-amber: #fbbf24;
+      --accent-rose: #fb7185;
+      --text-main: #f8fafc;
+      --text-secondary: #e2e8f0;
+      --text-muted: #94a3b8;
+      --border-color: rgba(148, 163, 184, 0.22);
+      --card-shadow: 0 20px 50px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      background: var(--bg-gradient);
+      background-color: var(--bg-solid);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      transition: background 0.35s ease, color 0.25s ease;
+    }
+
+    /* 顶部导航栏 */
+    header {
+      background: var(--header-bg);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-color);
+      padding: 14px 26px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      transition: background 0.3s ease;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .brand-badge {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--accent-blue), var(--accent-indigo));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 20px;
+      color: #0f172a;
+      box-shadow: 0 4px 15px rgba(56, 189, 248, 0.35);
+    }
+
+    .brand-title h1 {
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    .brand-title p {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    /* 背景颜色切换工具条 */
+    .theme-switcher {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      background: var(--panel-bg);
+      border: 1px solid var(--border-color);
+      padding: 5px 11px;
+      border-radius: 10px;
+    }
+
+    .theme-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 500;
+      margin-right: 2px;
+    }
+
+    .color-dot {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      border: 2px solid rgba(255, 255, 255, 0.35);
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      position: relative;
+    }
+
+    .color-dot:hover {
+      transform: scale(1.18);
+    }
+
+    .color-dot.active {
+      border-color: var(--accent-blue);
+      box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.45);
+      transform: scale(1.12);
+    }
+
+    .custom-color-wrapper {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 12px;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding-left: 4px;
+      border-left: 1px solid var(--border-color);
+    }
+
+    .custom-color-input {
+      width: 24px;
+      height: 24px;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      padding: 0;
+    }
+
+    .btn {
+      background: var(--panel-bg);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 8px 13px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn:hover {
+      border-color: var(--accent-blue);
+      background: rgba(56, 189, 248, 0.14);
+      transform: translateY(-1px);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #0284c7, #4f46e5);
+      color: #ffffff;
+      border-color: transparent;
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #0369a1, #4338ca);
+      color: #ffffff;
+      border-color: transparent;
+    }
+
+    /* 返回课程主页按钮 */
+    .btn-home {
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid var(--accent-rose);
+      color: var(--accent-rose);
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none;
+    }
+
+    .btn-home:hover {
+      background: rgba(251, 113, 133, 0.15);
+      color: #fda4af;
+      transform: translateY(-1px);
+    }
+
+    /* 控制与筛选栏 */
+    .control-bar {
+      max-width: 1120px;
+      width: 100%;
+      margin: 18px auto 0;
+      padding: 0 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+    }
+
+    .stat-card {
+      background: var(--panel-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      backdrop-filter: blur(8px);
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .stat-value {
+      font-size: 20px;
+      font-weight: 700;
+      margin-top: 2px;
+    }
+
+    .filter-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--panel-bg);
+      padding: 12px 16px;
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+      backdrop-filter: blur(8px);
+    }
+
+    .module-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .tab-btn {
+      background: transparent;
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .tab-btn.active, .tab-btn:hover {
+      background: rgba(56, 189, 248, 0.18);
+      color: var(--accent-blue);
+      border-color: var(--accent-blue);
+      font-weight: 600;
+    }
+
+    .search-box {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .search-input, .status-select {
+      background: var(--formula-bg);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 7px 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      outline: none;
+    }
+
+    .search-input:focus, .status-select:focus {
+      border-color: var(--accent-blue);
+    }
+
+    /* 进度条 */
+    .progress-wrapper {
+      width: 100%;
+      background: var(--panel-bg);
+      height: 8px;
+      border-radius: 4px;
+      overflow: hidden;
+      display: flex;
+      border: 1px solid var(--border-color);
+    }
+
+    .progress-segment {
+      height: 100%;
+      transition: width 0.35s ease;
+    }
+
+    .prog-mastered { background: var(--accent-emerald); }
+    .prog-hard { background: var(--accent-amber); }
+    .prog-again { background: var(--accent-rose); }
+
+    /* 主舞台：3D闪卡区 */
+    main {
+      flex: 1;
+      max-width: 1120px;
+      width: 100%;
+      margin: 14px auto 32px;
+      padding: 0 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .stage-container {
+      width: 100%;
+      max-width: 840px;
+      perspective: 1600px;
+      margin: 8px 0 22px;
+    }
+
+    .flashcard {
+      width: 100%;
+      min-height: 450px;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .flashcard.is-flipped {
+      transform: rotateY(180deg);
+    }
+
+    .card-face {
+      position: absolute;
+      inset: 0;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      border-radius: 20px;
+      padding: 30px 36px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-shadow: var(--card-shadow);
+      border: 1px solid var(--border-color);
+      overflow-y: auto;
+      transition: background 0.35s ease, border-color 0.3s ease;
+    }
+
+    .card-front {
+      background: var(--card-front-bg);
+    }
+
+    .card-back {
+      background: var(--card-back-bg);
+      transform: rotateY(180deg);
+      border-color: rgba(56, 189, 248, 0.45);
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 12px;
+    }
+
+    .card-tags {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .badge {
+      font-size: 12px;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-weight: 600;
+    }
+
+    .badge-module {
+      background: rgba(56, 189, 248, 0.16);
+      color: var(--accent-blue);
+      border: 1px solid rgba(56, 189, 248, 0.32);
+    }
+
+    .badge-side {
+      background: rgba(129, 140, 248, 0.18);
+      color: var(--accent-indigo);
+    }
+
+    .badge-status {
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-weight: 600;
+    }
+
+    .status-unseen { background: rgba(148, 163, 184, 0.22); color: var(--text-muted); }
+    .status-again { background: rgba(251, 113, 133, 0.22); color: var(--accent-rose); }
+    .status-hard { background: rgba(251, 191, 36, 0.22); color: var(--accent-amber); }
+    .status-mastered { background: rgba(52, 211, 153, 0.22); color: var(--accent-emerald); }
+
+    .card-body {
+      padding: 20px 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 14px;
+      flex: 1;
+    }
+
+    .question-text {
+      font-size: 21px;
+      line-height: 1.55;
+      font-weight: 600;
+      color: var(--text-main);
+      text-align: center;
+    }
+
+    .question-hint {
+      margin-top: 10px;
+      font-size: 14px;
+      color: var(--text-muted);
+      text-align: center;
+      background: var(--hint-bg);
+      padding: 10px 16px;
+      border-radius: 10px;
+      border-left: 3px solid var(--accent-blue);
+      align-self: center;
+      max-width: 92%;
+    }
+
+    .answer-content {
+      font-size: 16px;
+      line-height: 1.72;
+      color: var(--text-secondary);
+    }
+
+    .answer-content ul {
+      padding-left: 20px;
+      margin-top: 6px;
+    }
+
+    .answer-content li {
+      margin-bottom: 6px;
+    }
+
+    .formula-box {
+      background: var(--formula-bg);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      border-radius: 12px;
+      padding: 10px 16px;
+      margin: 8px 0;
+      text-align: center;
+      overflow-x: auto;
+      color: var(--text-main);
+    }
+
+    .key-point {
+      color: var(--accent-blue);
+      font-weight: 600;
+    }
+
+    .card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid var(--border-color);
+      padding-top: 12px;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    /* 底部操控按钮与自评栏 */
+    .action-panel {
+      width: 100%;
+      max-width: 840px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .nav-controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .nav-btn {
+      padding: 12px 22px;
+      font-size: 14px;
+      font-weight: 600;
+      border-radius: 12px;
+      background: var(--panel-bg);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      backdrop-filter: blur(8px);
+    }
+
+    .nav-btn:hover {
+      border-color: var(--accent-blue);
+      background: rgba(56, 189, 248, 0.16);
+    }
+
+    .flip-btn {
+      flex: 1;
+      max-width: 280px;
+      justify-content: center;
+      background: linear-gradient(135deg, rgba(56, 189, 248, 0.22), rgba(129, 140, 248, 0.22));
+      border-color: rgba(56, 189, 248, 0.45);
+    }
+
+    .rating-controls {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .rate-btn {
+      padding: 12px;
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      background: var(--panel-bg);
+      color: var(--text-main);
+      backdrop-filter: blur(8px);
+    }
+
+    .rate-btn span.sub {
+      font-size: 11px;
+      font-weight: 400;
+      color: var(--text-muted);
+    }
+
+    .rate-again:hover {
+      background: rgba(251, 113, 133, 0.2);
+      border-color: var(--accent-rose);
+      color: var(--accent-rose);
+    }
+
+    .rate-hard:hover {
+      background: rgba(251, 191, 36, 0.2);
+      border-color: var(--accent-amber);
+      color: var(--accent-amber);
+    }
+
+    .rate-mastered:hover {
+      background: rgba(52, 211, 153, 0.2);
+      border-color: var(--accent-emerald);
+      color: var(--accent-emerald);
+    }
+
+    /* 网格总览模式 */
+    .grid-view {
+      display: none;
+      width: 100%;
+      grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+      gap: 16px;
+      margin-top: 12px;
+    }
+
+    .grid-view.active {
+      display: grid;
+    }
+
+    .grid-item {
+      background: var(--panel-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      padding: 18px;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 10px;
+      backdrop-filter: blur(8px);
+    }
+
+    .grid-item:hover {
+      border-color: var(--accent-blue);
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+    }
+
+    .grid-item h4 {
+      font-size: 15px;
+      line-height: 1.45;
+      color: var(--text-main);
+    }
+
+    .grid-item p {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* 模态弹窗（导入/导出Anki） */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 200;
+      padding: 20px;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal-box {
+      background: var(--bg-solid);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      max-width: 740px;
+      width: 100%;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
+      color: var(--text-main);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-textarea {
+      width: 100%;
+      height: 240px;
+      background: var(--formula-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      color: var(--text-main);
+      padding: 12px;
+      font-family: monospace;
+      font-size: 13px;
+      line-height: 1.5;
+      resize: vertical;
+    }
+
+    .shortcut-bar {
+      margin-top: 18px;
+      font-size: 12px;
+      color: var(--text-muted);
+      text-align: center;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 14px;
+    }
+
+    kbd {
+      background: var(--panel-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      padding: 2px 6px;
+      font-size: 11px;
+      color: var(--accent-blue);
+      font-weight: 600;
+    }
+
+    @media (max-width: 680px) {
+      .card-face {
+        padding: 22px 18px;
+      }
+      .question-text {
+        font-size: 18px;
+      }
+      .answer-content {
+        font-size: 14.5px;
+      }
+      .flashcard {
+        min-height: 480px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 顶部导航 -->
+  <header>
+    <div class="brand">
+      <div class="brand-badge">力</div>
+      <div class="brand-title">
+        <h1>《力学》智慧课程 · 第二章 惯性系下质点动力学 3D闪卡</h1>
+        <p>覆盖牛顿三定律、万有引力、四种基本相互作用、微元张力与量纲分析 30 个核心知识点</p>
+      </div>
+    </div>
+
+    <div class="header-actions">
+      <a class="btn-home" href="../../index.html" title="返回《力学》AI 智慧课程主页">🏠 返回课程主页</a>
+      <!-- 背景颜色主题调节器 -->
+      <div class="theme-switcher" title="点击切换预设背景主题或自定义背景颜色">
+        <span class="theme-label">🎨 背景主题：</span>
+        <button class="color-dot active" id="theme-slate" style="background: linear-gradient(135deg, #1e1b4b, #0f172a);" onclick="applyTheme('slate')" title="深邃星空蓝（默认深色）"></button>
+        <button class="color-dot" id="theme-ocean" style="background: linear-gradient(135deg, #064e3b, #0f172a);" onclick="applyTheme('ocean')" title="极光森海绿（深色护眼）"></button>
+        <button class="color-dot" id="theme-plum" style="background: linear-gradient(135deg, #4c1d95, #1e1b4b);" onclick="applyTheme('plum')" title="量子星云紫（深色高对比）"></button>
+        <button class="color-dot" id="theme-daylight" style="background: linear-gradient(135deg, #f8fafc, #e2e8f0); border-color: #94a3b8;" onclick="applyTheme('daylight')" title="明亮教室白（适合日间与投影）"></button>
+        <button class="color-dot" id="theme-sage" style="background: linear-gradient(135deg, #ecfdf5, #d1fae5); border-color: #6ee7b7;" onclick="applyTheme('sage')" title="豆沙护眼绿（柔和浅色模式）"></button>
+        <button class="color-dot" id="theme-warm" style="background: linear-gradient(135deg, #fffbeb, #fef3c7); border-color: #fcd34d;" onclick="applyTheme('warm')" title="暖阳羊皮纸（温润阅读风）"></button>
+        <label class="custom-color-wrapper" title="自由选择任意背景颜色">
+          <span>自定义</span>
+          <input type="color" id="customBgPicker" class="custom-color-input" value="#0f172a" oninput="applyCustomBgColor(this.value)" />
+        </label>
+      </div>
+
+      <button class="btn" id="btnToggleView" onclick="toggleViewMode()">📋 全部卡片总览 (G)</button>
+      <button class="btn" onclick="shuffleCards()">🔀 随机乱序 (S)</button>
+      <button class="btn" onclick="resetProgress()">🔄 重置进度</button>
+      <button class="btn btn-primary" onclick="openModal()">📥 导出 Anki / 批量导入</button>
+    </div>
+  </header>
+
+  <!-- 统计与筛选控制栏 -->
+  <section class="control-bar">
+    <div class="stats-row">
+      <div class="stat-card">
+        <div>
+          <div class="stat-label">当前卡片进度</div>
+          <div class="stat-value" id="statCurrent">1 / 30</div>
+        </div>
+        <span style="font-size: 24px;">🗂️</span>
+      </div>
+      <div class="stat-card">
+        <div>
+          <div class="stat-label">🟢 已掌握 (Mastered)</div>
+          <div class="stat-value" style="color: var(--accent-emerald);" id="statMastered">0</div>
+        </div>
+        <span style="font-size: 24px;">✅</span>
+      </div>
+      <div class="stat-card">
+        <div>
+          <div class="stat-label">🟡 有点模糊 (Hard)</div>
+          <div class="stat-value" style="color: var(--accent-amber);" id="statHard">0</div>
+        </div>
+        <span style="font-size: 24px;">🤔</span>
+      </div>
+      <div class="stat-card">
+        <div>
+          <div class="stat-label">🔴 需重来 (Again)</div>
+          <div class="stat-value" style="color: var(--accent-rose);" id="statAgain">0</div>
+        </div>
+        <span style="font-size: 24px;">🔁</span>
+      </div>
+    </div>
+
+    <div class="progress-wrapper" title="掌握度实时分布">
+      <div class="progress-segment prog-mastered" id="progMastered" style="width: 0%"></div>
+      <div class="progress-segment prog-hard" id="progHard" style="width: 0%"></div>
+      <div class="progress-segment prog-again" id="progAgain" style="width: 0%"></div>
+    </div>
+
+    <div class="filter-row">
+      <div class="module-tabs" id="moduleTabs">
+        <button class="tab-btn active" data-module="all" onclick="filterByModule('all')">全部单元 (30)</button>
+        <button class="tab-btn" data-module="模块一：牛顿第一、三定律与力质量度量" onclick="filterByModule('模块一：牛顿第一、三定律与力质量度量')">一、第一/三定律与度量 (6)</button>
+        <button class="tab-btn" data-module="模块二：牛顿第二定律与变力积分" onclick="filterByModule('模块二：牛顿第二定律与变力积分')">二、第二定律与阻尼积分 (6)</button>
+        <button class="tab-btn" data-module="模块三：开普勒定律与万有引力" onclick="filterByModule('模块三：开普勒定律与万有引力')">三、开普勒与万有引力 (6)</button>
+        <button class="tab-btn" data-module="模块四：基本相互作用与弹力张力微元" onclick="filterByModule('模块四：基本相互作用与弹力张力微元')">四、基本力与弹力/张力 (6)</button>
+        <button class="tab-btn" data-module="模块五：摩擦力、欧拉公式与量纲计量" onclick="filterByModule('模块五：摩擦力、欧拉公式与量纲计量')">五、摩擦/量纲与基准计量 (6)</button>
+      </div>
+      <div class="search-box">
+        <select class="status-select" id="statusFilter" onchange="applyFilters()">
+          <option value="all">所有状态</option>
+          <option value="unseen">⚪ 未学习</option>
+          <option value="again">🔴 需重来</option>
+          <option value="hard">🟡 有点模糊</option>
+          <option value="mastered">🟢 已掌握</option>
+        </select>
+        <input type="text" class="search-input" id="searchInput" placeholder="搜索公式、例题或概念..." oninput="applyFilters()" />
+      </div>
+    </div>
+  </section>
+
+  <!-- 主舞台 -->
+  <main>
+    <!-- 单卡3D翻转模式 -->
+    <div class="stage-container" id="singleCardStage">
+      <div class="flashcard" id="flashcard" onclick="flipCard()">
+        <!-- 正面：问题 -->
+        <div class="card-face card-front">
+          <div class="card-header">
+            <div class="card-tags">
+              <span class="badge badge-module" id="frontModule">模块一</span>
+              <span class="badge badge-side">正面 · 思考提问</span>
+            </div>
+            <span class="badge-status status-unseen" id="frontStatus">未学习</span>
+          </div>
+          <div class="card-body">
+            <div class="question-text" id="frontQuestion">加载中...</div>
+            <div class="question-hint" id="frontHint">💡 提示：点击卡片或按空格键翻转查看推导与解析</div>
+          </div>
+          <div class="card-footer">
+            <span id="frontIndex">Card #1</span>
+            <span>👆 点击卡片或按 <kbd>Space</kbd> 翻转背面</span>
+          </div>
+        </div>
+
+        <!-- 背面：答案与公式推导 -->
+        <div class="card-face card-back">
+          <div class="card-header">
+            <div class="card-tags">
+              <span class="badge badge-module" id="backModule">模块一</span>
+              <span class="badge badge-side" style="background: rgba(52,211,153,0.18); color: var(--accent-emerald);">背面 · 详解与公式</span>
+            </div>
+            <span class="badge-status status-unseen" id="backStatus">未学习</span>
+          </div>
+          <div class="card-body">
+            <div class="answer-content" id="backAnswer">加载中...</div>
+          </div>
+          <div class="card-footer">
+            <span id="backIndex">Card #1</span>
+            <span>请根据掌握程度点击下方自评按钮（快捷键 <kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd>）</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 操控面板 -->
+    <div class="action-panel" id="actionPanel">
+      <div class="nav-controls">
+        <button class="nav-btn" onclick="prevCard()">⬅️ 上一张 (<kbd>←</kbd>)</button>
+        <button class="nav-btn flip-btn" onclick="flipCard()">🔄 翻转卡片 (<kbd>Space</kbd>)</button>
+        <button class="nav-btn" onclick="nextCard()">下一张 (<kbd>→</kbd>) ➡️</button>
+      </div>
+      <div class="rating-controls">
+        <button class="rate-btn rate-again" onclick="rateCard('again')">
+          <span>🔴 需重来 (快捷键 1)</span>
+          <span class="sub">概念或微元积分过程不熟，稍后重点复习</span>
+        </button>
+        <button class="rate-btn rate-hard" onclick="rateCard('hard')">
+          <span>🟡 有点模糊 (快捷键 2)</span>
+          <span class="sub">知道大致思路，但公式系数或条件易错</span>
+        </button>
+        <button class="rate-btn rate-mastered" onclick="rateCard('mastered')">
+          <span>🟢 已掌握 (快捷键 3)</span>
+          <span class="sub">物理图像清晰，能独立完成数理推演</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- 网格总览视图 -->
+    <div class="grid-view" id="gridView"></div>
+
+    <div class="shortcut-bar">
+      <span>⌨️ 快捷键支持：</span>
+      <span><kbd>Space</kbd> 翻转正反面</span>
+      <span><kbd>←</kbd> / <kbd>→</kbd> 切换卡片</span>
+      <span><kbd>1</kbd> 需重来</span>
+      <span><kbd>2</kbd> 有点模糊</span>
+      <span><kbd>3</kbd> 已掌握</span>
+      <span><kbd>S</kbd> 随机洗牌</span>
+      <span><kbd>G</kbd> 切换网格总览</span>
+    </div>
+  </main>
+
+  <!-- 导入/导出模态弹窗 -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>📥 导出 Anki 格式 / 批量导入自定义闪卡</h3>
+        <button class="btn" onclick="closeModal()">✖ 关闭</button>
+      </div>
+      <p style="font-size: 13px; color: var(--text-muted);">
+        下方文本框为标准 <code>正面问题 | 背面解析 | 所属模块</code> 格式，可直接复制保存为 <code>.txt</code> 导入 <strong>Anki / Quizlet</strong>，也可以在末尾直接粘贴新行并点击“应用修改到播放器”动态扩充题库：
+      </p>
+      <textarea class="modal-textarea" id="modalTextarea"></textarea>
+      <div style="display: flex; justify-content: flex-end; gap: 10px;">
+        <button class="btn" onclick="copyAnkiText()">📋 一键复制全部文本</button>
+        <button class="btn" onclick="downloadAnkiFile()">💾 下载 Anki 导入文件 (.txt)</button>
+        <button class="btn btn-primary" onclick="importFromTextarea()">✅ 应用修改到播放器</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 第二章《惯性系下质点动力学》30个核心知识点闪卡数据（严格对标PPT教学大纲与例题体系）
+    const initialCards = [
+      // ==================== 模块一：牛顿第一、三定律与力质量度量 (1-6) ====================
+      {
+        id: 1,
+        module: "模块一：牛顿第一、三定律与力质量度量",
+        question: "【物理学史与科学方法】动力学理论的发展经历了哪三个重要历史阶段？这段历史留给我们怎样的核心哲学思考？",
+        hint: "回顾公元前380多年、17世纪（1687年）与20世纪初的三次跨越",
+        answer: `<ul>
+          <li><strong>第一阶段（公元前380多年）：</strong>古希腊<strong>亚里士多德</strong>提出“力是维持物体运动的原因”（基于日常直觉观察）。</li>
+          <li><strong>第二阶段（17世纪，1687年）：</strong><strong>牛顿</strong>发表《自然哲学的数学原理》，建立经典力学体系，彻底取代亚里士多德理论。</li>
+          <li><strong>第三阶段（20世纪初）：</strong><strong>相对论与量子力学</strong>诞生，揭示牛顿力学在高速（接近光速 $c$）与微观尺度下也是近似理论。</li>
+        </ul>
+        <div class="formula-box">
+          <strong>核心启示：</strong>任何物理理论都有其成立的前提与适用范围！
+        </div>`
+      },
+      {
+        id: 2,
+        module: "模块一：牛顿第一、三定律与力质量度量",
+        question: "牛顿第一定律（惯性定律）的内容是什么？它在理论体系中有哪四个核心要点？",
+        hint: "从伽利略斜面实验、惯性参考系确立及绝对惯性系是否存在分析",
+        answer: `<p><span class="key-point">定律表述：</span>每个物体都保持其静止或匀速直线运动的状态，除非有外力作用于它迫使它改变那个状态。</p>
+        <ul>
+          <li><strong>1. 思想渊源：</strong>伽利略利用理想斜面实验，透过现象洞察并推理出惯性定律。</li>
+          <li><strong>2. 定义参考系：</strong>牛顿第一定律成立的参考系定义为<strong>惯性参考系</strong>。</li>
+          <li><strong>3. 实验确立：</strong>第一定律仅在特殊的惯性系下成立，需由实验检验并同时确立惯性系。</li>
+          <li><strong>4. 相对性：</strong>宇宙中<strong>绝对的惯性系是不存在的</strong>，通常根据问题精度选取近似惯性系（如地心系、日心系）。</li>
+        </ul>`
+      },
+      {
+        id: 3,
+        module: "模块一：牛顿第一、三定律与力质量度量",
+        question: "为什么说牛顿第二定律扮演了“力与质量的定义 + 运动定律”的双重身份？",
+        hint: "第一定律只定性提出了“力”与“惯性”，如何定量度量它们的大小？",
+        answer: `<p>第一定律并未给出“力”和“惯性（质量）”的具体度量方法，第二定律通过实验同时完成了<strong>定义度量</strong>与<strong>确立规律</strong>：</p>
+        <ul>
+          <li><strong>1. 力的度量（定义身份）：</strong>同一标准物体在不同力作用下满足 $\\frac{\\vec{F}_1}{\\vec{F}_2} = \\frac{\\vec{a}_1}{\\vec{a}_2}$，若令标准物体获得单位加速度的力为 $1$，即可标定弹簧制成测力计。</li>
+          <li><strong>2. 质量的度量（定义身份）：</strong>同一作用力作用在不同物体上满足 $\\frac{m_2}{m_1} = \\frac{a_1}{a_2}$，由此可通过与标准质量对比测定任意物体的惯性质量。</li>
+          <li><strong>3. 动力学定律身份：</strong>综合上述实验规律，在惯性参考系下确立普适方程 $\\vec{F} = km\\vec{a} = m\\vec{a}$。</li>
+        </ul>`
+      },
+      {
+        id: 4,
+        module: "模块一：牛顿第一、三定律与力质量度量",
+        question: "什么是“惯性质量”与“引力质量”？物理学史上是通过什么著名实验验证二者相等的？",
+        hint: "区分牛顿第二定律中的质量与万有引力定律中的质量",
+        answer: `<ul>
+          <li><strong>惯性质量 $m_i$：</strong>出现在牛顿第二定律 $\\vec{F} = m_i\\vec{a}$ 中，度量物体<strong>惯性大小</strong>（抵抗运动状态改变的能力）。</li>
+          <li><strong>引力质量 $m_g$：</strong>出现在万有引力定律 $F = G\\frac{m_{g1}m_{g2}}{r^2}$ 中，度量物体<strong>产生和承受引力作用的能力</strong>。</li>
+          <li><strong>实验验证：</strong>匈牙利物理学家<strong>厄特沃什（Eötvös）</strong>通过高精度的<strong>悬丝扭秤实验</strong>（对比不同材质物体所受地球引力与自转惯性离心力的合力方向），验证了惯性质量与引力质量在极高精度下严格成正比（选相同单位即严格相等），这后来成为爱因斯坦广义相对论等效原理的基石。</li>
+        </ul>`
+      },
+      {
+        id: 5,
+        module: "模块一：牛顿第一、三定律与力质量度量",
+        question: "在国际单位制（SI）、厘米·克·秒制（CGS）和工程单位制中，力的单位分别是什么？它们之间的换算关系如何？",
+        hint: "区分牛顿（N）、达因（dyn）与千克力/公斤力（kgf）",
+        answer: `<div class="formula-box">
+          $$1\\text{ N} = 1\\text{ kg}\\cdot\\text{m}\\cdot\\text{s}^{-2} = 10^3\\text{ g}\\cdot 10^2\\text{ cm}\\cdot\\text{s}^{-2} = 10^5\\text{ dyn（达因）}$$
+          $$1\\text{ kgf（千克力/公斤力）} = 9.8\\text{ N}$$
+        </div>
+        <ul>
+          <li><strong>国际单位制（SI）：</strong>力单位为<strong>牛顿（N）</strong>，质量为千克（$\\text{kg}$）。</li>
+          <li><strong>厘米·克·秒制（CGS）：</strong>力单位为<strong>达因（$\\text{dyn}$）</strong>，质量为克（$\\text{g}$）。</li>
+          <li><strong>工程单位制：</strong>把以“千克力（$\\text{kgf}$）”作为基本单位（定义为 $1\\text{ kg}$ 物体在地球表面所受引力），此时质量成为导出量。</li>
+        </ul>`
+      },
+      {
+        id: 6,
+        module: "模块一：牛顿第一、三定律与力质量度量",
+        question: "牛顿第三定律的三大核心特征是什么？在什么情况下牛顿第三定律“仅近似满足”甚至失效？",
+        hint: "考虑直接接触、静止场传播与非静止（运动电荷/变化场）传播的区别",
+        answer: `<p><span class="key-point">三大特征：</span>① 作用力与反作用力必定是<strong>相同性质的力</strong>；② 分别作用在<strong>两个不同物体上</strong>（绝不能合成抵消）；③ 大小相等、方向相反、共线，且同时出现、同时消失（$\\vec{F}_{12} = -\\vec{F}_{21}$）。</p>
+        <div class="formula-box">
+          <strong>适用边界：</strong><br/>
+          ① 直接接触作用、或静止物体通过场相互作用时：<strong>严格满足</strong>；<br/>
+          ② <strong>非静止（高速运动）物体通过场传播相互作用时：</strong>由于场以有限速度（如光速 $c$）传播存在延迟，且场本身携带动量，牛顿第三定律<strong>仅近似满足（严格讲不再瞬时成立）</strong>！
+        </div>`
+      },
+
+      // ==================== 模块二：牛顿第二定律与变力积分 (7-12) ====================
+      {
+        id: 7,
+        module: "模块二：牛顿第二定律与变力积分",
+        question: "牛顿在《自然哲学的数学原理》中原始采用的第二定律表达式是什么？当持续恒力作用时，为什么物体速度不会无限增大？",
+        hint: "对比 $\\vec{F}=m\\vec{a}$ 与 $\\vec{F}=\\frac{d\\vec{p}}{dt}$，引入相对论质速关系",
+        answer: `<p>1. 牛顿在《原理》中采用的是<strong>动量变化率形式</strong>：</p>
+        <div class="formula-box">
+          $$\\vec{F} = \\frac{d\\vec{p}}{dt} = \\frac{d(m\\vec{v})}{dt}$$
+        </div>
+        <p>2. 若按经典形式 $\\vec{F}=m\\vec{a}$（设 $m$ 恒定），有限外力持续作用将产生恒定加速度并导致无限大的速度。而<strong>狭义相对论</strong>指出物体的质量随速度增大而增大：</p>
+        <div class="formula-box">
+          $$m = \\frac{m_0}{\\sqrt{1 - \\frac{v^2}{c^2}}} \\implies v \\to c \\text{ 时 } m \\to \\infty,\\; a \\to 0$$
+        </div>
+        <p>因此任何有质量的物体速度都无法达到或超过光速 $c$。</p>`
+      },
+      {
+        id: 8,
+        module: "模块二：牛顿第二定律与变力积分",
+        question: "从数学公式看，第一定律似乎只是第二定律在 $\\vec{F}=0$ 时的特例，为什么说牛顿三大定律缺一不可，共同构成完整体系？",
+        hint: "从物理内涵角度分析三大定律各自的独立定位",
+        answer: `<ul>
+          <li><strong>第一定律（定性框架与参考系定义）：</strong>是对物体运动规律的宽泛描述，核心在于<strong>定义了惯性参考系</strong>，为第二定律提供了成立的舞台（并非第二定律的简单数学特例）。</li>
+          <li><strong>第二定律（定量关系）：</strong>在惯性系内进一步给出了力、质量的操作定义与定量微分方程。</li>
+          <li><strong>第三定律（独立的力的规律）：</strong>揭示了物体间相互作用的对称性，为<strong>将周围环境以力的形式等效</strong>以及证明<strong>质点系整体运动与内力无关</strong>提供了理论依据。</li>
+        </ul>`
+      },
+      {
+        id: 9,
+        module: "模块二：牛顿第二定律与变力积分",
+        question: "【动力学应用案例】① 在完全失重的太空中如何称量宇航员的体重（质量）？② 为什么桥梁常设计成向上凸起的“拱形桥”？",
+        hint: "太空无法用天平测重力，但可测惯性质量；拱形桥用本征坐标系法向方程分析",
+        answer: `<ul>
+          <li><strong>① 太空称重（测惯性质量）：</strong>太空中物体处于完全失重状态，无法用普通弹簧秤测引力；但可根据牛顿第二定律 $m = F/a$（施加已知恒力测加速度）或利用弹簧振子周期公式 $T = 2\\pi\\sqrt{m/k}$ 测定宇航员的<strong>惯性质量</strong>。</li>
+          <li><strong>② 拱形桥力学优势：</strong>汽车以速率 $v$ 通过曲率半径为 $R$ 的凸型拱桥顶部时，由法向牛顿第二定律：</li>
+        </ul>
+        <div class="formula-box">
+          $$mg - N = m\\frac{v^2}{R} \\implies N = mg - m\\frac{v^2}{R} < mg$$
+        </div>
+        <p>凸型设计使桥面承受的正压力小于车辆重力，有效减小桥梁结构负荷。</p>`
+      },
+      {
+        id: 10,
+        module: "模块二：牛顿第二定律与变力积分",
+        question: "什么是阻尼下落过程中的“收尾速度（极限速度）”？什么是牛顿第二定律中的“内在随机性（蝴蝶效应）”？",
+        hint: "分析重力与随速度增大的空气阻力平衡条件，以及非线性动力学对初值的敏感性",
+        answer: `<ul>
+          <li><strong>收尾速度（Terminal Velocity）：</strong>物体在流体中下落时受重力 $mg$ 和随速率增大的阻力 $f(v)$。当速率增大到使 $f(v_t) = mg$ 时，净外力为零，加速度 $a=0$，物体此后以恒定极限速度 $v_t$ 匀速下落（如雨滴、跳伞运动员）。</li>
+          <li><strong>内在随机性与蝴蝶效应：</strong>虽然牛顿第二定律是确定性微分方程，但在非线性系统（如三体引力摄动、大气湍流洛伦兹吸引子）中，<strong>初始条件的极微小差异会随时间指数级放大</strong>，导致长期运动轨迹不可精确预测。</li>
+        </ul>`
+      },
+      {
+        id: 11,
+        module: "模块二：牛顿第二定律与变力积分",
+        question: "【例2.1.2-1】从距地面高 $h$ 处以初速度 $v_0$ 竖直上抛质量为 $m$ 的物体，受线性空气阻力 $\\vec{f}_r = -k\\vec{v}$（$k$ 为常量），求速度 $v(t)$ 和位置 $y(t)$ 随时间的变化规律。",
+        hint: "取竖直向上为 +y 方向，建立微分方程并分离变量积分两次",
+        answer: `<p>1. 取地面为原点，竖直向上为 $+y$ 轴，由牛顿第二定律：</p>
+        <div class="formula-box">
+          $$m\\frac{dv}{dt} = -mg - kv \\implies \\frac{dv}{v + \\frac{mg}{k}} = -\\frac{k}{m}dt$$
+        </div>
+        <p>2. 结合初值 $v(0) = v_0$ 第一次积分得<strong>速度方程</strong>：</p>
+        <div class="formula-box">
+          $$v(t) = -\\frac{mg}{k} + \\left(v_0 + \\frac{mg}{k}\\right)e^{-\\frac{k}{m}t}$$
+        </div>
+        <p>3. 结合初值 $y(0) = h$ 對 $v = \\frac{dy}{dt}$ 再次积分得<strong>位置方程</strong>：</p>
+        <div class="formula-box">
+          $$y(t) = h - \\frac{mg}{k}t + \\frac{m}{k}\\left(v_0 + \\frac{mg}{k}\\right)\\left(1 - e^{-\\frac{k}{m}t}\\right)$$
+        </div>`
+      },
+      {
+        id: 12,
+        module: "模块二：牛顿第二定律与变力积分",
+        question: "【习题2-12】从地面以仰角 $\\theta_0$、初速度 $v_0$ 发射炮弹，始终受线性空气阻力 $\\vec{f}_r = -k\\vec{v}$，如何推导炮弹的运动轨迹方程 $y(x)$？",
+        hint: "正交分解到 x, y 方向分别积分得 x(t) 和 y(t)，再由 x(t) 解出时间 t 代入 y(t)",
+        answer: `<p>1. 正交分解动力学方程：</p>
+        <div class="formula-box">
+          $$x\\text{方向：} m\\frac{dv_x}{dt} = -kv_x \\implies x(t) = \\frac{mv_0\\cos\\theta_0}{k}\\left(1 - e^{-\\frac{k}{m}t}\\right)$$
+          $$y\\text{方向：} m\\frac{dv_y}{dt} = -mg - kv_y \\implies y(t) = -\\frac{mg}{k}t + \\frac{m}{k}\\left(v_0\\sin\\theta_0 + \\frac{mg}{k}\\right)\\left(1 - e^{-\\frac{k}{m}t}\\right)$$
+        </div>
+        <p>2. 由 $x(t)$ 解出 $1 - e^{-\\frac{k}{m}t} = \\frac{kx}{mv_0\\cos\\theta_0}$ 及 $t = -\\frac{m}{k}\\ln\\left(1 - \\frac{kx}{mv_0\\cos\\theta_0}\\right)$，代入 $y(t)$ 消去 $t$ 得<strong>轨迹方程</strong>：</p>
+        <div class="formula-box">
+          $$y = \\left(\\tan\\theta_0 + \\frac{mg}{kv_0\\cos\\theta_0}\\right)x + \\frac{m^2g}{k^2}\\ln\\left(1 - \\frac{kx}{mv_0\\cos\\theta_0}\\right)$$
+        </div>`
+      },
+
+      // ==================== 模块三：开普勒定律与万有引力 (13-18) ====================
+      {
+        id: 13,
+        module: "模块三：开普勒定律与万有引力",
+        question: "简述开普勒行星运动三大定律（轨道定律、面积定律、周期定律）的具体内容及其物理内涵。",
+        hint: "分别对应椭圆焦点、径矢扫过面积速率、周期平方与半长轴立方的关系",
+        answer: `<ul>
+          <li><strong>第一定律（轨道定律）：</strong>所有行星绕太阳运行的轨道都是椭圆，太阳位于这些椭圆轨道的一个<strong>公共焦点</strong>上。</li>
+          <li><strong>第二定律（面积定律）：</strong>行星与太阳的连线（径矢）在相等的时间内扫过相等的面积（$\\frac{dS}{dt} = \\frac{L}{2m} = \\text{常量}$，本质是<strong>有心力场中角动量守恒</strong>）。</li>
+          <li><strong>第三定律（周期定律）：</strong>行星绕太阳运行周期 $T$ 的平方与其椭圆轨道半长轴 $a$（或平均距离 $D$）的立方成正比：</li>
+        </ul>
+        <div class="formula-box">
+          $$\\frac{T^2}{a^3} = \\frac{1}{k_{\\text{日}}} = \\text{常量（仅与中心天体太阳质量有关）}$$
+        </div>`
+      },
+      {
+        id: 14,
+        module: "模块三：开普勒定律与万有引力",
+        question: "【天地合一的月—地检验】牛顿是如何利用地面重力加速度 $g$、地球半径 $R_{\\text{地}}$ 和月地距离 $r_{\\text{月地}}$，证明地球对月球的力与对苹果的力是同一种平方反比力的？",
+        hint: "设引力均满足 $F = C/r^2$，联立苹果自由落体与月球圆周运动方程求月球周期 T",
+        answer: `<p>设地球对月球和地面苹果的作用力均满足平方反比关系 $F \\propto \\frac{1}{r^2}$：</p>
+        <div class="formula-box">
+          $$\\text{对月球：}\\frac{C\\,m_{\\text{月}}}{r_{\\text{月地}}^2} = m_{\\text{月}}\\frac{4\\pi^2}{T^2}r_{\\text{月地}}, \\qquad \\text{对苹果：}\\frac{C\\,m_{\\text{苹}}}{R_{\\text{地}}^2} = m_{\\text{苹}}g$$
+        </div>
+        <p>两式相除消去比例常数 $C$，并代入天文观测参量 $r_{\\text{月地}} \\approx 60 R_{\\text{地}}$：</p>
+        <div class="formula-box">
+          $$T = 2\\pi\\sqrt{\\frac{r_{\\text{月地}}^3}{g\\,R_{\\text{地}}^2}} \\approx 27\\text{天}7\\text{小时}4\\text{分}$$
+        </div>
+        <p>理论计算结果与月球实际公转周期惊人吻合！月球做圆周运动而苹果竖直下落，仅仅是<strong>初始条件不同</strong>而已。</p>`
+      },
+      {
+        id: 15,
+        module: "模块三：开普勒定律与万有引力",
+        question: "牛顿是如何从开普勒第三定律出发，结合牛顿第二、第三定律引入“高斯常量”并最终推导出普适万有引力公式的？",
+        hint: "注意太阳吸引行星 $F_{12}$ 与行星吸引太阳 $F_{21}$ 的对称性",
+        answer: `<p>1. 由开普勒第三定律 $r^3/T^2 = k_1$ 及向心力公式，太阳（质量 $m_1$）对行星（质量 $m_2$）的引力为：$F_{12} = m_2\\frac{4\\pi^2}{T^2}r = \\frac{4\\pi^2 k_1 m_2}{r^2} = \\frac{\\gamma_1 m_2}{r^2}$，其中 $\\gamma_1 = 4\\pi^2 k_1$ 称为太阳的<strong>高斯常量</strong>。</p>
+        <p>2. 同理，行星对太阳的引力为 $F_{21} = \\frac{\\gamma_2 m_1}{r^2}$（$\\gamma_2$ 为行星的高斯常量）。</p>
+        <p>3. 由<strong>牛顿第三定律</strong> $F_{12} = F_{21}$ 得：</p>
+        <div class="formula-box">
+          $$\\frac{\\gamma_1 m_2}{r^2} = \\frac{\\gamma_2 m_1}{r^2} \\implies \\frac{\\gamma_1}{m_1} = \\frac{\\gamma_2}{m_2} = G \\text{（与星体无关的普适引力常量）}$$
+          $$\\vec{F}_{12} = -G\\frac{m_1 m_2}{r^2}\\vec{e}_{12}$$
+        </div>`
+      },
+      {
+        id: 16,
+        module: "模块三：开普勒定律与万有引力",
+        question: "谁被称为“第一个称量地球质量的人”？他采用了什么实验装置？此外，地球表面的“表观重力”与万有引力有什么区别？",
+        hint: "回顾1798年卡文迪许悬丝扭秤实验与地球自转惯性离心力",
+        answer: `<ul>
+          <li><strong>卡文迪许扭秤实验：</strong>英国科学家<strong>卡文迪许（H. Cavendish）</strong>利用精巧的<strong>悬丝扭秤实验</strong>（利用石英悬丝微弱扭转力矩平衡引力矩，并通过光杠杆放大测量），首次在实验室测出了引力常量 $G$（标准值约为 $6.67428\\times 10^{-11}\\text{ N}\\cdot\\text{m}^2/\\text{kg}^2$），从而可根据 $g = GM_{\\text{地}}/R_{\\text{地}}^2$ 算出地球质量，被称为<strong>“第一个称量地球质量的人”</strong>。</li>
+          <li><strong>重力与表观重力：</strong>若不计地球自转，重力即地球对物体的万有引力；若考虑地球自转，地面物体的<strong>表观重力是万有引力与惯性离心力的矢量合</strong>。</li>
+        </ul>`
+      },
+      {
+        id: 17,
+        module: "模块三：开普勒定律与万有引力",
+        question: "天体力学史上哪两项标志性成就彻底验证了万有引力定律“追踪过去、预测未来”的强大威力？",
+        hint: "思考哈雷彗星回归预言与海王星、冥王星的发现",
+        answer: `<ul>
+          <li><strong>1. 哈雷彗星的精准回归预言：</strong>哈雷运用牛顿万有引力定律计算了 1531、1607、1682 年大彗星轨道，判定它们是同一颗沿长椭圆轨道运行的周期彗星，并计入木星与土星的引力吸引延迟，准确预言其将于 1758 年底至 1759 年重返（1986 年已回归，下次将于 2061 年回归）。</li>
+          <li><strong>2. “笔尖下发现新行星”：</strong>天文学家根据天王星实际运行轨道与理论计算的微小偏差，利用万有引力定律反推未知摄动天体的位置，相继发现了<strong>海王星</strong>和冥王星。恩格斯评价牛顿“完成了人类科学史上的第一次大综合”。</li>
+        </ul>`
+      },
+      {
+        id: 18,
+        module: "模块三：开普勒定律与万有引力",
+        question: "写出第一、第二、第三宇宙速度的数值与物理意义，并说明不同初始速度下天体运行轨道的几何形状。",
+        hint: "对比圆轨道、椭圆轨道、抛物线轨道与双曲线轨道的临界速度",
+        answer: `<div class="formula-box">
+          $$v_1 = 7.9\\text{ km/s}, \\qquad v_2 = 11.2\\text{ km/s}, \\qquad v_3 = 16.7\\text{ km/s}$$
+        </div>
+        <ul>
+          <li><strong>$v_0 = 0$：</strong>沿直线下落（苹果落地）。</li>
+          <li><strong>第一宇宙速度 $v_1 = 7.9\\text{ km/s}$（环绕速度）：</strong>围绕地球做圆周运动，成为人造地球卫星；当 $v_1 < v_0 < v_2$ 时为椭圆轨道。</li>
+          <li><strong>第二宇宙速度 $v_2 = 11.2\\text{ km/s}$（脱离速度）：</strong>沿<strong>抛物线轨道</strong>一去不复返地脱离地球引力束缚，成为绕太阳运行的人造行星。</li>
+          <li><strong>第三宇宙速度 $v_3 = 16.7\\text{ km/s}$（逃逸速度）：</strong>挣脱太阳引力束缚飞出太阳系，成为银河系成员。</li>
+        </ul>`
+      },
+
+      // ==================== 模块四：基本相互作用与弹力张力微元 (19-24) ====================
+      {
+        id: 19,
+        module: "模块四：基本相互作用与弹力张力微元",
+        question: "自然界中一切力可归结为哪四种基本相互作用？请按相对强度从强到弱排序，并说明它们的力程特征及宏观弹力/摩擦力的本质。",
+        hint: "对比强相互作用、电磁力、弱相互作用、万有引力的强度量级与作用距离",
+        answer: `<div class="formula-box">
+          <strong>相对强度排序：</strong>强相互作用 ($1$) $>$ 电磁力 ($10^{-2}$) $>$ 弱相互作用 ($10^{-13}$) $>$ 万有引力 ($10^{-38}$)
+        </div>
+        <ul>
+          <li><strong>强相互作用：</strong>核子间的短程力，力程约 $10^{-15}\\text{ m}$，距离稍大即迅速消失。</li>
+          <li><strong>电磁相互作用：</strong>带电粒子间的长程力（力程 $\\infty$）。<strong>力学中常见的拉力、压力、扭力等弹性力以及摩擦力，归根结底都是电磁力！</strong></li>
+          <li><strong>弱相互作用：</strong>基本粒子间（如 $\\beta$ 衰变）的超短程力，力程约 $10^{-17}\\text{ m}$。</li>
+          <li><strong>万有引力：</strong>一切质量间的长程吸引力（力程 $\\infty$），虽最微弱，但在天体与宇宙大尺度结构中起决定性作用。</li>
+        </ul>`
+      },
+      {
+        id: 20,
+        module: "模块四：基本相互作用与弹力张力微元",
+        question: "如何用两原子核间的相互作用势能曲线 $E_p(r)$ 解释宏观物体的“平衡态”、“拉伸张力”与“压缩支持力”？",
+        hint: "原子间相互作用力等于势能曲线斜率的负值 $F = -dE_p/dr$，平衡距离 $r_0 \\approx 10^{-10}\\text{ m}$",
+        answer: `<p>由力学规律知，势能曲线斜率的负值代表原子间相互作用力的方向（$F_r = -\\frac{dE_p}{dr}$）：</p>
+        <ul>
+          <li><strong>当核间距 $r = r_0 \\approx 10^{-10}\\text{ m}$ 时：</strong>势能处于极小值谷底，斜率为零，原子间引力与斥力抵消，<strong>处于平衡状态</strong>。</li>
+          <li><strong>当 $r > r_0$（宏观被拉伸）时：</strong>势能曲线斜率为正，原子间表现为净<strong>吸引力</strong>，宏观上体现为抗拒拉伸的<strong>拉力/张力</strong>。</li>
+          <li><strong>当 $r < r_0$（宏观被挤压）时：</strong>势能曲线斜率为负且极陡峭，原子间表现为强<strong>排斥力</strong>，宏观上体现为接触面间的<strong>法向支持力（正压力）</strong>。</li>
+        </ul>`
+      },
+      {
+        id: 21,
+        module: "模块四：基本相互作用与弹力张力微元",
+        question: "轻弹簧与“有质量的弹簧”内部受力有何区别？由质量为 $m_0$ 的均匀弹簧和质量为 $m$ 的物体组成的谐振子，系统动能和势能如何等效表示？",
+        hint: "有质量弹簧各处受力不均匀，但在均匀形变下等效质量增加 $m_0/3$",
+        answer: `<ul>
+          <li><strong>轻弹簧（$m_0 \\approx 0$）：</strong>弹簧内部各处张力均匀相等，末端满足胡克定律 $F = -kx$。</li>
+          <li><strong>有质量的弹簧（质量 $m_0$）：</strong>加速运动时弹簧内部各处受力不均匀。在均匀形变假设下（距固定端 $l$ 处质元速度为 $v(l) = \\frac{l}{L}v$），通过微元积分可严格证明系统总动能与总势能等效表示为：</li>
+        </ul>
+        <div class="formula-box">
+          $$E_k = \\frac{1}{2}\\left(m + \\frac{1}{3}m_0\\right)v^2, \\qquad E_p = \\frac{1}{2}kx^2$$
+        </div>
+        <p>即有质量弹簧对谐振子贡献了 $\\frac{1}{3}m_0$ 的等效惯性质量！</p>`
+      },
+      {
+        id: 22,
+        module: "模块四：基本相互作用与弹力张力微元",
+        question: "【例2.3.3-1 微元法求旋转绳张力】长为 $l$、质量为 $m$ 的均匀柔绳以一端 $O$ 为轴，在光滑水平面内以匀角速度 $\\omega$ 旋转，求距转轴 $x$ 处的绳中张力 $T(x)$。",
+        hint: "取 [x, x+dx] 微元，列向心方向牛顿第二定律，利用自由端 T(l)=0 积分",
+        answer: `<p>1. 在距转轴 $x$ 处取长为 $dx$ 的小质元，其质量为 $dm = \\frac{m}{l}dx$。</p>
+        <p>2. 质元在水平径向受内侧拉力 $T(x)$ 和外侧拉力 $T(x+dx)$，由牛顿第二定律：</p>
+        <div class="formula-box">
+          $$T(x) - T(x+dx) = -dT = dm\\cdot\\omega^2 x = \\frac{m\\omega^2}{l}x\\,dx$$
+        </div>
+        <p>3. 利用自由端边界条件 $x=l$ 时 $T(l)=0$ 定积分：</p>
+        <div class="formula-box">
+          $$\\int_{T(x)}^{0} dT = -\\int_{x}^{l} \\frac{m\\omega^2}{l}x\\,dx \\implies T(x) = \\frac{m\\omega^2}{2l}(l^2 - x^2)$$
+        </div>
+        <p>当 $x=0$（转轴处）张力最大：$T_{\\max} = \\frac{1}{2}m\\omega^2 l$。</p>`
+      },
+      {
+        id: 23,
+        module: "模块四：基本相互作用与弹力张力微元",
+        question: "【例2.3.3-2 旋转圆环绳张力】首尾相接的圆环状均匀柔绳，周长为 $l$、质量为 $m$，绕圆心以匀角速度 $\\omega$ 在水平面内旋转，求绳中张力 $T$。",
+        hint: "取圆心角为 Δθ 的微元，两端张力 T 向心分量为 2T sin(Δθ/2) ≈ TΔθ",
+        answer: `<p>1. 圆环半径为 $R = \\frac{l}{2\\pi}$。在环上取对应圆心角为 $\\Delta\\theta$ 的微小质元，其质量为 $\\Delta m = \\frac{m}{l}R\\Delta\\theta = \\frac{m}{2\\pi}\\Delta\\theta$。</p>
+        <p>2. 质元两端张力 $T$ 在法线方向（指向圆心）的合力为 $2T\\sin\\frac{\\Delta\\theta}{2} \\approx T\\Delta\\theta$（小角近似 $\\sin\\frac{\\Delta\\theta}{2} \\approx \\frac{\\Delta\\theta}{2}$）。</p>
+        <p>3. 对质元法线方向应用牛顿第二定律：</p>
+        <div class="formula-box">
+          $$T\\Delta\\theta = \\Delta m\\cdot\\omega^2 R = \\left(\\frac{m}{2\\pi}\\Delta\\theta\\right)\\omega^2\\left(\\frac{l}{2\\pi}\\right) \\implies T = \\frac{m\\omega^2 l}{4\\pi^2}$$
+        </div>`
+      },
+      {
+        id: 24,
+        module: "模块四：基本相互作用与弹力张力微元",
+        question: "为什么宏观摩擦力的大小与物体的“表观接触面积”（如砖块平放或立放）无关，而只与正压力 $N$ 成正比？",
+        hint: "区分宏观“表观接触面积”与微观凸起处的“真实有效接触总面积”",
+        answer: `<ul>
+          <li><strong>微观机制：</strong>固体表面在微观上都是凹凸不平的，摩擦力的大小取决于微观接触点原子间相互作用的<strong>有效接触总面积</strong>（$\\text{有效总面积} = \\text{单点接触面积} \\times \\text{接触点数目}$），而非宏观表观面积。</li>
+          <li><strong>横放 vs 立放：</strong>
+            <ul>
+              <li>物体<strong>横放</strong>时：宏观表观面积大 $\\implies$ 接触点多，但每个接触点分担压强小、形变小（单点面积小）；</li>
+              <li>物体<strong>立放</strong>时：宏观表观面积小 $\\implies$ 接触点少，但每个接触点分担压强大、形变大（单点面积大）。</li>
+            </ul>
+          </li>
+          <li>二者乘积（有效接触总面积）仅与正压力 $N$ 成正比，故摩擦力与宏观放置方式无关！</li>
+        </ul>`
+      },
+
+      // ==================== 模块五：摩擦力、欧拉公式与量纲计量 (25-30) ====================
+      {
+        id: 25,
+        module: "模块五：摩擦力、欧拉公式与量纲计量",
+        question: "如何准确判断静摩擦力与滑动摩擦力的大小和方向？最大静摩擦因数 $\\mu_0$ 与滑动摩擦因数 $\\mu$ 有何关系？",
+        hint: "特别注意摩擦力方向是相对运动/相对运动趋势的反方向，而非绝对运动反方向",
+        answer: `<ul>
+          <li><strong>1. 大小规律：</strong>未滑动时静摩擦力 $0 \\le f_0 \\le f_{\\max} = \\mu_0 N$（由平衡或动力学方程决定）；滑动时滑动摩擦力 $f = \\mu N$。实验表明 $\\mu$ 随相对速度增大略有减小，通常 $\\mu$ 略小于 $\\mu_0$（无特殊说明时近似取 $\\mu = \\mu_0$）。</li>
+          <li><strong>2. 方向判断铁律：</strong>必须根据接触面之间的<strong>相对滑动方向或相对滑动趋势方向</strong>来判断，绝不能按物体的运动方向判断！</li>
+          <li><strong>典型例子：</strong>人向前走路时，鞋底相对地面有向后滑的趋势，因此地面给人的静摩擦力方向<strong>向前</strong>（是人前进的动力）。</li>
+        </ul>`
+      },
+      {
+        id: 26,
+        module: "模块五：摩擦力、欧拉公式与量纲计量",
+        question: "【例2.3.3-3 圆柱缠绕绳欧拉公式推导】重物 $G$ 用缠绕在固定水平圆柱上的绳子拉住，柱与绳间摩擦因数为 $\\mu$，总缠绕包角为 $\\theta_0$，如何用微元法推导所需的最小拉力 $F_A$？",
+        hint: "取微元 dθ，列出切向方程 dT = μ dN 与法向方程 Tdθ = dN，分离变量积分",
+        answer: `<p>1. 在圆柱包角 $\\theta$ 处取微元 $d\\theta$，两端张力为 $T$ 和 $T+dT$，柱面法向支持力为 $dN$，最大静摩擦力为 $df_{\\max} = \\mu\\,dN$。</p>
+        <p>2. 对绳微元列切向与法向平衡方程（忽略二阶小量 $dT\\cdot d\\theta$）：</p>
+        <div class="formula-box">
+          $$\\text{切向：} T + \\mu\\,dN = T + dT \\implies dT = \\mu\\,dN$$
+          $$\\text{法向：} (2T + dT)\\sin\\frac{d\\theta}{2} \\approx T\\,d\\theta = dN$$
+        </div>
+        <p>3. 联立得 $\\frac{dT}{T} = \\mu\\,d\\theta$，两边从拉力端 $(F_A, 0)$ 到重物端 $(G, \\theta_0)$ 定积分：</p>
+        <div class="formula-box">
+          $$\\int_{F_A}^{G} \\frac{dT}{T} = \\int_{0}^{\\theta_0} \\mu\\,d\\theta \\implies F_A = G\\,e^{-\\mu\\theta_0}$$
+        </div>
+        <p><strong>指数放大效应：</strong>当 $\\mu=0.5$、仅绕两圈半（$\\theta_0 = 5\\pi$）时，$G = F_A e^{2.5\\pi} \\approx 2580\\,F_A$，即用不到 $1\\text{公斤}$ 的力即可拉住 $2\\text{吨}$ 重物！</p>`
+      },
+      {
+        id: 27,
+        module: "模块五：摩擦力、欧拉公式与量纲计量",
+        question: "什么是基本量、导出量与“量纲（Dimension）”？写出速度、加速度、力、压强、能量和引力常量 $G$ 的力学量纲式。",
+        hint: "力学中选取长度 L、质量 M、时间 T 为三个独立基本量",
+        answer: `<p>力学中以<strong>长度 $L$、质量 $M$、时间 $T$</strong> 为基本量，任一导出量 $Q$ 的量纲可表示为 $\\dim Q = L^p M^q T^s$：</p>
+        <div class="formula-box">
+          $$\\dim v = LT^{-1}, \\qquad \\dim a = LT^{-2}, \\qquad \\dim F = MLT^{-2}$$
+          $$\\dim P\\text{（压强）} = \\frac{[F]}{[S]} = ML^{-1}T^{-2}, \\qquad \\dim E\\text{（功/能）} = [F][L] = ML^2T^{-2}$$
+          $$\\dim G\\text{（引力常量）} = \\frac{[F][r]^2}{[m]^2} = M^{-1}L^3T^{-2}$$
+        </div>`
+      },
+      {
+        id: 28,
+        module: "模块五：摩擦力、欧拉公式与量纲计量",
+        question: "量纲分析有哪三大作用？【经典案例】深海爆炸后形成的气泡振荡周期 $T$ 与静水压强 $P$、水密度 $\\rho$、气泡总能量 $E$ 满足 $T \\propto P^\\alpha \\rho^\\beta E^\\gamma$，如何用瑞利量纲法求指数 $\\alpha,\\beta,\\gamma$？",
+        hint: "利用等式两边 M, L, T 的幂次相等建立三元一次方程组求解",
+        answer: `<p><strong>三大作用：</strong>① 校验公式正确性（如超越函数 $\\ln u$ 的宗量 $u$ 必须无量纲）；② 确定未知常量的量纲；③ <strong>寻求物理规律</strong>。</p>
+        <p><strong>气泡周期推导：</strong>代入 $[P]=ML^{-1}T^{-2}$，$[\\rho]=ML^{-3}$，$[E]=ML^2T^{-2}$：</p>
+        <div class="formula-box">
+          $$T^1 = (ML^{-1}T^{-2})^\\alpha (ML^{-3})^\\beta (ML^2T^{-2})^\\gamma = M^{\\alpha+\\beta+\\gamma}\\,L^{-\\alpha-3\\beta+2\\gamma}\\,T^{-2\\alpha-2\\gamma}$$
+        </div>
+        <p>比较两端量纲幂次：$\\begin{cases} \\alpha + \\beta + \\gamma = 0 \\\\ -\\alpha - 3\\beta + 2\\gamma = 0 \\\\ -2\\alpha - 2\\gamma = 1 \\end{cases}$，联立解得 $\\alpha = -\\frac{5}{6},\\; \\beta = \\frac{1}{2},\\; \\gamma = \\frac{1}{3}$，故：</p>
+        <div class="formula-box">
+          $$T \\propto P^{-\\frac{5}{6}}\\,\\rho^{\\frac{1}{2}}\\,E^{\\frac{1}{3}}$$
+        </div>`
+      },
+      {
+        id: 29,
+        module: "模块五：摩擦力、欧拉公式与量纲计量",
+        question: "【基本物理量计量史】人类对“时间（秒）”和“长度（米）”的计量标准经历了怎样的演进？现代国际单位制（SI）是如何定义“秒”和“米”的？",
+        hint: "从圭表/日晷/石英钟到铯原子钟；从子午线/铂铱米原器到光速不变定义",
+        answer: `<ul>
+          <li><strong>1. 时间的计量：</strong>通常利用重复的周期现象。历经圭表、日晷、刻漏、沙漏 $\\rightarrow$ 机械钟 $\\rightarrow$ 石英钟（精度 $10^{-10}$，约270年差1秒） $\\rightarrow$ <strong>铯原子钟（精度达 $10^{-15}$）</strong>、冷原子钟与脉冲星辐射设想。</li>
+          <li><strong>2. 长度的计量：</strong>从人体尺寸 $\\rightarrow$ 通过巴黎的北极至赤道子午线长的一千万分之一 $\\rightarrow$ 截面呈“X”型的铂铱合金<strong>国际米原器</strong> $\\rightarrow$ 原子辐射波长 $\\rightarrow$ <strong>1983年新定义：</strong>将真空光速固定为精确值，<strong>“米”定义为光在真空中 $\\frac{1}{299792458}\\text{ s}$ 时间间隔内所经路径的长度</strong>。</li>
+        </ul>`
+      },
+      {
+        id: 30,
+        module: "模块五：摩擦力、欧拉公式与量纲计量",
+        question: "【质量计量新纪元】为什么沿用了百余年的铂铱合金“国际千克原器”被废除？2019年正式实施的质量单位“千克（kg）”新定义是以什么物理常数为基准的？",
+        hint: "实物原器磨损/沾污偏差达50微克；2018年第26届国际计量大会固定了普朗克常数 h",
+        answer: `<ul>
+          <li><strong>历史演进与痛点：</strong>千克最初定义为 $4^\\circ\\text{C}$ 时 $1\\text{升}$ 纯水的质量，后制成直径与高均为 $3.9\\text{ cm}$ 的铂铱合金圆柱体（国际千克原器）。但实物原器易受磨损或表面沾污，最大偏差达 <strong>$50\\text{ 微克}$</strong>（相对精度仅 $10^{-8}$）。</li>
+          <li><strong>2018年通过、2019年5月正式实施的新标准：</strong>将量子力学中的<strong>普朗克常数 $h$</strong> 固定为精确值：</li>
+        </ul>
+        <div class="formula-box">
+          $$h = 6.62607015 \\times 10^{-34}\\text{ J}\\cdot\\text{s} = 6.62607015 \\times 10^{-34}\\text{ kg}\\cdot\\text{m}^2\\cdot\\text{s}^{-1}$$
+        </div>
+        <p>由普朗克常数固定值 + 时间计量标准（秒）+ 长度计量标准（米）联合定义“千克”，测量精度跃升至 $10^{-12}$！</p>`
+      }
+    ];
+
+    // 预设背景主题配置表
+    const THEMES = {
+      slate: {
+        bgGradient: "radial-gradient(circle at top right, #1e1b4b, #0f172a 65%)",
+        bgSolid: "#0f172a",
+        headerBg: "rgba(15, 23, 42, 0.85)",
+        panelBg: "rgba(30, 41, 59, 0.65)",
+        cardFrontBg: "linear-gradient(145deg, #1e293b 0%, #0f172a 100%)",
+        cardBackBg: "linear-gradient(145deg, #172554 0%, #0f172a 100%)",
+        formulaBg: "rgba(15, 23, 42, 0.78)",
+        hintBg: "rgba(15, 23, 42, 0.55)",
+        textMain: "#f8fafc",
+        textSecondary: "#e2e8f0",
+        textMuted: "#94a3b8",
+        borderColor: "rgba(148, 163, 184, 0.22)",
+        accentBlue: "#38bdf8",
+        accentIndigo: "#818cf8"
+      },
+      ocean: {
+        bgGradient: "radial-gradient(circle at top right, #064e3b, #022c22 65%)",
+        bgSolid: "#022c22",
+        headerBg: "rgba(2, 44, 34, 0.85)",
+        panelBg: "rgba(6, 78, 59, 0.55)",
+        cardFrontBg: "linear-gradient(145deg, #064e3b 0%, #022c22 100%)",
+        cardBackBg: "linear-gradient(145deg, #115e59 0%, #042f2e 100%)",
+        formulaBg: "rgba(2, 44, 34, 0.78)",
+        hintBg: "rgba(2, 44, 34, 0.55)",
+        textMain: "#ecfdf5",
+        textSecondary: "#d1fae5",
+        textMuted: "#6ee7b7",
+        borderColor: "rgba(110, 231, 183, 0.22)",
+        accentBlue: "#34d399",
+        accentIndigo: "#2dd4bf"
+      },
+      plum: {
+        bgGradient: "radial-gradient(circle at top right, #4c1d95, #1e1b4b 65%)",
+        bgSolid: "#1e1b4b",
+        headerBg: "rgba(30, 27, 75, 0.85)",
+        panelBg: "rgba(49, 46, 129, 0.55)",
+        cardFrontBg: "linear-gradient(145deg, #312e81 0%, #1e1b4b 100%)",
+        cardBackBg: "linear-gradient(145deg, #4c1d95 0%, #1e1b4b 100%)",
+        formulaBg: "rgba(15, 23, 42, 0.72)",
+        hintBg: "rgba(15, 23, 42, 0.55)",
+        textMain: "#f5f3ff",
+        textSecondary: "#ede9fe",
+        textMuted: "#c4b5fd",
+        borderColor: "rgba(196, 181, 253, 0.24)",
+        accentBlue: "#c084fc",
+        accentIndigo: "#818cf8"
+      },
+      daylight: {
+        bgGradient: "radial-gradient(circle at top right, #e0f2fe, #f1f5f9 65%)",
+        bgSolid: "#f1f5f9",
+        headerBg: "rgba(255, 255, 255, 0.88)",
+        panelBg: "rgba(255, 255, 255, 0.85)",
+        cardFrontBg: "linear-gradient(145deg, #ffffff 0%, #f8fafc 100%)",
+        cardBackBg: "linear-gradient(145deg, #f0f9ff 0%, #e0f2fe 100%)",
+        formulaBg: "rgba(241, 245, 249, 0.95)",
+        hintBg: "rgba(224, 242, 254, 0.6)",
+        textMain: "#0f172a",
+        textSecondary: "#1e293b",
+        textMuted: "#475569",
+        borderColor: "rgba(100, 116, 139, 0.25)",
+        accentBlue: "#0284c7",
+        accentIndigo: "#4f46e5"
+      },
+      sage: {
+        bgGradient: "radial-gradient(circle at top right, #d1fae5, #ecfdf5 65%)",
+        bgSolid: "#ecfdf5",
+        headerBg: "rgba(236, 253, 245, 0.9)",
+        panelBg: "rgba(255, 255, 255, 0.8)",
+        cardFrontBg: "linear-gradient(145deg, #ffffff 0%, #f0fdf4 100%)",
+        cardBackBg: "linear-gradient(145deg, #ecfdf5 0%, #d1fae5 100%)",
+        formulaBg: "rgba(240, 253, 244, 0.95)",
+        hintBg: "rgba(209, 250, 229, 0.65)",
+        textMain: "#064e3b",
+        textSecondary: "#065f46",
+        textMuted: "#047857",
+        borderColor: "rgba(5, 150, 105, 0.24)",
+        accentBlue: "#059669",
+        accentIndigo: "#0d9488"
+      },
+      warm: {
+        bgGradient: "radial-gradient(circle at top right, #fef3c7, #fffbeb 65%)",
+        bgSolid: "#fffbeb",
+        headerBg: "rgba(255, 251, 235, 0.9)",
+        panelBg: "rgba(255, 255, 255, 0.82)",
+        cardFrontBg: "linear-gradient(145deg, #ffffff 0%, #fffbeb 100%)",
+        cardBackBg: "linear-gradient(145deg, #fef3c7 0%, #fde68a 100%)",
+        formulaBg: "rgba(254, 243, 199, 0.7)",
+        hintBg: "rgba(253, 230, 138, 0.45)",
+        textMain: "#451a03",
+        textSecondary: "#78350f",
+        textMuted: "#92400e",
+        borderColor: "rgba(180, 83, 9, 0.22)",
+        accentBlue: "#d97706",
+        accentIndigo: "#b45309"
+      }
+    };
+
+    // 状态管理
+    let allCards = [];
+    let filteredCards = [];
+    let currentIndex = 0;
+    let isFlipped = false;
+    let currentModule = 'all';
+    let isGridView = false;
+
+    const STORAGE_KEY = 'mechanics_ch2_flashcards_progress_v1';
+    const THEME_STORAGE_KEY = 'mechanics_ch2_theme_pref_v1';
+
+    function applyTheme(themeKey) {
+      const t = THEMES[themeKey];
+      if (!t) return;
+      const root = document.documentElement;
+      root.style.setProperty('--bg-gradient', t.bgGradient);
+      root.style.setProperty('--bg-solid', t.bgSolid);
+      root.style.setProperty('--header-bg', t.headerBg);
+      root.style.setProperty('--panel-bg', t.panelBg);
+      root.style.setProperty('--card-front-bg', t.cardFrontBg);
+      root.style.setProperty('--card-back-bg', t.cardBackBg);
+      root.style.setProperty('--formula-bg', t.formulaBg);
+      root.style.setProperty('--hint-bg', t.hintBg);
+      root.style.setProperty('--text-main', t.textMain);
+      root.style.setProperty('--text-secondary', t.textSecondary);
+      root.style.setProperty('--text-muted', t.textMuted);
+      root.style.setProperty('--border-color', t.borderColor);
+      root.style.setProperty('--accent-blue', t.accentBlue);
+      root.style.setProperty('--accent-indigo', t.accentIndigo);
+
+      document.querySelectorAll('.color-dot').forEach(dot => {
+        dot.classList.toggle('active', dot.id === `theme-${themeKey}`);
+      });
+
+      document.getElementById('customBgPicker').value = t.bgSolid;
+      localStorage.setItem(THEME_STORAGE_KEY, JSON.stringify({ type: 'preset', value: themeKey }));
+    }
+
+    // 根据任意自定义HEX颜色智能计算亮度并自动适配卡片深浅色对比度
+    function applyCustomBgColor(hexColor) {
+      const hex = hexColor.replace('#', '');
+      const r = parseInt(hex.substring(0, 2), 16) || 0;
+      const g = parseInt(hex.substring(2, 4), 16) || 0;
+      const b = parseInt(hex.substring(4, 6), 16) || 0;
+      // 相对感知亮度
+      const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+      const isLight = luminance > 0.58;
+
+      const root = document.documentElement;
+      root.style.setProperty('--bg-gradient', `radial-gradient(circle at top right, ${hexColor}, ${hexColor})`);
+      root.style.setProperty('--bg-solid', hexColor);
+
+      if (isLight) {
+        root.style.setProperty('--header-bg', 'rgba(255, 255, 255, 0.85)');
+        root.style.setProperty('--panel-bg', 'rgba(255, 255, 255, 0.82)');
+        root.style.setProperty('--card-front-bg', 'linear-gradient(145deg, #ffffff 0%, rgba(255,255,255,0.92) 100%)');
+        root.style.setProperty('--card-back-bg', 'linear-gradient(145deg, #f8fafc 0%, rgba(255,255,255,0.95) 100%)');
+        root.style.setProperty('--formula-bg', 'rgba(241, 245, 249, 0.92)');
+        root.style.setProperty('--hint-bg', 'rgba(226, 232, 240, 0.65)');
+        root.style.setProperty('--text-main', '#0f172a');
+        root.style.setProperty('--text-secondary', '#1e293b');
+        root.style.setProperty('--text-muted', '#475569');
+        root.style.setProperty('--border-color', 'rgba(100, 116, 139, 0.28)');
+        root.style.setProperty('--accent-blue', '#0284c7');
+        root.style.setProperty('--accent-indigo', '#4f46e5');
+      } else {
+        root.style.setProperty('--header-bg', 'rgba(15, 23, 42, 0.82)');
+        root.style.setProperty('--panel-bg', 'rgba(15, 23, 42, 0.58)');
+        root.style.setProperty('--card-front-bg', `linear-gradient(145deg, rgba(30, 41, 59, 0.95) 0%, ${hexColor} 100%)`);
+        root.style.setProperty('--card-back-bg', `linear-gradient(145deg, rgba(23, 37, 84, 0.95) 0%, ${hexColor} 100%)`);
+        root.style.setProperty('--formula-bg', 'rgba(15, 23, 42, 0.78)');
+        root.style.setProperty('--hint-bg', 'rgba(15, 23, 42, 0.55)');
+        root.style.setProperty('--text-main', '#f8fafc');
+        root.style.setProperty('--text-secondary', '#e2e8f0');
+        root.style.setProperty('--text-muted', '#cbd5e1');
+        root.style.setProperty('--border-color', 'rgba(255, 255, 255, 0.2)');
+        root.style.setProperty('--accent-blue', '#38bdf8');
+        root.style.setProperty('--accent-indigo', '#818cf8');
+      }
+
+      document.querySelectorAll('.color-dot').forEach(dot => dot.classList.remove('active'));
+      localStorage.setItem(THEME_STORAGE_KEY, JSON.stringify({ type: 'custom', value: hexColor }));
+    }
+
+    function initApp() {
+      // 恢复背景颜色设置
+      try {
+        const savedTheme = JSON.parse(localStorage.getItem(THEME_STORAGE_KEY) || 'null');
+        if (savedTheme) {
+          if (savedTheme.type === 'preset') applyTheme(savedTheme.value);
+          else if (savedTheme.type === 'custom') {
+            document.getElementById('customBgPicker').value = savedTheme.value;
+            applyCustomBgColor(savedTheme.value);
+          }
+        }
+      } catch (e) {}
+
+      const savedStatus = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+      allCards = initialCards.map(c => ({
+        ...c,
+        status: savedStatus[c.id] || 'unseen'
+      }));
+      filteredCards = [...allCards];
+      updateStats();
+      renderCurrentCard();
+      renderGridView();
+    }
+
+    function saveProgress() {
+      const map = {};
+      allCards.forEach(c => { map[c.id] = c.status; });
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(map));
+    }
+
+    function statusLabel(status) {
+      switch (status) {
+        case 'again': return { text: '🔴 需重来', cls: 'badge-status status-again' };
+        case 'hard': return { text: '🟡 有点模糊', cls: 'badge-status status-hard' };
+        case 'mastered': return { text: '🟢 已掌握', cls: 'badge-status status-mastered' };
+        default: return { text: '⚪ 未学习', cls: 'badge-status status-unseen' };
+      }
+    }
+
+    function renderCurrentCard() {
+      const cardEl = document.getElementById('flashcard');
+      isFlipped = false;
+      cardEl.classList.remove('is-flipped');
+
+      if (filteredCards.length === 0) {
+        document.getElementById('frontModule').textContent = '无匹配卡片';
+        document.getElementById('frontQuestion').innerHTML = '当前筛选条件下没有找到匹配的闪卡，请切换筛选标签或清空搜索词。';
+        document.getElementById('frontHint').style.display = 'none';
+        document.getElementById('statCurrent').textContent = '0 / 0';
+        return;
+      }
+
+      if (currentIndex >= filteredCards.length) currentIndex = 0;
+      if (currentIndex < 0) currentIndex = filteredCards.length - 1;
+
+      const card = filteredCards[currentIndex];
+      const st = statusLabel(card.status);
+
+      document.getElementById('frontModule').textContent = card.module;
+      document.getElementById('backModule').textContent = card.module;
+
+      const fSt = document.getElementById('frontStatus');
+      const bSt = document.getElementById('backStatus');
+      fSt.textContent = st.text;
+      fSt.className = st.cls;
+      bSt.textContent = st.text;
+      bSt.className = st.cls;
+
+      document.getElementById('frontQuestion').innerHTML = card.question;
+      const hintEl = document.getElementById('frontHint');
+      if (card.hint) {
+        hintEl.style.display = 'block';
+        hintEl.innerHTML = '💡 思考提示：' + card.hint;
+      } else {
+        hintEl.style.display = 'none';
+      }
+
+      document.getElementById('backAnswer').innerHTML = card.answer;
+      document.getElementById('frontIndex').textContent = `卡片 #${card.id} （当前列表 ${currentIndex + 1} / ${filteredCards.length}）`;
+      document.getElementById('backIndex').textContent = `卡片 #${card.id} （当前列表 ${currentIndex + 1} / ${filteredCards.length}）`;
+      document.getElementById('statCurrent').textContent = `${currentIndex + 1} / ${filteredCards.length}`;
+
+      typesetMath();
+    }
+
+    function typesetMath() {
+      if (window.MathJax && window.MathJax.typesetPromise) {
+        window.MathJax.typesetPromise().catch(err => console.warn('MathJax error:', err));
+      }
+    }
+
+    function flipCard() {
+      if (filteredCards.length === 0) return;
+      isFlipped = !isFlipped;
+      document.getElementById('flashcard').classList.toggle('is-flipped', isFlipped);
+    }
+
+    function nextCard() {
+      if (filteredCards.length === 0) return;
+      currentIndex = (currentIndex + 1) % filteredCards.length;
+      renderCurrentCard();
+    }
+
+    function prevCard() {
+      if (filteredCards.length === 0) return;
+      currentIndex = (currentIndex - 1 + filteredCards.length) % filteredCards.length;
+      renderCurrentCard();
+    }
+
+    function rateCard(level) {
+      if (filteredCards.length === 0) return;
+      const card = filteredCards[currentIndex];
+      card.status = level;
+      const origin = allCards.find(c => c.id === card.id);
+      if (origin) origin.status = level;
+
+      saveProgress();
+      updateStats();
+      renderGridView();
+
+      if (currentIndex < filteredCards.length - 1) {
+        currentIndex++;
+      } else {
+        currentIndex = 0;
+      }
+      renderCurrentCard();
+    }
+
+    function updateStats() {
+      const total = allCards.length || 1;
+      const mastered = allCards.filter(c => c.status === 'mastered').length;
+      const hard = allCards.filter(c => c.status === 'hard').length;
+      const again = allCards.filter(c => c.status === 'again').length;
+
+      document.getElementById('statMastered').textContent = mastered;
+      document.getElementById('statHard').textContent = hard;
+      document.getElementById('statAgain').textContent = again;
+
+      document.getElementById('progMastered').style.width = ((mastered / total) * 100).toFixed(1) + '%';
+      document.getElementById('progHard').style.width = ((hard / total) * 100).toFixed(1) + '%';
+      document.getElementById('progAgain').style.width = ((again / total) * 100).toFixed(1) + '%';
+    }
+
+    function filterByModule(mod) {
+      currentModule = mod;
+      document.querySelectorAll('#moduleTabs .tab-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('data-module') === mod);
+      });
+      applyFilters();
+    }
+
+    function applyFilters() {
+      const statusVal = document.getElementById('statusFilter').value;
+      const keyword = document.getElementById('searchInput').value.trim().toLowerCase();
+
+      filteredCards = allCards.filter(c => {
+        const matchMod = currentModule === 'all' || c.module === currentModule;
+        const matchStatus = statusVal === 'all' || c.status === statusVal;
+        const matchKey = !keyword ||
+          c.question.toLowerCase().includes(keyword) ||
+          c.answer.toLowerCase().includes(keyword) ||
+          (c.hint && c.hint.toLowerCase().includes(keyword));
+        return matchMod && matchStatus && matchKey;
+      });
+
+      currentIndex = 0;
+      renderCurrentCard();
+      renderGridView();
+    }
+
+    function shuffleCards() {
+      for (let i = filteredCards.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [filteredCards[i], filteredCards[j]] = [filteredCards[j], filteredCards[i]];
+      }
+      currentIndex = 0;
+      renderCurrentCard();
+      renderGridView();
+    }
+
+    function resetProgress() {
+      if (!confirm('确定要清空所有卡片的掌握度标记吗？')) return;
+      allCards.forEach(c => c.status = 'unseen');
+      localStorage.removeItem(STORAGE_KEY);
+      applyFilters();
+      updateStats();
+    }
+
+    function toggleViewMode() {
+      isGridView = !isGridView;
+      document.getElementById('singleCardStage').style.display = isGridView ? 'none' : 'block';
+      document.getElementById('actionPanel').style.display = isGridView ? 'none' : 'flex';
+      document.getElementById('gridView').classList.toggle('active', isGridView);
+      document.getElementById('btnToggleView').textContent = isGridView ? '🎴 返回单卡学习 (G)' : '📋 全部卡片总览 (G)';
+      if (isGridView) {
+        renderGridView();
+        typesetMath();
+      }
+    }
+
+    function renderGridView() {
+      const container = document.getElementById('gridView');
+      container.innerHTML = filteredCards.map((c, idx) => {
+        const st = statusLabel(c.status);
+        return `
+          <div class="grid-item" onclick="jumpToCard(${idx})">
+            <div style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
+              <span class="badge badge-module" style="font-size:11px;">#${c.id} · ${c.module.split('：')[1] || c.module}</span>
+              <span class="${st.cls}">${st.text}</span>
+            </div>
+            <h4>${c.question}</h4>
+            <p>👆 点击进入 3D 卡片详解</p>
+          </div>
+        `;
+      }).join('');
+      if (isGridView) typesetMath();
+    }
+
+    function jumpToCard(idx) {
+      currentIndex = idx;
+      if (isGridView) toggleViewMode();
+      renderCurrentCard();
+    }
+
+    // 导出与批量导入功能
+    function openModal() {
+      const lines = allCards.map(c => {
+        const cleanQ = c.question.replace(/\s+/g, ' ').trim();
+        const cleanA = c.answer.replace(/\s+/g, ' ').trim();
+        return `${cleanQ} | ${cleanA} | ${c.module}`;
+      });
+      document.getElementById('modalTextarea').value = lines.join('\n');
+      document.getElementById('modalOverlay').classList.add('active');
+    }
+
+    function closeModal() {
+      document.getElementById('modalOverlay').classList.remove('active');
+    }
+
+    function copyAnkiText() {
+      const textarea = document.getElementById('modalTextarea');
+      textarea.select();
+      document.execCommand('copy');
+      alert('已复制全部 30 张闪卡内容！可直接粘贴至 Anki 或笔记软件。');
+    }
+
+    function downloadAnkiFile() {
+      const content = document.getElementById('modalTextarea').value;
+      const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = '力学_第二章_惯性系下质点动力学_Anki闪卡.txt';
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function importFromTextarea() {
+      const raw = document.getElementById('modalTextarea').value.trim();
+      if (!raw) return;
+      const lines = raw.split('\n').filter(l => l.trim().includes('|'));
+      const newCards = lines.map((line, i) => {
+        const parts = line.split('|').map(p => p.trim());
+        return {
+          id: i + 1,
+          question: parts[0] || `问题 #${i + 1}`,
+          answer: parts[1] || '',
+          module: parts[2] || '自定义拓展模块',
+          hint: '点击卡片翻转查看解析',
+          status: 'unseen'
+        };
+      });
+      if (newCards.length > 0) {
+        allCards = newCards;
+        currentModule = 'all';
+        applyFilters();
+        updateStats();
+        closeModal();
+      }
+    }
+
+    // 键盘快捷键绑定
+    window.addEventListener('keydown', (e) => {
+      if (['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement.tagName)) return;
+      if (document.getElementById('modalOverlay').classList.contains('active')) {
+        if (e.key === 'Escape') closeModal();
+        return;
+      }
+
+      if (e.code === 'Space') {
+        e.preventDefault();
+        flipCard();
+      } else if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        nextCard();
+      } else if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        prevCard();
+      } else if (e.key === '1') {
+        rateCard('again');
+      } else if (e.key === '2') {
+        rateCard('hard');
+      } else if (e.key === '3') {
+        rateCard('mastered');
+      } else if (e.key.toLowerCase() === 's') {
+        shuffleCards();
+      } else if (e.key.toLowerCase() === 'g') {
+        toggleViewMode();
+      }
+    });
+
+    window.addEventListener('DOMContentLoaded', initApp);
+  </script>
+</body>
+</html>
