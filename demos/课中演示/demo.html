@@ -1,0 +1,1108 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>大学物理《力学》智慧课程 · 课中互动演示</title>
+  <!-- KaTeX 公式渲染 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" />
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      height: 100%;
+      background: radial-gradient(circle at 50% 0%, #1e293b 0%, #0f172a 70%);
+      color: #f8fafc;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+      overflow: hidden;
+    }
+    .mono { font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+
+    /* 顶部固定栏 */
+    header {
+      position: fixed; top: 0; left: 0; right: 0; height: 58px; z-index: 30;
+      display: flex; align-items: center; gap: 14px;
+      padding: 0 16px;
+      background: rgba(15, 23, 42, 0.78);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(148, 163, 184, 0.18);
+    }
+    .home-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 8px 14px; border-radius: 12px;
+      font-size: 13px; font-weight: 600; text-decoration: none;
+      color: #fda4af;
+      background: rgba(244, 63, 94, 0.14);
+      border: 1px solid rgba(244, 63, 94, 0.35);
+      transition: all .15s ease;
+    }
+    .home-btn:hover { background: rgba(244, 63, 94, 0.26); color: #fff; }
+    .title-badge {
+      font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+      padding: 4px 10px; border-radius: 999px;
+      color: #7dd3fc; background: rgba(56, 189, 248, 0.15);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      white-space: nowrap;
+    }
+    #chTitle { font-size: 16px; font-weight: 700; letter-spacing: .01em; }
+    .spacer { flex: 1; }
+    .chap-jump {
+      background: rgba(30, 41, 59, 0.7); color: #e2e8f0;
+      border: 1px solid rgba(148, 163, 184, 0.25); border-radius: 10px;
+      padding: 7px 10px; font-size: 13px; outline: none; cursor: pointer;
+    }
+
+    /* 主体布局 */
+    #app {
+      position: absolute; top: 58px; left: 0; right: 0; bottom: 0;
+      display: grid; grid-template-columns: 1fr 384px;
+    }
+    #stage { position: relative; overflow: hidden; }
+    #canvas { display: block; width: 100%; height: 100%; }
+
+    /* 侧栏 */
+    #panel {
+      border-left: 1px solid rgba(148, 163, 184, 0.18);
+      background: rgba(15, 23, 42, 0.55);
+      overflow-y: auto; padding: 16px;
+      display: flex; flex-direction: column; gap: 14px;
+    }
+    #panel::-webkit-scrollbar { width: 6px; }
+    #panel::-webkit-scrollbar-thumb { background: rgba(100,116,139,.4); border-radius: 999px; }
+
+    .card {
+      background: rgba(30, 41, 59, 0.55);
+      border: 1px solid rgba(148, 163, 184, 0.16);
+      border-radius: 14px; padding: 14px;
+    }
+    .card h3 {
+      font-size: 12px; font-weight: 700; color: #94a3b8;
+      text-transform: uppercase; letter-spacing: .06em; margin-bottom: 10px;
+      display: flex; align-items: center; gap: 6px;
+    }
+    #desc { font-size: 13px; line-height: 1.7; color: #cbd5e1; }
+    #desc .katex { color: #f8fafc; }
+
+    /* 控件 */
+    .ctrl { margin-bottom: 14px; }
+    .ctrl:last-child { margin-bottom: 0; }
+    .ctrl-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; }
+    .ctrl-head > span:first-child { font-size: 13px; color: #e2e8f0; font-weight: 500; }
+    .ctrl-head .val { font-size: 13px; font-weight: 700; color: #38bdf8; }
+    input[type=range] {
+      -webkit-appearance: none; appearance: none; width: 100%; height: 6px;
+      background: rgba(51, 65, 85, 0.9); border-radius: 999px; outline: none;
+    }
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none; appearance: none; width: 16px; height: 16px; border-radius: 50%;
+      background: #38bdf8; border: 2px solid #fff; cursor: pointer;
+      box-shadow: 0 0 10px rgba(56,189,248,.8); transition: transform .12s ease;
+    }
+    input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.18); }
+    .sel {
+      width: 100%; padding: 8px 10px; border-radius: 10px; font-size: 13px;
+      color: #e2e8f0; background: rgba(15,23,42,.85);
+      border: 1px solid rgba(148,163,184,.3); outline: none; cursor: pointer;
+    }
+
+    /* 读数 */
+    #readout { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .rcard {
+      background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(56,189,248,.18);
+      border-radius: 10px; padding: 8px 10px;
+    }
+    .rcard .rlabel { font-size: 11px; color: #94a3b8; margin-bottom: 3px; }
+    .rcard .rval { font-size: 16px; font-weight: 700; color: #38bdf8; line-height: 1.1; }
+    .rcard .runit { font-size: 11px; color: #64748b; font-weight: 500; margin-left: 2px; }
+
+    /* 底部按钮 */
+    .btn-row { display: flex; gap: 8px; flex-wrap: wrap; }
+    .btn {
+      flex: 1; min-width: 90px; padding: 9px 12px; border-radius: 11px;
+      font-size: 13px; font-weight: 700; cursor: pointer; border: 1px solid transparent;
+      transition: all .15s ease; text-align: center;
+    }
+    .btn-primary { background: #38bdf8; color: #0f172a; }
+    .btn-primary:hover { background: #7dd3fc; }
+    .btn-ghost { background: rgba(30,41,59,.8); color: #cbd5e1; border-color: rgba(148,163,184,.3); }
+    .btn-ghost:hover { background: rgba(51,65,85,.9); color: #fff; }
+
+    /* 章节导航 */
+    .nav-row { display: flex; gap: 8px; }
+    .nav-row .btn { font-size: 12px; padding: 8px; }
+
+    /* ch6 引导卡片 */
+    #redirect {
+      position: absolute; inset: 0; display: none;
+      align-items: center; justify-content: center; padding: 24px;
+    }
+    .redirect-card {
+      max-width: 520px; text-align: center;
+      background: rgba(30, 41, 59, 0.7);
+      border: 1px solid rgba(129, 140, 248, 0.35);
+      border-radius: 20px; padding: 36px 32px;
+      box-shadow: 0 24px 60px -20px rgba(0,0,0,.7);
+    }
+    .redirect-card .icon { font-size: 54px; margin-bottom: 14px; }
+    .redirect-card h2 { font-size: 22px; font-weight: 800; margin-bottom: 12px; color: #fff; }
+    .redirect-card p { font-size: 14px; line-height: 1.8; color: #cbd5e1; margin-bottom: 24px; }
+    .redirect-card .link-btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 13px 26px; border-radius: 14px; font-size: 15px; font-weight: 700;
+      text-decoration: none; color: #0f172a;
+      background: linear-gradient(135deg, #38bdf8, #818cf8);
+      box-shadow: 0 10px 30px -8px rgba(56,189,248,.6);
+      transition: transform .15s ease;
+    }
+    .redirect-card .link-btn:hover { transform: translateY(-2px); }
+
+    @media (max-width: 920px) {
+      #app { grid-template-columns: 1fr; grid-template-rows: 55% 45%; }
+      #panel { border-left: none; border-top: 1px solid rgba(148,163,184,.18); }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <a class="home-btn no-print" href="../../index.html" title="返回《力学》AI 智慧课程主页">🏠 返回课程主页</a>
+    <span class="title-badge">大学物理《力学》</span>
+    <span id="chTitle">第 1 章 · 质点运动学 · 互动演示</span>
+    <span class="spacer"></span>
+    <select class="chap-jump" id="chapJump" title="跳转章节"></select>
+  </header>
+
+  <div id="app">
+    <div id="stage">
+      <canvas id="canvas"></canvas>
+      <div id="redirect">
+        <div class="redirect-card">
+          <div class="icon">🌀</div>
+          <h2>第 6 章 · 刚体定轴转动</h2>
+          <p>本章的互动演示是一个专门的 <b>Three.js 三维陀螺仪</b> 演示，直观展示重力作用下陀螺的进动与角动量增量关系 <span class="mono">dL = M dt</span>。点击下方按钮在新页面中打开该 3D 演示。</p>
+          <a class="link-btn" href="../gyroscope-precession.html">打开陀螺仪 3D 演示 →</a>
+        </div>
+      </div>
+    </div>
+
+    <div id="panel">
+      <div class="card">
+        <h3>💡 原理说明</h3>
+        <div id="desc"></div>
+      </div>
+
+      <div class="card">
+        <h3>🎛️ 参数调节</h3>
+        <div id="controls"></div>
+      </div>
+
+      <div class="card">
+        <h3>📊 实时物理量</h3>
+        <div id="readout"></div>
+      </div>
+
+      <div class="card">
+        <div class="btn-row">
+          <button class="btn btn-primary" id="btnPlay">⏸ 暂停</button>
+          <button class="btn btn-ghost" id="btnReset">↺ 重置</button>
+        </div>
+        <div class="nav-row" style="margin-top:10px;">
+          <button class="btn btn-ghost" id="btnPrev">← 上一章</button>
+          <button class="btn btn-ghost" id="btnNext">下一章 →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  'use strict';
+
+  // ===== 配色 =====
+  const C = {
+    text:'#f8fafc', sub:'#94a3b8', blue:'#38bdf8', indigo:'#818cf8',
+    green:'#34d399', red:'#f87171', amber:'#fbbf24', pink:'#f472b6',
+    cyan:'#22d3ee', violet:'#a78bfa', grid:'rgba(148,163,184,0.10)',
+    axis:'rgba(148,163,184,0.4)'
+  };
+
+  const CHAPTERS = {
+    1:{name:'质点运动学'}, 2:{name:'牛顿运动定律'}, 3:{name:'动量守恒定律'},
+    4:{name:'动能定理与功能原理'}, 5:{name:'角动量与力矩'}, 6:{name:'刚体定轴转动'},
+    7:{name:'刚体平面运动'}, 8:{name:'机械振动'}, 9:{name:'机械波'},
+    10:{name:'流体力学'}, 11:{name:'万有引力与天体运动'}, 12:{name:'狭义相对论基础'}
+  };
+
+  // ===== 绘图工具 =====
+  function arrow(ctx, x1, y1, x2, y2, color, w, head) {
+    ctx.strokeStyle = color; ctx.fillStyle = color; ctx.lineWidth = w || 2;
+    ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+    const a = Math.atan2(y2 - y1, x2 - x1), hl = head || 9;
+    ctx.beginPath(); ctx.moveTo(x2, y2);
+    ctx.lineTo(x2 - hl * Math.cos(a - 0.42), y2 - hl * Math.sin(a - 0.42));
+    ctx.lineTo(x2 - hl * Math.cos(a + 0.42), y2 - hl * Math.sin(a + 0.42));
+    ctx.closePath(); ctx.fill();
+  }
+  function label(ctx, x, y, text, color) {
+    ctx.font = '600 12px JetBrains Mono, monospace';
+    const w = ctx.measureText(text).width + 10;
+    ctx.fillStyle = 'rgba(15,23,42,0.8)';
+    ctx.fillRect(x - w/2, y - 9, w, 18);
+    ctx.fillStyle = color || C.text; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(text, x, y);
+  }
+  function clearBg(ctx, W, H) {
+    const g = ctx.createLinearGradient(0, 0, 0, H);
+    g.addColorStop(0, '#0f172a'); g.addColorStop(1, '#0b1220');
+    ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+    ctx.strokeStyle = C.grid; ctx.lineWidth = 1;
+    for (let x = 0; x < W; x += 40) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke(); }
+    for (let y = 0; y < H; y += 40) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
+  }
+
+  // =========================================================================
+  // DEMOS 1–5, 7–12
+  // =========================================================================
+  const DEMOS = {
+
+    // ---------------- 第1章 质点运动学：抛体运动 ----------------
+    1: {
+      name: '质点运动学',
+      desc: '抛体运动：忽略空气阻力，质点仅受重力。运动方程 $x=v_0\\cos\\theta\\,t,\\; y=v_0\\sin\\theta\\,t-\\frac12 g t^2$。速度 $\\vec v=(v_0\\cos\\theta,\\; v_0\\sin\\theta-gt)$，加速度 $\\vec a=(0,-g)$ 恒定。',
+      controls: [
+        { key:'v0', label:'初速度 $v_0$', min:5, max:40, step:1, value:25, unit:'m/s' },
+        { key:'ang', label:'抛射角 $\\theta$', min:10, max:80, step:1, value:45, unit:'°' },
+        { key:'g', label:'重力加速度 $g$', min:1, max:20, step:0.1, value:9.8, unit:'m/s²' }
+      ],
+      init(P, S) { S.t = 0; },
+      step(P, S, dt) {
+        const th = P.ang * Math.PI / 180, vy = P.v0 * Math.sin(th);
+        const T = 2 * vy / P.g;
+        S.t += dt;
+        if (S.t > T + 0.001) S.t = 0;
+      },
+      draw(ctx, W, H, P, S) {
+        clearBg(ctx, W, H);
+        const th = P.ang * Math.PI / 180;
+        const vx = P.v0 * Math.cos(th), vy = P.v0 * Math.sin(th);
+        const R = 2 * vx * vy / P.g, Hmax = vy * vy / (2 * P.g);
+        const m = 64, s = Math.min((W - 2*m) / Math.max(R, 0.1), (H - 2*m) / Math.max(Hmax, 0.1));
+        const ox = m, oy = H - m;
+        // 地面
+        ctx.strokeStyle = C.axis; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.moveTo(0, oy); ctx.lineTo(W, oy); ctx.stroke();
+        // 轨迹
+        ctx.strokeStyle = 'rgba(56,189,248,0.35)'; ctx.lineWidth = 2; ctx.beginPath();
+        for (let i = 0; i <= 120; i++) {
+          const t = i / 120 * (2 * vy / P.g);
+          const x = vx * t, y = vy * t - 0.5 * P.g * t * t;
+          const px = ox + x * s, py = oy - y * s;
+          i ? ctx.lineTo(px, py) : ctx.moveTo(px, py);
+        }
+        ctx.stroke();
+        // 当前点
+        const t = S.t, x = vx * t, y = vy * t - 0.5 * P.g * t * t;
+        const px = ox + x * s, py = oy - y * s;
+        // 速度矢量
+        const vcx = vx, vcy = vy - P.g * t, vs = 3.2;
+        arrow(ctx, px, py, px + vcx * vs, py - vcy * vs, C.blue, 3);
+        label(ctx, px + vcx * vs, py - vcy * vs - 12, 'v', C.blue);
+        // 加速度矢量（恒定向下）
+        const as = 2.4;
+        arrow(ctx, px, py, px, py + P.g * as, C.red, 3);
+        label(ctx, px + 14, py + P.g * as, 'a=g', C.red);
+        // 质点
+        ctx.fillStyle = '#f8fafc'; ctx.beginPath(); ctx.arc(px, py, 7, 0, 7); ctx.fill();
+      },
+      readout(P, S) {
+        const th = P.ang * Math.PI / 180, vx = P.v0 * Math.cos(th), vy = P.v0 * Math.sin(th);
+        const t = S.t, x = vx * t, y = vy * t - 0.5 * P.g * t * t;
+        const vcy = vy - P.g * t;
+        const R = 2 * vx * vy / P.g, Hmax = vy * vy / (2 * P.g);
+        return [
+          { label:'飞行时间 t', value:t.toFixed(2), unit:'s', color:C.text },
+          { label:'位置 x, y', value:`${x.toFixed(1)}, ${y.toFixed(1)}`, unit:'m', color:C.text },
+          { label:'速度 |v|', value:Math.hypot(vx, vcy).toFixed(1), unit:'m/s', color:C.blue },
+          { label:'竖直速度 v_y', value:vcy.toFixed(1), unit:'m/s', color:C.blue },
+          { label:'加速度 a_y', value:(-P.g).toFixed(1), unit:'m/s²', color:C.red },
+          { label:'射程 R / 最大高', value:`${R.toFixed(1)} / ${Hmax.toFixed(1)}`, unit:'m', color:C.amber }
+        ];
+      }
+    },
+
+    // ---------------- 第2章 牛顿运动定律：斜面滑块 ----------------
+    2: {
+      name: '牛顿运动定律',
+      desc: '沿斜面方向列牛顿第二定律：$ma=mg\\sin\\theta-f$。滑动摩擦力 $f=\\mu N=\\mu mg\\cos\\theta$，故 $a=g(\\sin\\theta-\\mu\\cos\\theta)$。当 $\\mu\\ge\\tan\\theta$ 时静摩擦足以平衡，物体静止。',
+      controls: [
+        { key:'m', label:'质量 $m$', min:0.5, max:5, step:0.1, value:2, unit:'kg' },
+        { key:'ang', label:'倾角 $\\theta$', min:5, max:60, step:1, value:30, unit:'°' },
+        { key:'mu', label:'摩擦系数 $\\mu$', min:0, max:0.8, step:0.01, value:0.1 },
+        { key:'g', label:'重力加速度 $g$', min:1, max:20, step:0.1, value:9.8, unit:'m/s²' }
+      ],
+      init(P, S) { S.s = 0; S.v = 0; },
+      step(P, S, dt) {
+        const th = P.ang * Math.PI / 180;
+        const a = Math.max(0, P.g * (Math.sin(th) - P.mu * Math.cos(th)));
+        if (a > 0) { S.v += a * dt; S.s += S.v * dt; if (S.s >= 10) { S.s = 0; S.v = 0; } }
+      },
+      draw(ctx, W, H, P, S) {
+        clearBg(ctx, W, H);
+        const th = P.ang * Math.PI / 180;
+        const Lpx = Math.min(W, H) * 0.62;
+        const ax = 60, ay = H - 60;                       // 斜面底端（左下）
+        const bx = ax + Lpx * Math.cos(th), by = ay - Lpx * Math.sin(th); // 顶端（右上）
+        // 斜面
+        ctx.strokeStyle = C.blue; ctx.lineWidth = 6;
+        ctx.beginPath(); ctx.moveTo(ax, ay); ctx.lineTo(bx, by); ctx.stroke();
+        // 滑块位置（从顶端下滑 s）
+        const sScale = Lpx / 10;
+        const prog = Math.min(1, S.s / 10);
+        const cx = bx - (bx - ax) * prog, cy = by - (by - ay) * prog;
+        const nx = Math.cos(th), ny = -Math.sin(th);      // 沿斜面（上端→下端）单位向量
+        const px = -ny, py = nx;                          // 垂直斜面（向外）单位向量
+        const bw = 30, bl = 30;
+        ctx.save(); ctx.translate(cx, cy); ctx.rotate(-th);
+        ctx.fillStyle = C.indigo; ctx.strokeStyle = '#c7d2fe'; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.rect(-bl/2, -bw/2, bl, bw); ctx.fill(); ctx.stroke();
+        ctx.restore();
+        // 受力图（作用点在滑块中心 cx,cy）
+        const fScale = 1.1;
+        const mg = P.m * P.g;
+        const N = mg * Math.cos(th);
+        const a = Math.max(0, P.g * (Math.sin(th) - P.mu * Math.cos(th)));
+        const f = a > 0 ? P.mu * N : mg * Math.sin(th);   // 滑动/静摩擦
+        // 重力（竖直向下）
+        arrow(ctx, cx, cy, cx, cy + mg * fScale, C.green, 3);
+        label(ctx, cx + 16, cy + mg * fScale, 'mg', C.green);
+        // 支持力（垂直斜面向外）
+        arrow(ctx, cx, cy, cx + px * N * fScale, cy + py * N * fScale, C.cyan, 3);
+        label(ctx, cx + px * N * fScale, cy + py * N * fScale - 10, 'N', C.cyan);
+        // 摩擦力（沿斜面向上，即 -n 方向）
+        arrow(ctx, cx, cy, cx - nx * f * fScale, cy - ny * f * fScale, C.amber, 3);
+        label(ctx, cx - nx * f * fScale, cy - ny * f * fScale + 12, 'f', C.amber);
+        // 合力（沿斜面向下）
+        arrow(ctx, cx, cy, cx + nx * (P.m * a) * fScale, cy + ny * (P.m * a) * fScale, C.red, 3);
+        label(ctx, cx + nx * (P.m * a) * fScale, cy + ny * (P.m * a) * fScale, 'ma', C.red);
+      },
+      readout(P, S) {
+        const th = P.ang * Math.PI / 180, mg = P.m * P.g;
+        const N = mg * Math.cos(th);
+        const a = Math.max(0, P.g * (Math.sin(th) - P.mu * Math.cos(th)));
+        const f = a > 0 ? P.mu * N : mg * Math.sin(th);
+        const muc = Math.tan(th);
+        return [
+          { label:'加速度 a', value:a.toFixed(2), unit:'m/s²', color:C.red },
+          { label:'支持力 N', value:N.toFixed(1), unit:'N', color:C.cyan },
+          { label:'摩擦力 f', value:f.toFixed(1), unit:'N', color:C.amber },
+          { label:'下滑力 mg·sinθ', value:(mg*Math.sin(th)).toFixed(1), unit:'N', color:C.green },
+          { label:'临界 μ = tanθ', value:muc.toFixed(2), color:C.text },
+          { label:'状态', value:(P.mu>=muc?'静止(静摩擦)':'下滑(动摩擦)'), color:(P.mu>=muc?C.sub:C.blue) }
+        ];
+      }
+    },
+
+    // ---------------- 第3章 动量守恒：一维对心碰撞 ----------------
+    3: {
+      name: '动量守恒定律',
+      desc: '一维对心碰撞满足动量守恒 $m_1u_1+m_2u_2=m_1v_1+m_2v_2$。恢复系数 $e=(v_2-v_1)/(u_1-u_2)$；完全弹性 $e=1$ 动能守恒，完全非弹性 $e=0$ 共速、动能损失最大。',
+      controls: [
+        { key:'m1', label:'质量 $m_1$', min:0.5, max:5, step:0.1, value:2, unit:'kg' },
+        { key:'m2', label:'质量 $m_2$', min:0.5, max:5, step:0.1, value:2, unit:'kg' },
+        { key:'u1', label:'初速 $u_1$ (向右)', min:1, max:12, step:0.5, value:6, unit:'m/s' },
+        { key:'u2', label:'初速 $u_2$ (向左)', min:0, max:12, step:0.5, value:3, unit:'m/s' },
+        { key:'e', type:'select', label:'碰撞类型', value:1,
+          options:[ {label:'完全弹性 (e = 1)',value:1}, {label:'部分非弹性 (e = 0.5)',value:0.5}, {label:'完全非弹性 (e = 0)',value:0} ] }
+      ],
+      init(P, S) {
+        S.m1 = P.m1; S.m2 = P.m2;
+        S.r1 = 14 + P.m1 * 3; S.r2 = 14 + P.m2 * 3;
+        S.x1 = 150; S.x2 = W - 150; S.v1 = P.u1; S.v2 = -P.u2;
+        S.collided = false;
+      },
+      step(P, S, dt) {
+        const VS = 26;
+        if (!S.collided && (S.x2 - S.x1) <= (S.r1 + S.r2)) {
+          const e = P.e, m1 = S.m1, m2 = S.m2, u1 = S.v1, u2 = S.v2;
+          S.v1 = (m1*u1 + m2*u2 + m2*e*(u2-u1)) / (m1+m2);
+          S.v2 = (m1*u1 + m2*u2 + m1*e*(u1-u2)) / (m1+m2);
+          const ov = (S.r1+S.r2) - (S.x2-S.x1);
+          S.x1 -= ov/2; S.x2 += ov/2; S.collided = true;
+        }
+        S.x1 += S.v1 * dt * VS; S.x2 += S.v2 * dt * VS;
+        if (S.collided && (S.x1 > W+90 || S.x1 < -90 || S.x2 > W+90 || S.x2 < -90)) {
+          S.x1 = 150; S.x2 = W - 150; S.v1 = P.u1; S.v2 = -P.u2; S.collided = false;
+        }
+      },
+      draw(ctx, W, H, P, S) {
+        clearBg(ctx, W, H);
+        const cy = H/2;
+        // 地面线
+        ctx.strokeStyle = C.axis; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.moveTo(40, cy + 40); ctx.lineTo(W-40, cy + 40); ctx.stroke();
+        // 两球
+        ctx.fillStyle = C.blue; ctx.beginPath(); ctx.arc(S.x1, cy, S.r1, 0, 7); ctx.fill();
+        ctx.fillStyle = C.pink; ctx.beginPath(); ctx.arc(S.x2, cy, S.r2, 0, 7); ctx.fill();
+        ctx.fillStyle = '#0f172a'; ctx.font = '700 12px sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+        ctx.fillText('1', S.x1, cy); ctx.fillText('2', S.x2, cy);
+      },
+      readout(P, S) {
+        const p = S.m1 * S.v1 + S.m2 * S.v2;
+        const KE = 0.5*S.m1*S.v1*S.v1 + 0.5*S.m2*S.v2*S.v2;
+        const KE0 = 0.5*S.m1*P.u1*P.u1 + 0.5*S.m2*P.u2*P.u2;
+        return [
+          { label:'系统动量 p', value:p.toFixed(2), unit:'kg·m/s', color:C.amber },
+          { label:'初动量 p₀', value:(S.m1*P.u1 - S.m2*P.u2).toFixed(2), unit:'kg·m/s', color:C.sub },
+          { label:'球1速度 v₁', value:S.v1.toFixed(2), unit:'m/s', color:C.blue },
+          { label:'球2速度 v₂', value:S.v2.toFixed(2), unit:'m/s', color:C.pink },
+          { label:'碰后动能 E_k', value:KE.toFixed(2), unit:'J', color:C.green },
+          { label:'动能损失', value:(KE0-KE).toFixed(2), unit:'J', color:(KE0-KE>0.001?C.red:C.sub) }
+        ];
+      }
+    },
+
+    // ---------------- 第4章 动能定理与功能原理 ----------------
+    4: {
+      name: '动能定理与功能原理',
+      desc: '动能定理 $W_{\\text{合}}=\\Delta E_k$。斜面下滑时合外力做功 $W_{\\text{合}}=(mg\\sin\\theta-\\mu mg\\cos\\theta)s$，动能增量 $\\Delta E_k=\\frac12mv^2-\\frac12mv_0^2$，二者始终相等。',
+      controls: [
+        { key:'m', label:'质量 $m$', min:0.5, max:5, step:0.1, value:2, unit:'kg' },
+        { key:'ang', label:'倾角 $\\theta$', min:5, max:60, step:1, value:30, unit:'°' },
+        { key:'mu', label:'摩擦系数 $\\mu$', min:0, max:0.6, step:0.01, value:0.1 },
+        { key:'v0', label:'初速 $v_0$', min:0, max:10, step:0.5, value:0, unit:'m/s' },
+        { key:'g', label:'重力加速度 $g$', min:1, max:20, step:0.1, value:9.8, unit:'m/s²' }
+      ],
+      init(P, S) { S.s = 0; S.v = P.v0; },
+      step(P, S, dt) {
+        const th = P.ang * Math.PI / 180;
+        const a = Math.max(0, P.g * (Math.sin(th) - P.mu * Math.cos(th)));
+        S.v += a * dt; S.s += S.v * dt;
+        if (S.s >= 10) { S.s = 0; S.v = P.v0; }
+      },
+      draw(ctx, W, H, P, S) {
+        clearBg(ctx, W, H);
+        const th = P.ang * Math.PI / 180, Lpx = Math.min(W, H) * 0.62;
+        const ax = 60, ay = H - 60, bx = ax + Lpx*Math.cos(th), by = ay - Lpx*Math.sin(th);
+        ctx.strokeStyle = C.blue; ctx.lineWidth = 6;
+        ctx.beginPath(); ctx.moveTo(ax, ay); ctx.lineTo(bx, by); ctx.stroke();
+        const prog = Math.min(1, S.s / 10);
+        const cx = bx - (bx-ax)*prog, cy = by - (by-ay)*prog;
+        ctx.save(); ctx.translate(cx, cy); ctx.rotate(-th);
+        ctx.fillStyle = C.indigo; ctx.fillRect(-15, -15, 30, 30); ctx.restore();
+      },
+      readout(P, S) {
+        const th = P.ang * Math.PI / 180, mg = P.m * P.g;
+        const Wg = mg * Math.sin(th) * S.s;
+        const Wf = -P.mu * mg * Math.cos(th) * S.s;
+        const Wnet = Wg + Wf;
+        const dK = 0.5*P.m*S.v*S.v - 0.5*P.m*P.v0*P.v0;
+        const ok = Math.abs(Wnet - dK) < 0.05;
+        return [
+          { label:'位移 s', value:S.s.toFixed(2), unit:'m', color:C.text },
+          { label:'速度 v', value:S.v.toFixed(2), unit:'m/s', color:C.blue },
+          { label:'重力做功 W_G', value:Wg.toFixed(2), unit:'J', color:C.green },
+          { label:'摩擦做功 W_f', value:Wf.toFixed(2), unit:'J', color:C.amber },
+          { label:'合外力做功 W_合', value:Wnet.toFixed(2), unit:'J', color:C.red },
+          { label:'动能增量 ΔE_k', value:dK.toFixed(2), unit:'J', color:(ok?C.green:C.red) }
+        ];
+      }
+    },
+
+    // ---------------- 第5章 角动量与力矩：单摆 ----------------
+    5: {
+      name: '角动量与力矩',
+      desc: '单摆受重力矩 $\\tau=-mgl\\sin\\varphi$，转动方程 $I\\ddot\\varphi=\\tau$，其中 $I=ml^2$，角动量 $L=I\\omega$。重力矩不断改变角动量方向（垂直于摆动平面）。',
+      controls: [
+        { key:'l', label:'摆长 $l$', min:0.4, max:2, step:0.1, value:1, unit:'m' },
+        { key:'m', label:'质量 $m$', min:0.5, max:3, step:0.1, value:1, unit:'kg' },
+        { key:'ang', label:'初始角 $\\varphi_0$', min:10, max:80, step:1, value:45, unit:'°' },
+        { key:'g', label:'重力加速度 $g$', min:1, max:20, step:0.1, value:9.8, unit:'m/s²' }
+      ],
+      init(P, S) { S.phi = P.ang * Math.PI/180; S.omega = 0; },
+      step(P, S, dt) {
+        const alpha = -(P.g / P.l) * Math.sin(S.phi);
+        S.omega += alpha * dt; S.phi += S.omega * dt;
+      },
+      draw(ctx, W, H, P, S) {
+        clearBg(ctx, W, H);
+        const px = W/2, py = 70, Lpix = Math.min(W, H) * 0.42;
+        const bx = px + Lpix * Math.sin(S.phi), by = py + Lpix * Math.cos(S.phi);
+        // 摆线
+        ctx.strokeStyle = C.sub; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(bx, by); ctx.stroke();
+        // 支点
+        ctx.fillStyle = C.text; ctx.beginPath(); ctx.arc(px, py, 5, 0, 7); ctx.fill();
+        // 摆球
+        ctx.fillStyle = C.indigo; ctx.beginPath(); ctx.arc(bx, by, 14, 0, 7); ctx.fill();
+        // 位矢 r（支点→摆球）
+        arrow(ctx, px, py, bx, by, C.violet, 2);
+        label(ctx, (px+bx)/2 - 10, (py+by)/2, 'r', C.violet);
+        // 重力 mg（向下）
+        const mg = P.m * P.g, fs = 0.9;
+        arrow(ctx, bx, by, bx, by + mg*fs, C.green, 3);
+        label(ctx, bx + 16, by + mg*fs, 'mg', C.green);
+        // 力矩 / 角动量（垂直纸面，用 ±z 表示）
+        const tau = -P.m * P.g * P.l * Math.sin(S.phi);
+        const L = P.m * P.l * P.l * S.omega;
+        const dir = tau >= 0 ? 1 : -1;
+        const czx = px, czy = py + 30;
+        // z 轴指示（圆+点/叉）
+        ctx.strokeStyle = C.amber; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.arc(czx, czy, 12, 0, 7); ctx.stroke();
+        if (dir >= 0) { ctx.fillStyle = C.amber; ctx.beginPath(); ctx.arc(czx, czy, 3, 0, 7); ctx.fill(); }
+        else { ctx.beginPath(); ctx.moveTo(czx-5,czy-5); ctx.lineTo(czx+5,czy+5); ctx.moveTo(czx+5,czy-5); ctx.lineTo(czx-5,czy+5); ctx.stroke(); }
+        label(ctx, czx, czy - 22, 'τ,L ⊙', C.amber);
+      },
+      readout(P, S) {
+        const alpha = -(P.g / P.l) * Math.sin(S.phi);
+        const tau = -P.m * P.g * P.l * Math.sin(S.phi);
+        const L = P.m * P.l * P.l * S.omega;
+        const T = 2 * Math.PI * Math.sqrt(P.l / P.g);
+        const E = 0.5 * P.m * P.l * P.l * S.omega * S.omega + P.m * P.g * P.l * (1 - Math.cos(S.phi));
+        return [
+          { label:'角 φ', value:(S.phi*180/Math.PI).toFixed(1), unit:'°', color:C.text },
+          { label:'角速度 ω', value:S.omega.toFixed(2), unit:'rad/s', color:C.blue },
+          { label:'角加速度 α', value:alpha.toFixed(2), unit:'rad/s²', color:C.violet },
+          { label:'力矩 τ', value:tau.toFixed(2), unit:'N·m', color:C.amber },
+          { label:'角动量 L', value:L.toFixed(2), unit:'kg·m²/s', color:C.green },
+          { label:'小角周期 T', value:T.toFixed(2), unit:'s', color:C.cyan }
+        ];
+      }
+    },
+
+    // ---------------- 第7章 刚体平面运动：纯滚动 vs 滑动 ----------------
+    7: {
+      name: '刚体平面运动',
+      desc: '圆柱纯滚动无滑满足运动学约束 $v=\\omega R$，质心加速度 $a=\\dfrac{g\\sin\\theta}{1+I/(mR^2)}$（实心圆柱 $I=\\frac12mR^2$，故 $a=\\frac23g\\sin\\theta$）。若打滑则 $v\\neq\\omega R$。上方为纯滚动，下方为有滑动（无摩擦）。',
+      controls: [
+        { key:'R', label:'半径 $R$', min:0.3, max:1.2, step:0.05, value:0.6, unit:'m' },
+        { key:'ang', label:'倾角 $\\theta$', min:5, max:50, step:1, value:25, unit:'°' },
+        { key:'g', label:'重力加速度 $g$', min:1, max:20, step:0.1, value:9.8, unit:'m/s²' }
+      ],
+      init(P, S) { S.sR = 0; S.sS = 0; S.vR = 0; S.vS = 0; S.wR = 0; },
+      step(P, S, dt) {
+        const th = P.ang * Math.PI / 180;
+        const aR = 2/3 * P.g * Math.sin(th);      // 纯滚动
+        const aS = P.g * Math.sin(th);            // 滑动（无摩擦）
+        S.vR += aR * dt; S.sR += S.vR * dt; S.wR = S.vR / P.R;
+        S.vS += aS * dt; S.sS += S.vS * dt;
+        if (S.sR >= 10) { S.sR = 0; S.vR = 0; S.wR = 0; }
+        if (S.sS >= 10) { S.sS = 0; S.vS = 0; }
+      },
+      draw(ctx, W, H, P, S) {
+        clearBg(ctx, W, H);
+        const th = P.ang * Math.PI / 180, Lpx = Math.min(W, H) * 0.5;
+        const laneY = [H*0.34, H*0.72];
+        [0,1].forEach(k => {
+          const y0 = laneY[k];
+          const ax = 60, ay = y0, bx = ax + Lpx*Math.cos(th), by = ay - Lpx*Math.sin(th);
+          ctx.strokeStyle = C.blue; ctx.lineWidth = 5;
+          ctx.beginPath(); ctx.moveTo(ax, ay); ctx.lineTo(bx, by); ctx.stroke();
+          const s = k===0 ? S.sR : S.sS, r = 22 + P.R*14;
+          const prog = Math.min(1, s/10);
+          const cx = bx - (bx-ax)*prog, cy = by - (by-ay)*prog - r;
+          // 圆柱
+          ctx.fillStyle = k===0 ? C.green : C.amber;
+          ctx.beginPath(); ctx.arc(cx, cy, r, 0, 7); ctx.fill();
+          // 标记半径线显示旋转
+          const w = k===0 ? S.wR : 0;
+          ctx.strokeStyle = '#0f172a'; ctx.lineWidth = 3;
+          ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx + r*Math.cos(w), cy + r*Math.sin(w)); ctx.stroke();
+          // 标签
+          ctx.fillStyle = C.text; ctx.font='600 12px sans-serif'; ctx.textAlign='left';
+          ctx.fillText(k===0 ? '纯滚动 (v=ωR)' : '有滑动 (ω=0)', ax+4, ay - r - 12);
+        });
+      },
+      readout(P, S) {
+        const th = P.ang * Math.PI / 180;
+        const aR = 2/3 * P.g * Math.sin(th), aS = P.g * Math.sin(th);
+        const ratio = (S.wR*P.R) > 1e-6 ? (S.vR/(S.wR*P.R)) : 0;
+        return [
+          { label:'纯滚动 a', value:aR.toFixed(2), unit:'m/s²', color:C.green },
+          { label:'纯滚动 v, ω', value:`${S.vR.toFixed(1)}, ${S.wR.toFixed(1)}`, unit:'m/s, r/s', color:C.green },
+          { label:'纯滚动 v/(ωR)', value:(S.wR>0?ratio.toFixed(2):'—'), color:C.green },
+          { label:'滑动 a', value:aS.toFixed(2), unit:'m/s²', color:C.amber },
+          { label:'滑动 v', value:S.vS.toFixed(1), unit:'m/s', color:C.amber },
+          { label:'滑动 ω', value:'0.00', unit:'rad/s', color:C.amber }
+        ];
+      }
+    },
+
+    // ---------------- 第8章 机械振动：弹簧振子 ----------------
+    8: {
+      name: '机械振动',
+      desc: '弹簧振子运动方程 $\\ddot x=-\\frac{k}{m}x-\\frac{b}{m}\\dot x$。无阻尼时 $\\omega_0=\\sqrt{k/m}$，周期 $T=2\\pi/\\omega_0$；欠阻尼时振幅按 $e^{-\\gamma t}$ 衰减，$\\gamma=b/(2m)$。',
+      controls: [
+        { key:'k', label:'劲度系数 $k$', min:1, max:30, step:0.5, value:10, unit:'N/m' },
+        { key:'m', label:'质量 $m$', min:0.2, max:3, step:0.1, value:1, unit:'kg' },
+        { key:'b', label:'阻尼系数 $b$', min:0, max:6, step:0.1, value:0.4 },
+        { key:'A', label:'初始振幅 $A$', min:0.2, max:2, step:0.1, value:1, unit:'m' }
+      ],
+      init(P, S) { S.x = P.A; S.v = 0; S.t = 0; S.hist = []; },
+      step(P, S, dt) {
+        S.t += dt;
+        const a = -(P.k/P.m)*S.x - (P.b/P.m)*S.v;
+        S.v += a * dt; S.x += S.v * dt;
+        S.hist.push({ t: S.t, x: S.x, v: S.v });
+        if (S.hist.length > 260) S.hist.shift();
+      },
+      draw(ctx, W, H, P, S) {
+        clearBg(ctx, W, H);
+        const wallX = 70, eqX = W*0.42, ampPx = 90;
+        const yMid = H*0.34;
+        // 墙
+        ctx.fillStyle = C.sub; ctx.fillRect(wallX-10, yMid-50, 10, 100);
+        // 弹簧（锯齿）
+        ctx.strokeStyle = C.blue; ctx.lineWidth = 2;
+        const xm = eqX + S.x * ampPx;
+        ctx.beginPath(); ctx.moveTo(wallX, yMid);
+        const coils = 12, sp = (xm - wallX)/coils;
+        for (let i = 0; i <= coils; i++) {
+          const xx = wallX + sp*i, yy = yMid + ((i%2)?14:-14)*(i>0 && i<coils?1:0);
+          ctx.lineTo(xx, yy);
+        }
+        ctx.lineTo(xm, yMid); ctx.stroke();
+        // 质量块
+        ctx.fillStyle = C.indigo; ctx.fillRect(xm-16, yMid-16, 32, 32);
+        // 平衡位置
+        ctx.strokeStyle = 'rgba(148,163,184,0.4)'; ctx.setLineDash([4,4]);
+        ctx.beginPath(); ctx.moveTo(eqX, yMid-60); ctx.lineTo(eqX, yMid+60); ctx.stroke(); ctx.setLineDash([]);
+
+        // 右下：x-t 曲线 与 相图
+        const gx = 24, gy = H*0.58, gw = W-48, gh = H*0.36;
+        ctx.strokeStyle = 'rgba(148,163,184,0.3)'; ctx.strokeRect(gx, gy, gw, gh);
+        // x-t
+        const x0 = gx+10, y0 = gy+gh*0.32, w0 = gw*0.58, h0 = gh*0.5;
+        ctx.strokeStyle = 'rgba(56,189,248,0.25)';
+        ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x0+w0, y0); ctx.stroke();
+        ctx.strokeStyle = C.blue; ctx.lineWidth = 2; ctx.beginPath();
+        S.hist.forEach((p,i) => {
+          const xx = x0 + (i/(S.hist.length||1))*w0;
+          const yy = y0 - p.x/h0 * h0*0.9;
+          i?ctx.lineTo(xx,yy):ctx.moveTo(xx,yy);
+        });
+        ctx.stroke();
+        ctx.fillStyle = C.sub; ctx.font='11px sans-serif'; ctx.textAlign='left';
+        ctx.fillText('x–t 曲线', x0, gy+14);
+        // 相图 x-v
+        const px0 = gx+gw*0.66, py0 = gy+gh*0.6, pw = gw*0.3, ph = gh*0.7;
+        ctx.strokeStyle = 'rgba(148,163,184,0.3)';
+        ctx.beginPath(); ctx.moveTo(px0, gy+10); ctx.lineTo(px0, gy+gh-10);
+        ctx.moveTo(px0-pw/2, py0); ctx.lineTo(px0+pw/2, py0); ctx.stroke();
+        ctx.strokeStyle = C.amber; ctx.lineWidth = 2; ctx.beginPath();
+        S.hist.forEach((p,i) => {
+          const xx = px0 + (p.x/Math.max(P.A,0.1))*(pw/2)*0.9;
+          const yy = py0 - (p.v/Math.max(P.A,0.1))* (ph/2)*0.9;
+          i?ctx.lineTo(xx,yy):ctx.moveTo(xx,yy);
+        });
+        ctx.stroke();
+        ctx.fillStyle = C.sub; ctx.fillText('相图 (x, v)', px0-pw/2, gy+14);
+      },
+      readout(P, S) {
+        const w0 = Math.sqrt(P.k/P.m), gamma = P.b/(2*P.m);
+        const wd = Math.sqrt(Math.max(0, w0*w0 - gamma*gamma));
+        const E = 0.5*P.k*S.x*S.x + 0.5*P.m*S.v*S.v;
+        return [
+          { label:'固有 ω₀', value:w0.toFixed(2), unit:'rad/s', color:C.blue },
+          { label:'阻尼 γ', value:gamma.toFixed(2), unit:'1/s', color:C.amber },
+          { label:'周期 T', value:(2*Math.PI/w0).toFixed(2), unit:'s', color:C.cyan },
+          { label:'位移 x', value:S.x.toFixed(3), unit:'m', color:C.text },
+          { label:'速度 v', value:S.v.toFixed(3), unit:'m/s', color:C.green },
+          { label:'机械能 E', value:E.toFixed(2), unit:'J', color:C.violet }
+        ];
+      }
+    },
+
+    // ---------------- 第9章 机械波：行波/驻波 ----------------
+    9: {
+      name: '机械波',
+      desc: '行波 $y=A\\sin(kx-\\omega t)$，波速 $v=\\lambda f=\\omega/k$。两列反向行波叠加形成驻波 $y=2A\\sin(kx)\\cos(\\omega t)$。',
+      controls: [
+        { key:'f', label:'频率 $f$', min:0.2, max:3, step:0.1, value:1, unit:'Hz' },
+        { key:'v', label:'波速 $v$', min:1, max:10, step:0.1, value:4, unit:'m/s' },
+        { key:'A', label:'振幅 $A$', min:5, max:40, step:1, value:22, unit:'px' },
+        { key:'mode', type:'select', label:'波型', value:'travel',
+          options:[ {label:'行波（单向传播）',value:'travel'}, {label:'驻波（两波叠加）',value:'stand'}, {label:'两列反向波叠加',value:'both'} ] }
+      ],
+      init(P, S) { S.t = 0; },
+      step(P, S, dt) { S.t += dt; },
+      draw(ctx, W, H, P, S) {
+        clearBg(ctx, W, H);
+        const lam = P.v / P.f, k = 2*Math.PI/lam, w = 2*Math.PI*P.f;
+        const midY = H/2, n = 6;
+        const drawWave = (phase, color, alpha, width) => {
+          ctx.strokeStyle = color; ctx.globalAlpha = alpha; ctx.lineWidth = width;
+          ctx.beginPath();
+          for (let px = 20; px <= W-20; px += 2) {
+            const x = (px-20)/(W-40)*n*lam;
+            const y = midY - P.A * Math.sin(k*x - w*S.t + phase);
+            px===20?ctx.moveTo(px,y):ctx.lineTo(px,y);
+          }
+          ctx.stroke(); ctx.globalAlpha = 1;
+        };
+        if (P.mode === 'travel') drawWave(0, C.blue, 1, 3);
+        else if (P.mode === 'stand') drawWave(0, C.blue, 1, 3);
+        else { drawWave(0, 'rgba(56,189,248,0.5)', 0.6, 2); drawWave(Math.PI, 'rgba(129,140,248,0.5)', 0.6, 2); drawWave(0, C.text, 1, 3); }
+        if (P.mode === 'stand') {
+          // 驻波包络
+          ctx.strokeStyle = 'rgba(148,163,184,0.4)'; ctx.setLineDash([4,4]);
+          for (const s of [1,-1]) { ctx.beginPath();
+            for (let px=20; px<=W-20; px+=2){ const x=(px-20)/(W-40)*n*lam; const y=midY - s*2*P.A*Math.sin(k*x); px===20?ctx.moveTo(px,y):ctx.lineTo(px,y);} ctx.stroke(); }
+          ctx.setLineDash([]);
+        }
+      },
+      readout(P, S) {
+        const lam = P.v/P.f, w = 2*Math.PI*P.f, k = 2*Math.PI/lam;
+        return [
+          { label:'波长 λ', value:lam.toFixed(2), unit:'m', color:C.blue },
+          { label:'周期 T', value:(1/P.f).toFixed(2), unit:'s', color:C.cyan },
+          { label:'角频率 ω', value:w.toFixed(2), unit:'rad/s', color:C.amber },
+          { label:'波数 k', value:k.toFixed(2), unit:'rad/m', color:C.violet },
+          { label:'波速 v', value:P.v.toFixed(2), unit:'m/s', color:C.green },
+          { label:'振幅 A', value:P.A.toFixed(0), unit:'px', color:C.text }
+        ];
+      }
+    },
+
+    // ---------------- 第10章 流体力学：连续性 + 伯努利 ----------------
+    10: {
+      name: '流体力学',
+      desc: '连续性方程 $A_1v_1=A_2v_2$；水平管伯努利方程 $p+\\frac12\\rho v^2=\\text{常数}$，故管径变细处流速增大、压强减小（文丘里效应）。',
+      controls: [
+        { key:'v1', label:'入口流速 $v_1$', min:0.5, max:5, step:0.1, value:2, unit:'m/s' },
+        { key:'A1', label:'宽处面积 $A_1$', min:20, max:60, step:1, value:50, unit:'u' },
+        { key:'A2', label:'窄处面积 $A_2$', min:8, max:40, step:1, value:20, unit:'u' },
+        { key:'rho', label:'密度 $\\rho$', min:0.5, max:3, step:0.1, value:1, unit:'kg/m³' }
+      ],
+      init(P, S) { S.parts = []; for (let i=0;i<60;i++) S.parts.push({ x: Math.random(), ph: Math.random()*2 }); },
+      step(P, S, dt) {
+        const v2 = P.v1 * P.A1 / P.A2;
+        const localV = (x) => {
+          // x in [0,1] along pipe; narrow region in middle
+          const narrow = (x > 0.4 && x < 0.6);
+          return narrow ? v2 : P.v1;
+        };
+        S.parts.forEach(p => { p.x += localV(p.x) * dt * 0.12; if (p.x > 1) p.x -= 1; });
+      },
+      draw(ctx, W, H, P, S) {
+        clearBg(ctx, W, H);
+        const topY = H*0.28, botY = H*0.72;
+        const pipeTop = (x) => {
+          const narrow = (x>0.4 && x<0.6);
+          const half = narrow ? topY + (botY-topY)*(1 - P.A2/P.A1)/2 : topY;
+          return half;
+        };
+        const pipeBot = (x) => {
+          const narrow = (x>0.4 && x<0.6);
+          const half = narrow ? botY - (botY-topY)*(1 - P.A2/P.A1)/2 : botY;
+          return half;
+        };
+        // 管壁
+        ctx.strokeStyle = C.blue; ctx.lineWidth = 3;
+        ctx.beginPath(); for (let i=0;i<=100;i++){ const x=i/100; const px=20+(W-40)*x; i?ctx.lineTo(px,pipeTop(x)):ctx.moveTo(px,pipeTop(x)); } ctx.stroke();
+        ctx.beginPath(); for (let i=0;i<=100;i++){ const x=i/100; const px=20+(W-40)*x; i?ctx.lineTo(px,pipeBot(x)):ctx.moveTo(px,pipeBot(x)); } ctx.stroke();
+        // 流体 + 粒子
+        ctx.fillStyle = 'rgba(56,189,248,0.12)';
+        ctx.beginPath();
+        for (let i=0;i<=100;i++){ const x=i/100; const px=20+(W-40)*x; i?ctx.lineTo(px,pipeTop(x)):ctx.moveTo(px,pipeTop(x)); }
+        for (let i=100;i>=0;i--){ const x=i/100; const px=20+(W-40)*x; ctx.lineTo(px,pipeBot(x)); }
+        ctx.closePath(); ctx.fill();
+        S.parts.forEach(p => {
+          const px = 20 + (W-40)*p.x;
+          const y = (pipeTop(p.x)+pipeBot(p.x))/2 + Math.sin(p.ph*6.28)*((pipeBot(p.x)-pipeTop(p.x))/2-4);
+          ctx.fillStyle = C.amber; ctx.beginPath(); ctx.arc(px, y, 3, 0, 7); ctx.fill();
+        });
+        // 标注 v1 / v2
+        ctx.fillStyle = C.text; ctx.font='600 13px sans-serif'; ctx.textAlign='center';
+        ctx.fillText('宽处  v₁='+P.v1.toFixed(1), 20+(W-40)*0.2, topY-10);
+        ctx.fillText('窄处  v₂='+(P.v1*P.A1/P.A2).toFixed(1), 20+(W-40)*0.5, pipeTop(0.5)-10);
+      },
+      readout(P, S) {
+        const v2 = P.v1 * P.A1 / P.A2;
+        const p1 = 0;
+        const p2 = 0.5 * P.rho * (P.v1*P.v1 - v2*v2);
+        const dp = p2 - p1;
+        return [
+          { label:'入口流速 v₁', value:P.v1.toFixed(2), unit:'m/s', color:C.blue },
+          { label:'窄处流速 v₂', value:v2.toFixed(2), unit:'m/s', color:C.amber },
+          { label:'面积比 A₁/A₂', value:(P.A1/P.A2).toFixed(2), color:C.text },
+          { label:'窄处压强 p₂', value:p2.toFixed(2), unit:'Pa', color:C.green },
+          { label:'压强变化 Δp', value:dp.toFixed(2), unit:'Pa', color:(dp<0?C.red:C.green) },
+          { label:'结论', value:(v2>P.v1?'细处速大压小':''), color:C.red }
+        ];
+      }
+    },
+
+    // ---------------- 第11章 万有引力与天体运动 ----------------
+    11: {
+      name: '万有引力与天体运动',
+      desc: '万有引力 $F=\\dfrac{GMm}{r^2}$ 提供向心力。机械能 $E=\\frac12mv^2-\\dfrac{GMm}{r}<0$ 为椭圆轨道；角动量 $\\vec L=\\vec r\\times m\\vec v$ 守恒，故近地点速度快、远地点速度慢（开普勒第二定律）。',
+      controls: [
+        { key:'vf', label:'初速 (×圆轨道)', min:0.4, max:1.5, step:0.05, value:1, unit:'v_c' },
+        { key:'mu', label:'中心引力参量 μ', min:400, max:1600, step:50, value:800 }
+      ],
+      init(P, S) {
+        S.r0 = 200; S.mu = P.mu;
+        S.vc = Math.sqrt(S.mu / S.r0);
+        S.x = S.r0; S.y = 0; S.vx = 0; S.vy = P.vf * S.vc;
+        S.rmin = S.r0; S.rmax = S.r0; S.trail = [];
+        S.pmin = {x:S.r0,y:0}; S.pmax = {x:S.r0,y:0};
+      },
+      step(P, S, dt) {
+        S.mu = P.mu; S.vc = Math.sqrt(S.mu / S.r0);
+        let T = dt * 60, h = 0.5, n = Math.max(1, Math.round(T/h));
+        for (let i=0;i<n;i++) {
+          const r = Math.hypot(S.x, S.y) || 1e-6;
+          const ax = -S.mu * S.x / (r*r*r), ay = -S.mu * S.y / (r*r*r);
+          S.vx += ax*h; S.vy += ay*h; S.x += S.vx*h; S.y += S.vy*h;
+          const rn = Math.hypot(S.x, S.y);
+          if (rn < S.rmin) { S.rmin = rn; S.pmin = {x:S.x, y:S.y}; }
+          if (rn > S.rmax) { S.rmax = rn; S.pmax = {x:S.x, y:S.y}; }
+        }
+        S.trail.push({x:S.x, y:S.y});
+        if (S.trail.length > 900) S.trail.shift();
+      },
+      draw(ctx, W, H, P, S) {
+        clearBg(ctx, W, H);
+        const cx = W/2, cy = H/2;
+        const scale = (Math.min(W,H)*0.32) / S.r0;
+        // 恒星
+        ctx.fillStyle = C.amber; ctx.beginPath(); ctx.arc(cx, cy, 12, 0, 7); ctx.fill();
+        ctx.fillStyle = C.text; ctx.font='12px sans-serif'; ctx.textAlign='center';
+        ctx.fillText('恒星 (中心)', cx, cy+26);
+        // 轨迹
+        ctx.strokeStyle = 'rgba(56,189,248,0.5)'; ctx.lineWidth = 1.5; ctx.beginPath();
+        S.trail.forEach((p,i) => { const px=cx+p.x*scale, py=cy-p.y*scale; i?ctx.lineTo(px,py):ctx.moveTo(px,py); });
+        ctx.stroke();
+        // 近/远地点
+        ctx.fillStyle = C.green; ctx.beginPath(); ctx.arc(cx+S.pmin.x*scale, cy-S.pmin.y*scale, 4, 0, 7); ctx.fill();
+        ctx.fillStyle = C.red; ctx.beginPath(); ctx.arc(cx+S.pmax.x*scale, cy-S.pmax.y*scale, 4, 0, 7); ctx.fill();
+        // 行星
+        const px = cx + S.x*scale, py = cy - S.y*scale;
+        ctx.fillStyle = C.blue; ctx.beginPath(); ctx.arc(px, py, 8, 0, 7); ctx.fill();
+        // 速度矢量
+        const vscale = scale * 8;
+        arrow(ctx, px, py, px + S.vx*vscale, py - S.vy*vscale, C.green, 2);
+        label(ctx, px + S.vx*vscale, py - S.vy*vscale - 10, 'v', C.green);
+      },
+      readout(P, S) {
+        const r = Math.hypot(S.x, S.y);
+        const v = Math.hypot(S.vx, S.vy);
+        const E = 0.5*v*v - S.mu/r;
+        const L = S.x*S.vy - S.y*S.vx;
+        const type = E < -1e-4 ? '椭圆轨道' : (E > 1e-4 ? '抛物线/逃逸' : '圆轨道');
+        return [
+          { label:'轨道半径 r', value:r.toFixed(0), unit:'u', color:C.text },
+          { label:'速率 v', value:v.toFixed(2), unit:'u/s', color:C.green },
+          { label:'机械能 E', value:E.toFixed(3), color:(E<0?C.cyan:C.red) },
+          { label:'角动量 L', value:L.toFixed(1), unit:'守恒', color:C.violet },
+          { label:'近/远地点', value:`${S.rmin.toFixed(0)}/${S.rmax.toFixed(0)}`, unit:'u', color:C.amber },
+          { label:'轨道类型', value:type, color:C.blue }
+        ];
+      }
+    },
+
+    // ---------------- 第12章 狭义相对论基础 ----------------
+    12: {
+      name: '狭义相对论基础',
+      desc: '时间膨胀 $\\Delta t=\\gamma\\Delta\\tau$，长度收缩 $L=L_0/\\gamma$，其中 $\\gamma=1/\\sqrt{1-\\beta^2},\\;\\beta=v/c$。经典力学认为时间与长度与参考系无关（$\\gamma=1$）。',
+      controls: [
+        { key:'beta', label:'速率比 $\\beta=v/c$', min:0, max:0.95, step:0.01, value:0.6 }
+      ],
+      init(P, S) { S.t = 0; },
+      step(P, S, dt) { S.t += dt; },
+      draw(ctx, W, H, P, S) {
+        clearBg(ctx, W, H);
+        const beta = P.beta, gamma = 1/Math.sqrt(1 - beta*beta);
+        const tau = 2, Dt = gamma * tau, L0 = 110;
+        // 上：运动光钟（实验室系）—— 光脉冲沿对角线往返
+        const lx = W*0.3, baseY = H*0.32, half = Dt/2;
+        const phase = (S.t % Dt) / Dt;            // 0..1 整周期
+        const up = phase < 0.5;                   // 上行/下行
+        const f = up ? phase*2 : (phase-0.5)*2;
+        const clockX = lx;
+        // 画钟（两镜面，竖直相距 L0）
+        ctx.strokeStyle = C.sub; ctx.lineWidth = 3;
+        ctx.beginPath(); ctx.moveTo(clockX, baseY - L0/2); ctx.lineTo(clockX, baseY + L0/2); ctx.stroke();
+        // 光路径（完整 V 形）
+        ctx.strokeStyle = 'rgba(56,189,248,0.35)'; ctx.lineWidth = 2;
+        const endX = clockX + L0 * beta * gamma;   // 半周期内水平位移
+        ctx.beginPath();
+        ctx.moveTo(clockX, baseY - L0/2);
+        ctx.lineTo(clockX + endX, baseY + L0/2);
+        ctx.moveTo(clockX + endX, baseY + L0/2);
+        ctx.lineTo(clockX + 2*endX, baseY - L0/2);
+        ctx.stroke();
+        // 当前光点
+        const dotX = up ? clockX + endX*f : clockX + endX*(1+ (1-f));
+        const dotY = up ? baseY - L0/2 + L0*f : baseY + L0/2 - L0*f;
+        ctx.fillStyle = C.amber; ctx.beginPath(); ctx.arc(dotX, dotY, 6, 0, 7); ctx.fill();
+        // 直角三角形标注
+        ctx.strokeStyle = C.red; ctx.setLineDash([4,4]); ctx.lineWidth=1.5;
+        ctx.beginPath(); ctx.moveTo(clockX, baseY-L0/2); ctx.lineTo(clockX+endX, baseY-L0/2); ctx.lineTo(clockX+endX, baseY+L0/2); ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.fillStyle = C.text; ctx.font='12px sans-serif'; ctx.textAlign='center';
+        ctx.fillText('运动光钟 (实验室系)', clockX+endX/2, baseY-L0/2-14);
+        ctx.fillText('L₀', clockX-14, baseY);
+        ctx.fillText('v·Δt/2', clockX+endX/2, baseY-L0/2-2+0);
+
+        // 下：长度收缩
+        const rx = W*0.5 - L0/2, ry = H*0.72;
+        // 经典（无收缩）
+        ctx.strokeStyle = 'rgba(148,163,184,0.4)'; ctx.lineWidth=2;
+        ctx.beginPath(); ctx.moveTo(rx, ry-40); ctx.lineTo(rx+L0, ry-40); ctx.stroke();
+        ctx.fillStyle=C.sub; ctx.fillText('经典 L₀', rx+L0/2, ry-52);
+        // 相对论收缩
+        const Lr = L0/gamma;
+        ctx.strokeStyle = C.green; ctx.lineWidth=4;
+        ctx.beginPath(); ctx.moveTo(rx, ry+10); ctx.lineTo(rx+Lr, ry+10); ctx.stroke();
+        ctx.fillStyle=C.green; ctx.fillText('相对论 L = L₀/γ', rx+L0/2, ry+28);
+        // 运动箭头
+        ctx.fillStyle=C.blue; ctx.font='20px sans-serif'; ctx.fillText('→', rx+L0+20, ry+10);
+      },
+      readout(P, S) {
+        const beta = P.beta, gamma = 1/Math.sqrt(1-beta*beta);
+        const tau = 2, Dt = gamma*tau;
+        return [
+          { label:'β = v/c', value:beta.toFixed(2), color:C.text },
+          { label:'洛伦兹因子 γ', value:gamma.toFixed(3), color:C.amber },
+          { label:'本征时间 Δτ', value:tau.toFixed(2), unit:'(钟)', color:C.green },
+          { label:'观测时间 Δt', value:Dt.toFixed(3), unit:'(钟)', color:C.red },
+          { label:'经典 Δt(旧)', value:tau.toFixed(2), unit:'(钟)', color:C.sub },
+          { label:'观测长度 L', value:(1/gamma).toFixed(3)+' L₀', color:C.blue }
+        ];
+      }
+    }
+  };
+
+  // =========================================================================
+  // 框架逻辑
+  // =========================================================================
+  const canvas = document.getElementById('canvas');
+  const ctx = canvas.getContext('2d');
+  let W = 0, H = 0, ch = 1, demo = null, playing = true;
+  let P = {}, S = {};
+
+  function resize() {
+    const r = canvas.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = Math.max(1, r.width * dpr);
+    canvas.height = Math.max(1, r.height * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    W = r.width; H = r.height;
+  }
+  window.addEventListener('resize', resize);
+
+  function renderKatex(el) {
+    if (window.renderMathInElement) {
+      try { renderMathInElement(el, { delimiters:[{left:'$',right:'$',display:false}], throwOnError:false }); } catch (e) {}
+    }
+  }
+
+  function buildControls(spec) {
+    const wrap = document.getElementById('controls');
+    wrap.innerHTML = '';
+    P = {};
+    spec.controls.forEach(c => {
+      P[c.key] = c.value;
+      const row = document.createElement('div'); row.className = 'ctrl';
+      if (c.type === 'select') {
+        const opts = c.options.map(o => `<option value="${o.value}" ${o.value===c.value?'selected':''}>${o.label}</option>`).join('');
+        row.innerHTML = `<div class="ctrl-head"><span>${c.label}</span></div><select class="sel" data-key="${c.key}">${opts}</select>`;
+      } else {
+        const unit = c.unit ? (' ' + c.unit) : '';
+        row.innerHTML = `<div class="ctrl-head"><span>${c.label}</span><span class="val" id="val_${c.key}">${c.value}${unit}</span></div>` +
+          `<input type="range" min="${c.min}" max="${c.max}" step="${c.step}" value="${c.value}" data-key="${c.key}">`;
+      }
+      wrap.appendChild(row);
+    });
+    wrap.querySelectorAll('input[type=range]').forEach(inp => {
+      const k = inp.dataset.key;
+      inp.addEventListener('input', () => {
+        const v = parseFloat(inp.value);
+        P[k] = v; const lab = document.getElementById('val_'+k);
+        const c = spec.controls.find(x => x.key === k);
+        if (lab) lab.textContent = v + (c.unit ? (' ' + c.unit) : '');
+      });
+      inp.addEventListener('change', () => {
+        P[k] = parseFloat(inp.value);
+        if (demo && demo.init) { S = {}; demo.init(P, S); }
+      });
+    });
+    wrap.querySelectorAll('select').forEach(sel => {
+      sel.addEventListener('change', () => {
+        const k = sel.dataset.key; P[k] = parseFloat(sel.value);
+        if (demo && demo.init) { S = {}; demo.init(P, S); }
+      });
+    });
+  }
+
+  function updateReadout(arr) {
+    const el = document.getElementById('readout');
+    el.innerHTML = arr.map(r =>
+      `<div class="rcard"><div class="rlabel">${r.label}</div><div class="rval" style="color:${r.color||C.blue}">${r.value}<span class="runit">${r.unit?(' '+r.unit):''}</span></div></div>`
+    ).join('');
+  }
+
+  function showRedirect(on) {
+    document.getElementById('redirect').style.display = on ? 'flex' : 'none';
+    canvas.style.display = on ? 'none' : 'block';
+    document.getElementById('panel').style.display = on ? 'none' : 'flex';
+  }
+
+  function loadChapter(n) {
+    ch = n;
+    document.getElementById('chTitle').textContent = `第 ${n} 章 · ${CHAPTERS[n].name} · 互动演示`;
+    document.getElementById('chapJump').value = String(n);
+    if (n === 6) { demo = null; showRedirect(true); history.replaceState(null, '', '?ch=' + n); return; }
+    showRedirect(false);
+    demo = DEMOS[n];
+    document.getElementById('desc').innerHTML = demo.desc;
+    renderKatex(document.getElementById('desc'));
+    buildControls(demo);
+    S = {}; demo.init(P, S);
+    history.replaceState(null, '', '?ch=' + n);
+  }
+
+  // 章节跳转下拉
+  const jump = document.getElementById('chapJump');
+  for (let i = 1; i <= 12; i++) {
+    const o = document.createElement('option');
+    o.value = String(i); o.textContent = `第 ${i} 章 · ${CHAPTERS[i].name}`;
+    jump.appendChild(o);
+  }
+  jump.addEventListener('change', () => loadChapter(parseInt(jump.value, 10)));
+
+  document.getElementById('btnPlay').addEventListener('click', (e) => {
+    playing = !playing;
+    e.target.textContent = playing ? '⏸ 暂停' : '▶ 播放';
+  });
+  document.getElementById('btnReset').addEventListener('click', () => {
+    if (demo && demo.init) { S = {}; demo.init(P, S); }
+  });
+  document.getElementById('btnPrev').addEventListener('click', () => loadChapter(Math.max(1, ch - 1)));
+  document.getElementById('btnNext').addEventListener('click', () => loadChapter(Math.min(12, ch + 1)));
+
+  // 主循环
+  let last = performance.now();
+  function loop(now) {
+    requestAnimationFrame(loop);
+    let dt = (now - last) / 1000; last = now;
+    if (dt > 0.05) dt = 0.05;
+    if (demo && ch !== 6) {
+      if (playing) demo.step(P, S, dt);
+      demo.draw(ctx, W, H, P, S);
+      updateReadout(demo.readout(P, S));
+    }
+  }
+
+  // 启动
+  resize();
+  const startCh = parseInt(new URLSearchParams(location.search).get('ch') || '1', 10);
+  loadChapter(Math.min(12, Math.max(1, startCh)));
+  requestAnimationFrame(loop);
+});
+</script>
+</body>
+</html>
