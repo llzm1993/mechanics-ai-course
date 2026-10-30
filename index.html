@@ -364,6 +364,17 @@
       margin-top: 14px; font-size: 0.74rem; color: var(--text-muted);
       text-align: center; line-height: 1.6;
     }
+    .auth-err { color: var(--accent-rose); font-size: 0.78rem; margin-top: 5px; min-height: 0; }
+    .code-row { display: flex; gap: 10px; }
+    .code-row input { flex: 1; min-width: 0; }
+    .btn-send-code {
+      flex-shrink: 0; padding: 0 14px; border-radius: 10px;
+      border: 1px solid var(--border-color); background: rgba(129, 140, 248, 0.12);
+      color: var(--accent-indigo); font-weight: 600; font-size: 0.84rem;
+      cursor: pointer; transition: all .18s; white-space: nowrap;
+    }
+    .btn-send-code:hover:not(:disabled) { background: rgba(129, 140, 248, 0.22); }
+    .btn-send-code:disabled { opacity: 0.5; cursor: not-allowed; }
 
     @media (max-width: 640px) {
       .nav-links { display: none; }
@@ -485,7 +496,7 @@
         <div class="feature">
           <div class="ico">🛠️</div>
           <h3>技术栈</h3>
-          <p>纯静态前端：HTML + CSS + Three.js / MathJax，无需后端，可一键部署到 GitHub Pages。</p>
+          <p>纯静态前端：HTML + CSS + Three.js / MathJax；账号系统接入 Supabase 云数据库（免费 Postgres + 认证），可一键部署到 GitHub Pages。</p>
         </div>
         <div class="feature">
           <div class="ico">🌱</div>
@@ -498,31 +509,31 @@
 
   <footer>
     <p>《力学》AI 智慧课程 · 基于静态前端与 AI 辅助教学构建</p>
-    <p style="margin-top:6px;">© <span id="year"></span> 力学 AI 课程 · 使用 GitHub Pages 部署</p>
+    <p style="margin-top:6px;">© <span id="year"></span> 力学 AI 课程 · 静态前端 + Supabase 云数据库（免费）</p>
   </footer>
 
-  <!-- 登录 / 注册 模态框 -->
+  <!-- 登录 / 注册 模态框（Supabase 云数据库：邮箱 + 密码） -->
   <div class="modal-overlay" id="authModal" hidden>
     <div class="auth-modal" role="dialog" aria-modal="true" aria-labelledby="authTitle">
       <button class="modal-close" id="closeAuth" aria-label="关闭">✕</button>
       <h2 id="authTitle">欢迎进入《力学》智慧课程</h2>
-      <p class="sub" id="authSub">登录后可记录学习身份，亦可使用游客身份直接体验全部内容。</p>
+      <p class="sub" id="authSub">使用邮箱注册并登录（账号由 Supabase 云数据库安全托管，免费、跨设备）；也可直接以游客身份浏览全部公开内容。</p>
       <div class="auth-tabs">
         <button type="button" data-tab="login" class="active" id="tabLogin">账号登录</button>
         <button type="button" data-tab="register" id="tabRegister">注册账号</button>
       </div>
       <form id="authForm" autocomplete="off">
         <div class="auth-field">
-          <label for="auName">用户名</label>
-          <input id="auName" type="text" placeholder="请输入用户名（2-20 位）" maxlength="20" />
+          <label for="auEmail">邮箱</label>
+          <input id="auEmail" type="email" placeholder="请输入邮箱" maxlength="120" />
         </div>
         <div class="auth-field">
           <label for="auPass">密码</label>
-          <input id="auPass" type="password" placeholder="请输入密码（至少 4 位）" maxlength="32" />
+          <input id="auPass" type="password" placeholder="请输入密码（至少 6 位）" maxlength="64" />
         </div>
         <div class="auth-field" id="fieldConfirm" hidden>
           <label for="auConfirm">确认密码</label>
-          <input id="auConfirm" type="password" placeholder="请再次输入密码" maxlength="32" />
+          <input id="auConfirm" type="password" placeholder="请再次输入密码" maxlength="64" />
         </div>
         <button type="submit" class="btn-auth-submit" id="authSubmit">登录</button>
       </form>
@@ -530,10 +541,11 @@
         <button type="button" class="btn-guest" id="guestLogin">🚀 游客登录（无需注册，直接体验）</button>
       </div>
       <p class="auth-msg" id="authMsg"></p>
-      <p class="auth-hint">本站为静态演示课程，账号与登录状态仅保存在你当前浏览器（localStorage），不会上传任何服务器。</p>
+      <p class="auth-hint">账号由 Supabase 云数据库（Postgres）真实后端托管，注册/登录数据保存在云端、跨设备可用；游客身份仅用于免账号浏览公开内容，不创建云端账号。</p>
     </div>
   </div>
 
+  <script src="vendor/supabase.js"></script>
   <script>
     // 12 章力学大纲（三阶段共用）
     const CHAPTERS = [
@@ -576,34 +588,46 @@
 
     document.getElementById('year').textContent = new Date().getFullYear();
 
-    // ===== 登录 / 注册 / 游客（纯前端，localStorage）=====
+    // ===== 云端账号登录 / 注册（Supabase：邮箱 + 密码，复用积分游戏的免费项目）=====
     (function () {
-      const LS_ACCOUNTS = 'mech_course_accounts';
-      const LS_SESSION  = 'mech_course_session';
-      const authArea  = document.getElementById('authArea');
-      const modal     = document.getElementById('authModal');
-      const tabLogin  = document.getElementById('tabLogin');
-      const tabReg    = document.getElementById('tabRegister');
-      const fieldConf = document.getElementById('fieldConfirm');
-      const form      = document.getElementById('authForm');
-      const msg       = document.getElementById('authMsg');
-      const submit    = document.getElementById('authSubmit');
-      const guestBtn  = document.getElementById('guestLogin');
-      let mode = 'login';
+      // 来自积分游戏同款 Supabase 项目的公开配置（仅前端可见的 URL + anon 公钥）
+      const SUPABASE_CONFIG = {
+        url: "https://yvsgpmoudmorjmukbxgu.supabase.co",
+        publishableKey: "sb_publishable_exGYITDk5sn2hXKaZodxiQ_CXO_jx7f"
+      };
 
-      // 简易哈希（仅前端混淆，非安全加密）
-      function hash(str) {
-        let h = 5381;
-        for (let i = 0; i < str.length; i++) h = ((h << 5) + h + str.charCodeAt(i)) >>> 0;
-        return 'h' + h.toString(16);
+      const authArea = document.getElementById('authArea');
+      const modal    = document.getElementById('authModal');
+      const tabLogin = document.getElementById('tabLogin');
+      const tabReg   = document.getElementById('tabRegister');
+      const fieldConf= document.getElementById('fieldConfirm');
+      const form     = document.getElementById('authForm');
+      const submit   = document.getElementById('authSubmit');
+      const msg      = document.getElementById('authMsg');
+      const guestBtn = document.getElementById('guestLogin');
+
+      const LS_GUEST = 'mech_course_guest';
+      let client = null, mode = 'login';
+
+      try {
+        client = supabase.createClient(SUPABASE_CONFIG.url, SUPABASE_CONFIG.publishableKey, {
+          auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: false }
+        });
+      } catch (e) {
+        client = null;
       }
-      function getAccounts() {
-        try { return JSON.parse(localStorage.getItem(LS_ACCOUNTS)) || {}; }
-        catch (e) { return {}; }
-      }
-      function saveAccounts(a) { localStorage.setItem(LS_ACCOUNTS, JSON.stringify(a)); }
 
       function showMsg(t, c) { msg.textContent = t; msg.className = 'auth-msg ' + (c || ''); }
+      function escapeHtml(s) {
+        return String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+      }
+      function maskEmail(e) {
+        const s = String(e || ''); const i = s.indexOf('@');
+        return (i > 1) ? s[0] + '***' + s.slice(i) : s;
+      }
+
+      function openModal() { modal.hidden = false; setMode('login'); }
+      function closeModal() { modal.hidden = true; }
 
       function setMode(m) {
         mode = m;
@@ -614,63 +638,96 @@
         showMsg('', '');
       }
 
-      function openModal() { modal.hidden = false; setMode('login'); }
-      function closeModal() { modal.hidden = true; }
+      function paintUser(user) {
+        const label = (user && maskEmail(user.email)) || '已登录';
+        authArea.innerHTML =
+          '<span class="user-chip">👤 ' + escapeHtml(label) + '</span>' +
+          '<button class="btn-logout" id="logoutBtn">退出</button>';
+        document.getElementById('logoutBtn').addEventListener('click', logout);
+      }
 
-      function renderAuth() {
-        let s = null;
-        try { s = JSON.parse(localStorage.getItem(LS_SESSION)); } catch (e) {}
-        if (s && s.name) {
-          const label = s.type === 'guest' ? '🚀 游客' : ('👤 ' + s.name);
+      function paintGuestOrLogin() {
+        let guest = false;
+        try { guest = localStorage.getItem(LS_GUEST) === '1'; } catch (e) {}
+        if (guest) {
           authArea.innerHTML =
-            '<span class="user-chip">' + label + '</span>' +
+            '<span class="user-chip">🚀 游客</span>' +
             '<button class="btn-logout" id="logoutBtn">退出</button>';
-          document.getElementById('logoutBtn').addEventListener('click', function () {
-            localStorage.removeItem(LS_SESSION);
-            renderAuth();
-          });
+          document.getElementById('logoutBtn').addEventListener('click', logout);
         } else {
           authArea.innerHTML = '<button class="btn-auth" id="openLogin">🔐 登录 / 注册</button>';
           document.getElementById('openLogin').addEventListener('click', openModal);
         }
       }
 
+      function renderAuth() {
+        if (!client) { paintGuestOrLogin(); return; }
+        client.auth.getSession().then(({ data, error }) => {
+          if (!error && data && data.session) paintUser(data.session.user);
+          else paintGuestOrLogin();
+        }).catch(() => paintGuestOrLogin());
+      }
+
+      function logout() {
+        if (client) { client.auth.signOut().catch(() => {}); }
+        try { localStorage.removeItem(LS_GUEST); } catch (e) {}
+        paintGuestOrLogin();
+      }
+
+      function mapErr(m) {
+        const s = String(m || '');
+        if (/Invalid login/i.test(s)) return '邮箱或密码不正确';
+        if (/already registered/i.test(s)) return '该邮箱已注册，请直接登录';
+        if (/password should be/i.test(s)) return '密码长度不符合要求（至少 6 位）';
+        if (/User already registered/i.test(s)) return '该邮箱已注册，请直接登录';
+        return s || '操作失败，请重试';
+      }
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('auEmail').value.trim();
+        const pass  = document.getElementById('auPass').value;
+        const conf  = document.getElementById('auConfirm').value;
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return showMsg('请输入有效的邮箱', 'err');
+        if (pass.length < 6) return showMsg('密码至少 6 位', 'err');
+        if (mode === 'register' && pass !== conf) return showMsg('两次输入的密码不一致', 'err');
+        if (!client) { showMsg('云服务未就绪，请刷新页面重试', 'err'); return; }
+
+        submit.disabled = true;
+        if (mode === 'register') {
+          const { data, error } = await client.auth.signUp({ email, password: pass });
+          submit.disabled = false;
+          if (error) { showMsg(mapErr(error.message), 'err'); return; }
+          if (data.session) {
+            showMsg('注册成功，已自动登录', 'ok');
+            setTimeout(() => { closeModal(); renderAuth(); }, 500);
+          } else {
+            showMsg('注册成功，请查收验证邮件完成激活后再登录（或在 Supabase 关闭邮箱验证）', 'ok');
+          }
+        } else {
+          const { data, error } = await client.auth.signInWithPassword({ email, password: pass });
+          submit.disabled = false;
+          if (error) { showMsg(mapErr(error.message), 'err'); return; }
+          showMsg('登录成功', 'ok');
+          setTimeout(() => { closeModal(); renderAuth(); }, 500);
+        }
+      });
+
       tabLogin.addEventListener('click', () => setMode('login'));
       tabReg.addEventListener('click', () => setMode('register'));
+      guestBtn.addEventListener('click', function () {
+        try { localStorage.setItem(LS_GUEST, '1'); } catch (e) {}
+        closeModal(); paintGuestOrLogin();
+      });
       document.getElementById('closeAuth').addEventListener('click', closeModal);
       modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
       document.addEventListener('keydown', e => { if (e.key === 'Escape' && !modal.hidden) closeModal(); });
 
-      form.addEventListener('submit', function (e) {
-        e.preventDefault();
-        const name = document.getElementById('auName').value.trim();
-        const pass = document.getElementById('auPass').value;
-        const confirm = document.getElementById('auConfirm').value;
-        if (name.length < 2) return showMsg('用户名至少 2 个字符', 'err');
-        if (!pass) return showMsg('请填写密码', 'err');
-        if (pass.length < 4) return showMsg('密码至少 4 位', 'err');
-        if (mode === 'register' && pass !== confirm) return showMsg('两次输入的密码不一致', 'err');
-
-        const accounts = getAccounts();
-        if (mode === 'register') {
-          if (accounts[name]) return showMsg('该用户名已被注册', 'err');
-          accounts[name] = { pw: hash(pass), created: Date.now() };
-          saveAccounts(accounts);
-          showMsg('注册成功，已自动登录', 'ok');
-        } else {
-          if (!accounts[name]) return showMsg('账号不存在，请先注册', 'err');
-          if (accounts[name].pw !== hash(pass)) return showMsg('密码错误', 'err');
-          showMsg('登录成功', 'ok');
-        }
-        localStorage.setItem(LS_SESSION, JSON.stringify({ type: 'user', name: name }));
-        setTimeout(() => { closeModal(); renderAuth(); }, 600);
-      });
-
-      guestBtn.addEventListener('click', function () {
-        localStorage.setItem(LS_SESSION, JSON.stringify({ type: 'guest', name: '游客' }));
-        showMsg('欢迎，游客！正在进入…', 'ok');
-        setTimeout(() => { closeModal(); renderAuth(); }, 500);
-      });
+      if (client && client.auth.onAuthStateChange) {
+        client.auth.onAuthStateChange((event, session) => {
+          if (session) paintUser(session.user); else paintGuestOrLogin();
+        });
+      }
 
       renderAuth();
     })();
