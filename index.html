@@ -267,9 +267,108 @@
     }
     footer a { color: var(--accent-blue); }
 
+    /* ===== 登录 / 注册入口 ===== */
+    .nav-right { display: flex; align-items: center; gap: 20px; }
+    .auth-area { display: flex; align-items: center; gap: 10px; }
+    .btn-auth {
+      padding: 8px 16px;
+      border-radius: 10px;
+      border: 1px solid var(--border-color);
+      background: rgba(56, 189, 248, 0.12);
+      color: var(--accent-blue);
+      font-weight: 600;
+      font-size: 0.88rem;
+      cursor: pointer;
+      transition: transform .18s, background .18s;
+    }
+    .btn-auth:hover { transform: translateY(-1px); background: rgba(56, 189, 248, 0.22); }
+    .user-chip {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 7px 13px; border-radius: 999px;
+      background: rgba(129, 140, 248, 0.14); color: var(--accent-indigo);
+      font-size: 0.85rem; font-weight: 600;
+      border: 1px solid rgba(129, 140, 248, 0.35);
+    }
+    .btn-logout {
+      padding: 7px 13px; border-radius: 10px;
+      border: 1px solid var(--border-color);
+      background: transparent; color: var(--text-muted);
+      font-size: 0.82rem; cursor: pointer;
+      transition: color .18s, border-color .18s;
+    }
+    .btn-logout:hover { color: var(--accent-rose); border-color: rgba(251, 113, 133, 0.5); }
+
+    /* 模态框 */
+    .modal-overlay {
+      position: fixed; inset: 0; z-index: 200;
+      background: rgba(2, 6, 23, 0.72);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      display: flex; align-items: center; justify-content: center;
+      padding: 20px;
+    }
+    .modal-overlay[hidden] { display: none; }
+    .auth-modal {
+      position: relative;
+      width: 100%; max-width: 400px;
+      background: linear-gradient(160deg, #1e293b, #131c30);
+      border: 1px solid var(--border-color);
+      border-radius: 20px; padding: 30px 28px 24px;
+      box-shadow: 0 30px 80px -20px rgba(0, 0, 0, 0.8);
+    }
+    .modal-close {
+      position: absolute; top: 14px; right: 16px;
+      background: transparent; border: none; color: var(--text-muted);
+      font-size: 1.2rem; cursor: pointer; line-height: 1;
+    }
+    .modal-close:hover { color: var(--text-main); }
+    .auth-modal h2 { font-size: 1.3rem; margin-bottom: 4px; }
+    .auth-modal .sub { color: var(--text-muted); font-size: 0.85rem; margin-bottom: 18px; }
+    .auth-tabs { display: flex; gap: 8px; margin-bottom: 18px; }
+    .auth-tabs button {
+      flex: 1; padding: 9px; border-radius: 10px; cursor: pointer;
+      border: 1px solid var(--border-color); background: transparent;
+      color: var(--text-muted); font-weight: 600; font-size: 0.88rem;
+      transition: all .18s;
+    }
+    .auth-tabs button.active {
+      background: linear-gradient(135deg, var(--accent-blue), var(--accent-indigo));
+      color: #0f172a; border-color: transparent;
+    }
+    .auth-field { margin-bottom: 14px; }
+    .auth-field label { display: block; font-size: 0.82rem; color: var(--text-muted); margin-bottom: 6px; }
+    .auth-field input {
+      width: 100%; padding: 11px 13px; border-radius: 10px;
+      border: 1px solid var(--border-color); background: rgba(15, 23, 42, 0.7);
+      color: var(--text-main); font-size: 0.92rem; outline: none; transition: border-color .18s;
+    }
+    .auth-field input:focus { border-color: var(--accent-blue); }
+    .btn-auth-submit {
+      width: 100%; padding: 12px; border-radius: 12px; border: none; cursor: pointer;
+      background: linear-gradient(135deg, var(--accent-blue), var(--accent-indigo));
+      color: #0f172a; font-weight: 700; font-size: 0.95rem; margin-top: 4px;
+      transition: transform .18s;
+    }
+    .btn-auth-submit:hover { transform: translateY(-2px); }
+    .guest-row { margin-top: 16px; }
+    .btn-guest {
+      width: 100%; padding: 11px; border-radius: 12px; cursor: pointer;
+      border: 1px dashed rgba(52, 211, 153, 0.5); background: rgba(52, 211, 153, 0.08);
+      color: var(--accent-emerald); font-weight: 600; font-size: 0.9rem; transition: all .18s;
+    }
+    .btn-guest:hover { background: rgba(52, 211, 153, 0.16); }
+    .auth-msg { margin-top: 14px; font-size: 0.84rem; min-height: 18px; text-align: center; }
+    .auth-msg.ok { color: var(--accent-emerald); }
+    .auth-msg.err { color: var(--accent-rose); }
+    .auth-hint {
+      margin-top: 14px; font-size: 0.74rem; color: var(--text-muted);
+      text-align: center; line-height: 1.6;
+    }
+
     @media (max-width: 640px) {
       .nav-links { display: none; }
       .hero { padding-top: 56px; }
+      .nav-right { gap: 10px; }
     }
   </style>
 </head>
@@ -282,14 +381,19 @@
         <span class="logo">⚙️</span>
         <span>力学 · AI 智慧课程</span>
       </a>
-      <nav class="nav-links">
-        <a href="#prereq">先修基础</a>
-        <a href="#formula">公式速查</a>
-        <a href="#pre">课前预习</a>
-        <a href="#demo">课中演示</a>
-        <a href="#card">课后闪卡</a>
-        <a href="#about">关于</a>
-      </nav>
+      <div class="nav-right">
+        <nav class="nav-links">
+          <a href="#prereq">先修基础</a>
+          <a href="#formula">公式速查</a>
+          <a href="#pre">课前预习</a>
+          <a href="#demo">课中演示</a>
+          <a href="#card">课后闪卡</a>
+          <a href="#about">关于</a>
+        </nav>
+        <div class="auth-area" id="authArea">
+          <button class="btn-auth" id="openLogin">🔐 登录 / 注册</button>
+        </div>
+      </div>
     </div>
   </header>
 
@@ -397,6 +501,39 @@
     <p style="margin-top:6px;">© <span id="year"></span> 力学 AI 课程 · 使用 GitHub Pages 部署</p>
   </footer>
 
+  <!-- 登录 / 注册 模态框 -->
+  <div class="modal-overlay" id="authModal" hidden>
+    <div class="auth-modal" role="dialog" aria-modal="true" aria-labelledby="authTitle">
+      <button class="modal-close" id="closeAuth" aria-label="关闭">✕</button>
+      <h2 id="authTitle">欢迎进入《力学》智慧课程</h2>
+      <p class="sub" id="authSub">登录后可记录学习身份，亦可使用游客身份直接体验全部内容。</p>
+      <div class="auth-tabs">
+        <button type="button" data-tab="login" class="active" id="tabLogin">账号登录</button>
+        <button type="button" data-tab="register" id="tabRegister">注册账号</button>
+      </div>
+      <form id="authForm" autocomplete="off">
+        <div class="auth-field">
+          <label for="auName">用户名</label>
+          <input id="auName" type="text" placeholder="请输入用户名（2-20 位）" maxlength="20" />
+        </div>
+        <div class="auth-field">
+          <label for="auPass">密码</label>
+          <input id="auPass" type="password" placeholder="请输入密码（至少 4 位）" maxlength="32" />
+        </div>
+        <div class="auth-field" id="fieldConfirm" hidden>
+          <label for="auConfirm">确认密码</label>
+          <input id="auConfirm" type="password" placeholder="请再次输入密码" maxlength="32" />
+        </div>
+        <button type="submit" class="btn-auth-submit" id="authSubmit">登录</button>
+      </form>
+      <div class="guest-row">
+        <button type="button" class="btn-guest" id="guestLogin">🚀 游客登录（无需注册，直接体验）</button>
+      </div>
+      <p class="auth-msg" id="authMsg"></p>
+      <p class="auth-hint">本站为静态演示课程，账号与登录状态仅保存在你当前浏览器（localStorage），不会上传任何服务器。</p>
+    </div>
+  </div>
+
   <script>
     // 12 章力学大纲（三阶段共用）
     const CHAPTERS = [
@@ -438,6 +575,105 @@
     });
 
     document.getElementById('year').textContent = new Date().getFullYear();
+
+    // ===== 登录 / 注册 / 游客（纯前端，localStorage）=====
+    (function () {
+      const LS_ACCOUNTS = 'mech_course_accounts';
+      const LS_SESSION  = 'mech_course_session';
+      const authArea  = document.getElementById('authArea');
+      const modal     = document.getElementById('authModal');
+      const tabLogin  = document.getElementById('tabLogin');
+      const tabReg    = document.getElementById('tabRegister');
+      const fieldConf = document.getElementById('fieldConfirm');
+      const form      = document.getElementById('authForm');
+      const msg       = document.getElementById('authMsg');
+      const submit    = document.getElementById('authSubmit');
+      const guestBtn  = document.getElementById('guestLogin');
+      let mode = 'login';
+
+      // 简易哈希（仅前端混淆，非安全加密）
+      function hash(str) {
+        let h = 5381;
+        for (let i = 0; i < str.length; i++) h = ((h << 5) + h + str.charCodeAt(i)) >>> 0;
+        return 'h' + h.toString(16);
+      }
+      function getAccounts() {
+        try { return JSON.parse(localStorage.getItem(LS_ACCOUNTS)) || {}; }
+        catch (e) { return {}; }
+      }
+      function saveAccounts(a) { localStorage.setItem(LS_ACCOUNTS, JSON.stringify(a)); }
+
+      function showMsg(t, c) { msg.textContent = t; msg.className = 'auth-msg ' + (c || ''); }
+
+      function setMode(m) {
+        mode = m;
+        tabLogin.classList.toggle('active', m === 'login');
+        tabReg.classList.toggle('active', m === 'register');
+        fieldConf.hidden = (m !== 'register');
+        submit.textContent = (m === 'login' ? '登录' : '注册并登录');
+        showMsg('', '');
+      }
+
+      function openModal() { modal.hidden = false; setMode('login'); }
+      function closeModal() { modal.hidden = true; }
+
+      function renderAuth() {
+        let s = null;
+        try { s = JSON.parse(localStorage.getItem(LS_SESSION)); } catch (e) {}
+        if (s && s.name) {
+          const label = s.type === 'guest' ? '🚀 游客' : ('👤 ' + s.name);
+          authArea.innerHTML =
+            '<span class="user-chip">' + label + '</span>' +
+            '<button class="btn-logout" id="logoutBtn">退出</button>';
+          document.getElementById('logoutBtn').addEventListener('click', function () {
+            localStorage.removeItem(LS_SESSION);
+            renderAuth();
+          });
+        } else {
+          authArea.innerHTML = '<button class="btn-auth" id="openLogin">🔐 登录 / 注册</button>';
+          document.getElementById('openLogin').addEventListener('click', openModal);
+        }
+      }
+
+      tabLogin.addEventListener('click', () => setMode('login'));
+      tabReg.addEventListener('click', () => setMode('register'));
+      document.getElementById('closeAuth').addEventListener('click', closeModal);
+      modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
+      document.addEventListener('keydown', e => { if (e.key === 'Escape' && !modal.hidden) closeModal(); });
+
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        const name = document.getElementById('auName').value.trim();
+        const pass = document.getElementById('auPass').value;
+        const confirm = document.getElementById('auConfirm').value;
+        if (name.length < 2) return showMsg('用户名至少 2 个字符', 'err');
+        if (!pass) return showMsg('请填写密码', 'err');
+        if (pass.length < 4) return showMsg('密码至少 4 位', 'err');
+        if (mode === 'register' && pass !== confirm) return showMsg('两次输入的密码不一致', 'err');
+
+        const accounts = getAccounts();
+        if (mode === 'register') {
+          if (accounts[name]) return showMsg('该用户名已被注册', 'err');
+          accounts[name] = { pw: hash(pass), created: Date.now() };
+          saveAccounts(accounts);
+          showMsg('注册成功，已自动登录', 'ok');
+        } else {
+          if (!accounts[name]) return showMsg('账号不存在，请先注册', 'err');
+          if (accounts[name].pw !== hash(pass)) return showMsg('密码错误', 'err');
+          showMsg('登录成功', 'ok');
+        }
+        localStorage.setItem(LS_SESSION, JSON.stringify({ type: 'user', name: name }));
+        setTimeout(() => { closeModal(); renderAuth(); }, 600);
+      });
+
+      guestBtn.addEventListener('click', function () {
+        localStorage.setItem(LS_SESSION, JSON.stringify({ type: 'guest', name: '游客' }));
+        showMsg('欢迎，游客！正在进入…', 'ok');
+        setTimeout(() => { closeModal(); renderAuth(); }, 500);
+      });
+
+      renderAuth();
+    })();
   </script>
 </body>
 </html>
