@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>大学物理《力学》智慧课程 · 第八章：机械振动（课前15分钟导学）</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        space: {
+                            950: '#070b14',
+                            900: '#0b1120',
+                            800: '#131c31',
+                            700: '#1e293b',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'PingFang SC', 'Microsoft YaHei', 'sans-serif'],
+                        math: ['Cambria Math', 'Times New Roman', 'serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+        :root {
+            --bg-primary: #070b14;
+            --bg-card: #0b1120;
+            --bg-elevated: #131c31;
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --text-muted: #94a3b8;
+            --border-color: #1e293b;
+            --canvas-bg: #070b14;
+            --canvas-grid: rgba(148, 163, 184, 0.06);
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            background-image: 
+                radial-gradient(at 15% 15%, rgba(34, 211, 238, 0.08) 0px, transparent 45%),
+                radial-gradient(at 85% 20%, rgba(244, 63, 94, 0.07) 0px, transparent 45%),
+                radial-gradient(at 50% 85%, rgba(99, 102, 241, 0.08) 0px, transparent 50%);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        /* 主题背景与卡片自适应映射 */
+        .bg-space-950 { background-color: var(--bg-primary) !important; }
+        .bg-space-950\/80, .bg-space-950\/90, .bg-space-950\/70 { background-color: var(--bg-primary) !important; }
+        .bg-space-900 { background-color: var(--bg-card) !important; }
+        .bg-space-900\/90 { background-color: var(--bg-card) !important; }
+        .bg-space-800 { background-color: var(--bg-elevated) !important; }
+        canvas { background-color: var(--canvas-bg); transition: background-color 0.3s ease; }
+
+        /* 浅色/护眼主题下的高对比度文字与边框自适应 */
+        body.theme-light .text-white,
+        body.theme-light .text-slate-100,
+        body.theme-light .text-slate-200 {
+            color: var(--text-primary) !important;
+        }
+        body.theme-light .text-slate-300 {
+            color: var(--text-secondary) !important;
+        }
+        body.theme-light .text-slate-400 {
+            color: var(--text-muted) !important;
+        }
+        body.theme-light .border-slate-800,
+        body.theme-light .border-slate-800\/80,
+        body.theme-light .border-slate-800\/90,
+        body.theme-light .border-slate-700,
+        body.theme-light .border-slate-700\/80 {
+            border-color: var(--border-color) !important;
+        }
+        body.theme-light .from-space-800 {
+            --tw-gradient-from: var(--bg-elevated) !important;
+            --tw-gradient-to: var(--bg-card) !important;
+            --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important;
+        }
+        body.theme-light .from-space-900 {
+            --tw-gradient-from: var(--bg-card) !important;
+            --tw-gradient-to: var(--bg-elevated) !important;
+            --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important;
+        }
+        body.theme-light .bg-indigo-950\/30,
+        body.theme-light .bg-cyan-950\/30,
+        body.theme-light .bg-emerald-950\/30,
+        body.theme-light .bg-rose-950\/30 {
+            background-color: var(--bg-elevated) !important;
+        }
+        body.theme-light .text-cyan-300,
+        body.theme-light .text-cyan-400 {
+            color: #0284c7 !important;
+        }
+        body.theme-light .text-amber-300,
+        body.theme-light .text-amber-400,
+        body.theme-light .text-amber-200 {
+            color: #b45309 !important;
+        }
+        body.theme-light .text-emerald-300,
+        body.theme-light .text-emerald-400,
+        body.theme-light .text-emerald-200 {
+            color: #047857 !important;
+        }
+        body.theme-light .text-rose-300,
+        body.theme-light .text-rose-400 {
+            color: #be123c !important;
+        }
+        body.theme-light .text-indigo-300,
+        body.theme-light .text-indigo-200 {
+            color: #4338ca !important;
+        }
+
+        /* 数学公式规范排版样式（物理量斜体、单位与算子正体） */
+        .math {
+            font-family: 'Cambria Math', 'Times New Roman', serif;
+            font-style: italic;
+            letter-spacing: 0.02em;
+        }
+        .math-rm {
+            font-family: 'Cambria Math', 'Times New Roman', serif;
+            font-style: normal;
+        }
+        .vec {
+            position: relative;
+            display: inline-block;
+            font-weight: 600;
+        }
+        .vec::after {
+            content: "→";
+            position: absolute;
+            top: -0.58em;
+            left: 50%;
+            transform: translateX(-50%) scale(0.75);
+            font-style: normal;
+            font-weight: 700;
+            line-height: 1;
+        }
+        .dot-top {
+            position: relative;
+            display: inline-block;
+        }
+        .dot-top::after {
+            content: "·";
+            position: absolute;
+            top: -0.55em;
+            left: 50%;
+            transform: translateX(-50%) scale(1.4);
+            font-weight: bold;
+        }
+        .ddot-top {
+            position: relative;
+            display: inline-block;
+        }
+        .ddot-top::after {
+            content: "··";
+            position: absolute;
+            top: -0.55em;
+            left: 50%;
+            transform: translateX(-50%) scale(1.1);
+            letter-spacing: -1px;
+            font-weight: bold;
+        }
+        .frac {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            vertical-align: middle;
+            margin: 0 0.16em;
+            font-size: 0.92em;
+        }
+        .frac > span:first-child {
+            border-bottom: 1.5px solid currentColor;
+            padding: 0 0.25em 0.05em;
+            line-height: 1.15;
+        }
+        .frac > span:last-child {
+            padding: 0.05em 0.25em 0;
+            line-height: 1.15;
+        }
+
+        /* 3D 闪卡翻转特效 */
+        .perspective-1000 {
+            perspective: 1200px;
+        }
+        .transform-style-3d {
+            transform-style: preserve-3d;
+            transition: transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .backface-hidden {
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+        }
+        .rotate-y-180 {
+            transform: rotateY(180deg);
+        }
+
+        /* 自定义滑块样式 */
+        input[type=range] {
+            -webkit-appearance: none;
+            background: #1e293b;
+            height: 6px;
+            border-radius: 999px;
+            outline: none;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #22d3ee;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(34, 211, 238, 0.6);
+            border: 2px solid #0f172a;
+            transition: transform 0.15s ease;
+        }
+        input[type=range]::-webkit-slider-thumb:hover {
+            transform: scale(1.15);
+        }
+
+        /* 网格背景装饰 */
+        .bg-grid-pattern {
+            background-size: 28px 28px;
+            background-image: 
+                linear-gradient(to right, var(--canvas-grid) 1px, transparent 1px),
+                linear-gradient(to bottom, var(--canvas-grid) 1px, transparent 1px);
+        }
+
+        /* 滚动条美化 */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0b1120;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+            /* 阶段导航高亮（通用外壳） */
+        .stage-nav-btn.stage-active {
+            background-color: rgba(34,211,238,0.20) !important;
+            color: #67e8f9 !important;
+            border-color: rgba(34,211,238,0.40) !important;
+        }
+        /* 闪卡翻转（配合 ch2 已有的 .transform-style-3d/.backface-hidden/.rotate-y-180/.perspective-1000） */
+        .flip-card-inner.rotate-y-180 { transform: rotateY(180deg); }
+</style>
+</head>
+<body class="min-h-screen flex flex-col selection:bg-cyan-500/30 selection:text-cyan-200">
+
+    <!-- ==================== 顶部固定智慧导航栏 ==================== -->
+    <header class="sticky top-0 z-40 backdrop-blur-xl bg-space-900/90 border-b border-slate-800/80 shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3">
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
+                <!-- 左侧课程标题与徽章 -->
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <a href="../../index.html" class="no-print px-3 py-2 rounded-xl bg-space-800 hover:bg-slate-700 text-cyan-300 border border-slate-700 text-xs font-semibold shadow flex items-center gap-1.5 transition-all mr-1" title="返回课程主页"><i class="fa-solid fa-house"></i><span>🏠 返回课程主页</span></a>
+<div class="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-cyan-500/20">
+                            <i class="fa-solid fa-wave-square text-white text-lg"></i>
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <span class="text-xs font-semibold uppercase tracking-wider px-2 py-0.5 rounded bg-cyan-500/15 text-cyan-300 border border-cyan-500/30">智慧物理导学</span>
+                                <span class="text-xs text-slate-400 hidden sm:inline">控时长 · 补工具 · 立图像 · 抓迷思</span>
+                            </div>
+                            <h1 class="text-base sm:text-lg font-bold text-white tracking-tight mt-0.5">
+                                大学物理《力学》智慧课程 · 第八章：机械振动（课前15分钟导学）
+                            </h1>
+                        </div>
+                    </div>
+                    <!-- 移动端主题与导出按钮 -->
+                    <div class="flex items-center gap-2 lg:hidden">
+                        <button onclick="toggleThemePanel()" class="px-2.5 py-1.5 rounded-lg bg-space-800 text-cyan-300 border border-slate-700 text-xs font-medium shadow flex items-center gap-1">
+                            <i class="fa-solid fa-palette"></i>
+                            <span>🎨 背景调控</span>
+                        </button>
+                        <button onclick="openExportModal()" class="px-3 py-1.5 rounded-lg bg-gradient-to-r from-indigo-600 to-cyan-600 text-white text-xs font-medium shadow">
+                            <i class="fa-solid fa-clipboard-check mr-1"></i>生成回执
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 中部4环节递进导航条 -->
+                <nav class="flex items-center gap-1.5 overflow-x-auto py-1 no-scrollbar">
+                    <button onclick="switchStage(1)" id="nav-stage-1" class="stage-nav-btn flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-all whitespace-nowrap bg-cyan-500/20 text-cyan-300 border border-cyan-500/40">
+                        <span id="badge-stage-1" class="w-5 h-5 rounded-full bg-cyan-400 text-space-950 font-bold flex items-center justify-center text-xs">1</span>
+                        <span>数学脚手架</span>
+                    </button>
+                    <i class="fa-solid fa-chevron-right text-[10px] text-slate-600"></i>
+                    <button onclick="switchStage(2)" id="nav-stage-2" class="stage-nav-btn flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-all whitespace-nowrap text-slate-400 hover:text-slate-200">
+                        <span id="badge-stage-2" class="w-5 h-5 rounded-full bg-slate-800 text-slate-400 font-bold flex items-center justify-center text-xs">2</span>
+                        <span>POE图像盲测</span>
+                    </button>
+                    <i class="fa-solid fa-chevron-right text-[10px] text-slate-600"></i>
+                    <button onclick="switchStage(3)" id="nav-stage-3" class="stage-nav-btn flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-all whitespace-nowrap text-slate-400 hover:text-slate-200">
+                        <span id="badge-stage-3" class="w-5 h-5 rounded-full bg-slate-800 text-slate-400 font-bold flex items-center justify-center text-xs">3</span>
+                        <span>3D闪卡排雷</span>
+                    </button>
+                    <i class="fa-solid fa-chevron-right text-[10px] text-slate-600"></i>
+                    <button onclick="switchStage(4)" id="nav-stage-4" class="stage-nav-btn flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-all whitespace-nowrap text-slate-400 hover:text-slate-200">
+                        <span id="badge-stage-4" class="w-5 h-5 rounded-full bg-slate-800 text-slate-400 font-bold flex items-center justify-center text-xs">4</span>
+                        <span>迷思图&amp;AI学伴</span>
+                    </button>
+                </nav>
+
+                <!-- 右侧：15分钟计时器（可暂停）、背景调控与回执按钮 -->
+                <div class="hidden lg:flex items-center gap-2.5">
+                    <div class="flex items-center gap-2.5 bg-space-950 px-3 py-1.5 rounded-xl border border-slate-800">
+                        <div class="text-right">
+                            <div class="flex items-center gap-1.5">
+                                <button onclick="toggleTimerPause()" id="timer-pause-btn" class="text-[11px] text-cyan-400 hover:text-cyan-300 transition" title="暂停/继续计时">
+                                    <i id="timer-pause-icon" class="fa-solid fa-pause"></i>
+                                </button>
+                                <span class="text-[11px] text-slate-400">预习控时</span>
+                                <span id="timer-display" class="text-xs font-mono font-bold text-cyan-300">15:00</span>
+                            </div>
+                            <div class="w-24 h-1.5 bg-slate-800 rounded-full overflow-hidden mt-1">
+                                <div id="overall-progress-bar" class="h-full bg-gradient-to-r from-cyan-400 to-emerald-400 transition-all duration-500" style="width: 15%"></div>
+                            </div>
+                        </div>
+                        <span id="overall-progress-text" class="text-xs font-bold text-emerald-400">15%</span>
+                    </div>
+
+                    <!-- 背景与护眼配色调控按钮 -->
+                    <button onclick="toggleThemePanel()" id="theme-toggle-btn" class="px-3 py-2 rounded-xl bg-space-800 hover:bg-slate-700 text-cyan-300 border border-slate-700 text-xs font-semibold shadow flex items-center gap-1.5 transition-all" title="切换护眼背景色与自定义配色">
+                        <i class="fa-solid fa-palette"></i>
+                        <span>🎨 背景调控</span>
+                    </button>
+
+                    <button onclick="openExportModal()" class="px-3.5 py-2 rounded-xl bg-gradient-to-r from-indigo-600 via-cyan-600 to-teal-600 hover:from-indigo-500 hover:to-teal-500 text-white text-xs font-semibold shadow-lg shadow-cyan-500/15 flex items-center gap-2 transition-all">
+                        <i class="fa-solid fa-clipboard-check"></i>
+                        <span>📋 雨课堂/学习通回执</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 展开式背景颜色与护眼主题调控面板 -->
+            <div id="theme-control-panel" class="hidden mt-3 pt-3 border-t border-slate-800/80 flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-space-950/90 p-3 rounded-xl border border-slate-800">
+                <div class="flex flex-wrap items-center gap-2">
+                    <span class="text-xs font-bold text-slate-300 mr-1"><i class="fa-solid fa-eye-low-vision text-cyan-400 mr-1"></i>预设背景主题：</span>
+                    <button onclick="applyThemePreset('dark')" id="preset-btn-dark" class="px-2.5 py-1.5 rounded-lg text-xs font-medium border border-cyan-400 bg-[#070b14] text-slate-100 flex items-center gap-1.5 shadow-sm transition ring-2 ring-cyan-400">
+                        <span class="w-3 h-3 rounded-full bg-[#070b14] border border-cyan-400"></span>🌌 默认深空蓝
+                    </button>
+                    <button onclick="applyThemePreset('light')" id="preset-btn-light" class="px-2.5 py-1.5 rounded-lg text-xs font-medium border border-slate-600 bg-[#f8fafc] text-slate-900 flex items-center gap-1.5 shadow-sm transition">
+                        <span class="w-3 h-3 rounded-full bg-[#ffffff] border border-slate-400"></span>☀️ 明亮护眼白
+                    </button>
+                    <button onclick="applyThemePreset('green')" id="preset-btn-green" class="px-2.5 py-1.5 rounded-lg text-xs font-medium border border-slate-600 bg-[#e6f2ea] text-[#132a1c] flex items-center gap-1.5 shadow-sm transition">
+                        <span class="w-3 h-3 rounded-full bg-[#a3d9b5] border border-emerald-700"></span>🍵 豆沙护眼绿
+                    </button>
+                    <button onclick="applyThemePreset('charcoal')" id="preset-btn-charcoal" class="px-2.5 py-1.5 rounded-lg text-xs font-medium border border-slate-600 bg-[#141619] text-[#e5e7eb] flex items-center gap-1.5 shadow-sm transition">
+                        <span class="w-3 h-3 rounded-full bg-[#272a30] border border-slate-400"></span>🌙 极夜深灰
+                    </button>
+                </div>
+
+                <!-- 自定义颜色拾取器（自动计算明度适配深浅文字与Canvas重绘） -->
+                <div class="flex items-center gap-2.5 self-end sm:self-auto">
+                    <label for="custom-bg-picker" class="text-xs text-slate-300 flex items-center gap-1.5 cursor-pointer">
+                        <span>自定义背景色：</span>
+                        <input type="color" id="custom-bg-picker" value="#070b14" oninput="applyCustomBgColor(this.value)" class="w-7 h-7 rounded cursor-pointer border border-slate-600 bg-transparent p-0">
+                    </label>
+                    <span id="theme-contrast-badge" class="text-[11px] px-2 py-0.5 rounded bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 font-mono">默认深空蓝 · 暗色高反差</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- ==================== 主体内容容器 ==================== -->
+        <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6">
+
+        <!-- =====================================================================
+             环节一：数学脚手架前置 —— 机械振动“微工具”唤醒
+             ===================================================================== -->
+        <section id="stage-1" class="stage-section space-y-6">
+            <!-- 环节导语横幅 -->
+            <div class="bg-gradient-to-r from-space-800 via-indigo-950/60 to-space-800 rounded-2xl p-5 border border-indigo-500/30 shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div class="space-y-1">
+                    <div class="flex items-center gap-2">
+                        <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">环节 1 / 4 · 预计 4 分钟</span>
+                        <span class="text-xs text-amber-300"><i class="fa-solid fa-screwdriver-wrench mr-1"></i>简谐振动三要素与典型系统 ω</span>
+                    </div>
+                    <h2 class="text-xl font-bold text-white">数学脚手架前置：3 个振动“微工具”唤醒</h2>
+                    <p class="text-sm text-slate-300">预习第八章“机械振动”前，先打通三个高频数理卡点：<span class="text-cyan-300 font-medium">简谐振动的定义与三要素（A/ω/φ）</span>、<span class="text-amber-300 font-medium">两类典型系统的角频率 ω</span>，以及<span class="text-emerald-300 font-medium">微分方程、旋转矢量与能量守恒</span>。</p>
+                </div>
+            </div>
+
+            <!-- 微工具 A：简谐振动定义与三要素 -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <div class="lg:col-span-7 bg-space-900 rounded-2xl border border-slate-800 p-5 space-y-4 shadow-xl">
+                    <div class="flex items-center justify-between flex-wrap gap-2">
+                        <h3 class="text-base font-bold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-wave-square text-cyan-400"></i>
+                            <span>微工具 A · 简谐振动定义与三要素</span>
+                        </h3>
+                        <span class="text-xs font-bold uppercase tracking-wider px-2.5 py-1 rounded bg-cyan-500/15 text-cyan-300 border border-cyan-500/30">振幅 / 角频率 / 相位</span>
+                    </div>
+                    <p class="text-sm text-slate-300">任何满足 <span class="math">x = A cos(&omega;t + &phi;)</span> 的运动都是简谐振动（SHM）。只需 <span class="math">A, &omega;, &phi;</span> 三个量即可完全描述一次振动。</p>
+                    <div class="bg-space-950 rounded-xl p-4 border border-slate-800 space-y-2 text-sm">
+                        <div class="text-slate-400 text-xs pb-1 border-b border-slate-800">运动学三要素：</div>
+                        <div class="math text-white text-center py-1">x = A cos(&omega;t + &phi;)</div>
+                        <div class="grid grid-cols-2 gap-2 text-xs mt-2">
+                            <div class="p-2 rounded-lg bg-space-900 border border-slate-800"><span class="text-slate-400">振幅 <span class="math">A</span></span><div class="text-cyan-300 font-semibold mt-0.5">最大位移大小</div></div>
+                            <div class="p-2 rounded-lg bg-space-900 border border-slate-800"><span class="text-slate-400">角频率 <span class="math">&omega;</span></span><div class="text-cyan-300 font-semibold mt-0.5"><span class="math">&omega; = 2&pi;/T = 2&pi;f</span></div></div>
+                            <div class="p-2 rounded-lg bg-space-900 border border-slate-800"><span class="text-slate-400">周期 <span class="math">T</span> / 频率 <span class="math">f</span></span><div class="text-cyan-300 font-semibold mt-0.5"><span class="math">T = 1/f</span></div></div>
+                            <div class="p-2 rounded-lg bg-space-900 border border-slate-800"><span class="text-slate-400">相位 <span class="math">&omega;t+&phi;</span></span><div class="text-cyan-300 font-semibold mt-0.5">决定瞬时状态</div></div>
+                        </div>
+                    </div>
+                    <div class="p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/25 text-xs space-y-1">
+                        <div class="font-bold text-rose-300 flex items-center gap-1.5"><i class="fa-solid fa-circle-question"></i> 课前预习常见卡壳点：</div>
+                        <p class="text-slate-300">把“相位 <span class="math">&omega;t+&phi;</span>”和“初相 <span class="math">&phi;</span>”混为一谈。<span class="math">&phi;</span> 只是 <span class="math">t=0</span> 时的相位（由初始条件定）；判断两个振动“谁超前谁”，要看相位差 <span class="math">&Delta;&phi;</span>，而非各自初相的大小。</p>
+                    </div>
+                </div>
+
+                <!-- 微工具 B：两类典型系统的 ω -->
+                <div class="lg:col-span-5 bg-space-900 rounded-2xl border border-slate-800 p-5 space-y-4 shadow-xl">
+                    <div class="flex items-center justify-between flex-wrap gap-2">
+                        <h3 class="text-base font-bold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-arrows-left-right text-amber-400"></i>
+                            <span>微工具 B · 典型系统的 <span class="math">&omega;</span></span>
+                        </h3>
+                    </div>
+                    <p class="text-sm text-slate-300"><span class="math">&omega;</span> 由系统本身的物理性质决定，与初始条件（振幅）无关。</p>
+                    <div class="bg-space-950 rounded-xl p-4 border border-slate-800 space-y-3 text-sm">
+                        <div class="math text-white text-center py-1">弹簧振子：&omega; = &radic;(k/m)，T = 2&pi;&radic;(m/k)</div>
+                        <div class="math text-white text-center py-1">单摆（小角）：&omega; = &radic;(g/l)，T = 2&pi;&radic;(l/g)</div>
+                        <div class="text-xs text-slate-400 mt-1">竖直弹簧振子：平衡位置仅下移 <span class="math">mg/k</span>，<span class="math">&omega;</span> 仍为 <span class="math">&radic;(k/m)</span>。</div>
+                    </div>
+                    <div class="p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/25 text-xs space-y-1">
+                        <div class="font-bold text-rose-300 flex items-center gap-1.5"><i class="fa-solid fa-circle-question"></i> 课前预习常见卡壳点：</div>
+                        <p class="text-slate-300">以为“拉得越远、周期越长”。<span class="math">T</span> 由系统决定、与振幅无关（<span class="text-amber-300 font-semibold">等时性</span>）；竖直放置只是把平衡位置平移，并不改变周期。</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 微工具 C：微分方程 / 旋转矢量 / 能量 -->
+            <div class="bg-space-900 rounded-2xl border border-slate-800 p-5 space-y-4 shadow-xl">
+                <div class="flex items-center justify-between flex-wrap gap-2">
+                    <h3 class="text-base font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-rotate text-emerald-400"></i>
+                        <span>微工具 C · 微分方程、旋转矢量法与能量守恒</span>
+                    </h3>
+                    <span class="text-xs font-bold uppercase tracking-wider px-2.5 py-1 rounded bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">SHM 本质</span>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="bg-space-950 rounded-xl p-4 border border-slate-800 space-y-2">
+                        <div class="text-xs text-slate-400">运动微分方程</div>
+                        <div class="math text-white text-center py-1"><span class="ddot-top">x</span> + &omega;<sup>2</sup>x = 0</div>
+                        <p class="text-xs text-slate-300">加速度与位移成正比且反向——“线性回复”是 SHM 的本质判据。</p>
+                    </div>
+                    <div class="bg-space-950 rounded-xl p-4 border border-slate-800 space-y-2">
+                        <div class="text-xs text-slate-400">旋转矢量法</div>
+                        <div class="math text-white text-center py-1">A&middot;(cos&theta;, sin&theta;)</div>
+                        <p class="text-xs text-slate-300">长度 <span class="math">A</span> 的矢量以角速 <span class="math">&omega;</span> 匀速旋转，其 x 投影即 <span class="math">x(t)</span>；矢量转角就是相位，可快速判断超前/滞后。</p>
+                    </div>
+                    <div class="bg-space-950 rounded-xl p-4 border border-slate-800 space-y-2">
+                        <div class="text-xs text-slate-400">机械能守恒</div>
+                        <div class="math text-white text-center py-1">E = <span class="frac"><span>1</span><span>2</span></span>kA<sup>2</sup> = <span class="frac"><span>1</span><span>2</span></span>mv<sup>2</sup> + <span class="frac"><span>1</span><span>2</span></span>kx<sup>2</sup></div>
+                        <p class="text-xs text-slate-300">总机械能守恒，动能与势能在 0 与 <span class="math">E</span> 之间互换，平均各占一半。</p>
+                    </div>
+                </div>
+                <div class="p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/25 text-xs space-y-1">
+                    <div class="font-bold text-rose-300 flex items-center gap-1.5"><i class="fa-solid fa-circle-question"></i> 课前预习常见卡壳点：</div>
+                    <p class="text-slate-300">把“无阻尼”默认套到所有振动上。一旦出现阻尼，振幅随时间衰减、能量持续耗散，就<span class="text-rose-300 font-semibold">不再是严格 SHM</span>；旋转矢量法也只在简谐（匀速旋转）时成立。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- =====================================================================
+             环节二：POE 图像盲测 —— 反直觉预测
+             ===================================================================== -->
+        <section id="stage-2" class="stage-section space-y-6 hidden">
+            <div class="bg-gradient-to-r from-space-800 via-indigo-950/60 to-space-800 rounded-2xl p-5 border border-indigo-500/30 shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div class="space-y-1">
+                    <div class="flex items-center gap-2">
+                        <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">环节 2 / 4 · 预计 4 分钟</span>
+                        <span class="text-xs text-cyan-300"><i class="fa-solid fa-eye mr-1"></i>Predict → Observe → Explain</span>
+                    </div>
+                    <h2 class="text-xl font-bold text-white">POE 图像盲测：先预测，再揭晓物理原因</h2>
+                    <p class="text-sm text-slate-300">先凭直觉选择你认为正确的结论，点击后查看解析。重点纠正常见的“振幅影响周期”“重力改变周期”等直觉误判。</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- POE 1 -->
+                <div class="poe-sandbox bg-space-900 rounded-2xl border border-slate-800 p-5 space-y-3">
+                    <h3 class="text-white font-bold flex items-center gap-2"><i class="fa-solid fa-1 text-cyan-400"></i>POE 1 · 竖直悬挂 vs 水平放置的同一弹簧振子</h3>
+                    <p class="text-sm text-slate-300">同一根弹簧、同一物块，分别水平放置（无重力干扰）与竖直悬挂（重力让它平衡位置下移）。从各自平衡位置附近轻拉后释放，两者的振动周期一样吗？</p>
+                    <div class="grid sm:grid-cols-2 gap-2">
+                        <button class="poe-opt text-left p-3 rounded-xl bg-space-950 border border-slate-800 hover:border-cyan-400 transition" data-correct="1">周期相同，均为 <span class="math">T = 2&pi;&radic;(m/k)</span>；竖直仅把平衡位置下移 <span class="math">mg/k</span></button>
+                        <button class="poe-opt text-left p-3 rounded-xl bg-space-950 border border-slate-800 hover:border-cyan-400 transition" data-correct="0">竖直时多了重力，周期会变长（或变短）</button>
+                    </div>
+                    <div class="poe-explain hidden p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-sm text-slate-200">竖直弹簧振子的回复力仍来自弹簧形变差，重力被平衡位置的静伸长 <span class="math">mg/k</span> 抵消，等效 <span class="math">&omega;</span> 仍为 <span class="math">&radic;(k/m)</span>，周期与水平放置完全相同——重力只平移平衡位置，不改变动力学。</div>
+                </div>
+
+                <!-- POE 2 -->
+                <div class="poe-sandbox bg-space-900 rounded-2xl border border-slate-800 p-5 space-y-3">
+                    <h3 class="text-white font-bold flex items-center gap-2"><i class="fa-solid fa-2 text-amber-400"></i>POE 2 · 单摆摆角从 5° 增大到 30°</h3>
+                    <p class="text-sm text-slate-300">同一单摆，分别在很小摆角（≈5°，近似简谐）和较大摆角（≈30°）下从静止释放。大摆角时的周期，与小幅近似 <span class="math">T<sub>0</sub> = 2&pi;&radic;(l/g)</span> 相比如何？</p>
+                    <div class="grid sm:grid-cols-2 gap-2">
+                        <button class="poe-opt text-left p-3 rounded-xl bg-space-950 border border-slate-800 hover:border-cyan-400 transition" data-correct="1">周期变长：大振幅下单摆并非严格简谐，<span class="math">T &approx; T<sub>0</sub>(1 + &theta;<sub>0</sub><sup>2</sup>/16)</span></button>
+                        <button class="poe-opt text-left p-3 rounded-xl bg-space-950 border border-slate-800 hover:border-cyan-400 transition" data-correct="0">周期仍等于 <span class="math">2&pi;&radic;(l/g)</span>，与摆角无关</button>
+                    </div>
+                    <div class="poe-explain hidden p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-sm text-slate-200">只有小角近似 <span class="math">sin&theta; &approx; &theta;</span> 时单摆才是简谐、周期才与振幅无关；大角度下恢复力矩非线性（<span class="math">sin&theta; &ne; &theta;</span>），精确周期随振幅增大而变长。</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =====================================================================
+             环节三：3D 闪卡排雷 —— 8 张核心概念卡
+             ===================================================================== -->
+        <section id="stage-3" class="stage-section space-y-6 hidden">
+            <div class="bg-gradient-to-r from-space-800 via-indigo-950/60 to-space-800 rounded-2xl p-5 border border-indigo-500/30 shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div class="space-y-1">
+                    <div class="flex items-center gap-2">
+                        <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">环节 3 / 4 · 预计 4 分钟</span>
+                        <span class="text-xs text-cyan-300"><i class="fa-solid fa-layer-group mr-1"></i>点击卡片翻转</span>
+                    </div>
+                    <h2 class="text-xl font-bold text-white">3D 闪卡排雷：8 张核心概念 / 公式 / 图像</h2>
+                    <p class="text-sm text-slate-300">逐张点击翻转，正面是概念或问题，反面是解释与公式。覆盖定义、三要素、典型系统、旋转矢量与能量。</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="flip-card perspective-1000 h-52 cursor-pointer select-none">
+                    <div class="flip-card-inner transform-style-3d relative w-full h-full">
+                        <div class="absolute inset-0 backface-hidden rounded-2xl border border-slate-800 bg-space-900 p-5 flex flex-col justify-center">
+                            <span class="text-xs font-bold text-cyan-300 mb-2">正面 · 概念</span>
+                            <div class="text-white font-semibold">什么是简谐振动（SHM）？</div>
+                        </div>
+                        <div class="absolute inset-0 backface-hidden rotate-y-180 rounded-2xl border border-cyan-500/40 bg-gradient-to-br from-space-800 to-indigo-950/40 p-5 flex flex-col justify-center">
+                            <span class="text-xs font-bold text-emerald-300 mb-2">反面 · 解释</span>
+                            <div class="text-slate-200 text-sm">物体受力（或加速度）与相对平衡位置的位移成正比且反向，运动学上满足 <span class="math">x = A cos(&omega;t + &phi;)</span>。本质是线性回复运动。</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flip-card perspective-1000 h-52 cursor-pointer select-none">
+                    <div class="flip-card-inner transform-style-3d relative w-full h-full">
+                        <div class="absolute inset-0 backface-hidden rounded-2xl border border-slate-800 bg-space-900 p-5 flex flex-col justify-center">
+                            <span class="text-xs font-bold text-cyan-300 mb-2">正面 · 概念</span>
+                            <div class="text-white font-semibold">振幅 <span class="math">A</span> 表示什么？</div>
+                        </div>
+                        <div class="absolute inset-0 backface-hidden rotate-y-180 rounded-2xl border border-cyan-500/40 bg-gradient-to-br from-space-800 to-indigo-950/40 p-5 flex flex-col justify-center">
+                            <span class="text-xs font-bold text-emerald-300 mb-2">反面 · 解释</span>
+                            <div class="text-slate-200 text-sm">振动的最大位移大小，由初始能量 / 初始条件决定，<span class="text-emerald-300 font-semibold">与周期无关</span>。</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flip-card perspective-1000 h-52 cursor-pointer select-none">
+                    <div class="flip-card-inner transform-style-3d relative w-full h-full">
+                        <div class="absolute inset-0 backface-hidden rounded-2xl border border-slate-800 bg-space-900 p-5 flex flex-col justify-center">
+                            <span class="text-xs font-bold text-cyan-300 mb-2">正面 · 公式</span>
+                            <div class="text-white font-semibold">角频率 <span class="math">&omega;</span>、周期 <span class="math">T</span>、频率 <span class="math">f</span> 的关系？</div>
+                        </div>
+                        <div class="absolute inset-0 backface-hidden rotate-y-180 rounded-2xl border border-cyan-500/40 bg-gradient-to-br from-space-800 to-indigo-950/40 p-5 flex flex-col justify-center">
+                            <span class="text-xs font-bold text-emerald-300 mb-2">反面 · 公式</span>
+                            <div class="text-slate-200 text-sm"><span class="math">&omega; = 2&pi;/T = 2&pi;f</span>，<span class="math">T = 1/f</span>；它们由系统本身决定（等时性），不随振幅变。</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flip-card perspective-1000 h-52 cursor-pointer select-none">
+                    <div class="flip-card-inner transform-style-3d relative w-full h-full">
+                        <div class="absolute inset-0 backface-hidden rounded-2xl border border-slate-800 bg-space-900 p-5 flex flex-col justify-center">
+                            <span class="text-xs font-bold text-cyan-300 mb-2">正面 · 概念</span>
+                            <div class="text-white font-semibold">什么是相位与初相？</div>
+                        </div>
+                        <div class="absolute inset-0 backface-hidden rotate-y-180 rounded-2xl border border-cyan-500/40 bg-gradient-to-br from-space-800 to-indigo-950/40 p-5 flex flex-col justify-center">
+                            <span class="text-xs font-bold text-emerald-300 mb-2">反面 · 解释</span>
+                            <div class="text-slate-200 text-sm">相位 <span class="math">&omega;t+&phi;</span> 决定任意时刻的运动状态；初相 <span class="math">&phi;</span> 是 <span class="math">t=0</span> 时的相位，由初始条件定。比较振动用相位差 <span class="math">&Delta;&phi;</span>。</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flip-card perspective-1000 h-52 cursor-pointer select-none">
+                    <div class="flip-card-inner transform-style-3d relative w-full h-full">
+                        <div class="absolute inset-0 backface-hidden rounded-2xl border border-slate-800 bg-space-900 p-5 flex flex-col justify-center">
+                            <span class="text-xs font-bold text-cyan-300 mb-2">正面 · 公式</span>
+                            <div class="text-white font-semibold">弹簧振子的 <span class="math">&omega;</span> 与 <span class="math">T</span>？</div>
+                        </div>
+                        <div class="absolute inset-0 backface-hidden rotate-y-180 rounded-2xl border border-cyan-500/40 bg-gradient-to-br from-space-800 to-indigo-950/40 p-5 flex flex-col justify-center">
+                            <span class="text-xs font-bold text-emerald-300 mb-2">反面 · 公式</span>
+                            <div class="text-slate-200 text-sm"><span class="math">&omega; = &radic;(k/m)</span>，<span class="math">T = 2&pi;&radic;(m/k)</span>；质量越大或弹簧越软（k 越小），周期越长。</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flip-card perspective-1000 h-52 cursor-pointer select-none">
+                    <div class="flip-card-inner transform-style-3d relative w-full h-full">
+                        <div class="absolute inset-0 backface-hidden rounded-2xl border border-slate-800 bg-space-900 p-5 flex flex-col justify-center">
+                            <span class="text-xs font-bold text-cyan-300 mb-2">正面 · 公式</span>
+                            <div class="text-white font-semibold">单摆（小角）的 <span class="math">&omega;</span> 与 <span class="math">T</span>？</div>
+                        </div>
+                        <div class="absolute inset-0 backface-hidden rotate-y-180 rounded-2xl border border-cyan-500/40 bg-gradient-to-br from-space-800 to-indigo-950/40 p-5 flex flex-col justify-center">
+                            <span class="text-xs font-bold text-emerald-300 mb-2">反面 · 公式</span>
+                            <div class="text-slate-200 text-sm"><span class="math">&omega; = &radic;(g/l)</span>，<span class="math">T = 2&pi;&radic;(l/g)</span>；与摆球质量无关，仅由摆长与 <span class="math">g</span> 决定（小角近似）。</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flip-card perspective-1000 h-52 cursor-pointer select-none">
+                    <div class="flip-card-inner transform-style-3d relative w-full h-full">
+                        <div class="absolute inset-0 backface-hidden rounded-2xl border border-slate-800 bg-space-900 p-5 flex flex-col justify-center">
+                            <span class="text-xs font-bold text-cyan-300 mb-2">正面 · 图像</span>
+                            <div class="text-white font-semibold">旋转矢量法怎么用？</div>
+                        </div>
+                        <div class="absolute inset-0 backface-hidden rotate-y-180 rounded-2xl border border-cyan-500/40 bg-gradient-to-br from-space-800 to-indigo-950/40 p-5 flex flex-col justify-center">
+                            <span class="text-xs font-bold text-emerald-300 mb-2">反面 · 解释</span>
+                            <div class="text-slate-200 text-sm">以原点为心、长 <span class="math">A</span> 的矢量绕 O 以角速 <span class="math">&omega;</span> 旋转，其 x 投影即 <span class="math">x(t)</span>；矢量转角 = 相位，可快速判断超前 / 滞后与时间关系。</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flip-card perspective-1000 h-52 cursor-pointer select-none">
+                    <div class="flip-card-inner transform-style-3d relative w-full h-full">
+                        <div class="absolute inset-0 backface-hidden rounded-2xl border border-slate-800 bg-space-900 p-5 flex flex-col justify-center">
+                            <span class="text-xs font-bold text-cyan-300 mb-2">正面 · 能量</span>
+                            <div class="text-white font-semibold">简谐振动的能量关系？</div>
+                        </div>
+                        <div class="absolute inset-0 backface-hidden rotate-y-180 rounded-2xl border border-cyan-500/40 bg-gradient-to-br from-space-800 to-indigo-950/40 p-5 flex flex-col justify-center">
+                            <span class="text-xs font-bold text-emerald-300 mb-2">反面 · 公式</span>
+                            <div class="text-slate-200 text-sm">总机械能 <span class="math">E = <span class="frac"><span>1</span><span>2</span></span>kA<sup>2</sup></span> 守恒，<span class="math">E = <span class="frac"><span>1</span><span>2</span></span>mv<sup>2</sup> + <span class="frac"><span>1</span><span>2</span></span>kx<sup>2</sup></span>；动能↔势能互换，平均各占一半。</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =====================================================================
+             环节四：迷思图 & AI 学伴 —— 高频错误观念纠正
+             ===================================================================== -->
+        <section id="stage-4" class="stage-section space-y-6 hidden">
+            <div class="bg-gradient-to-r from-space-800 via-indigo-950/60 to-space-800 rounded-2xl p-5 border border-indigo-500/30 shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div class="space-y-1">
+                    <div class="flex items-center gap-2">
+                        <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30">环节 4 / 4 · 预计 3 分钟</span>
+                        <span class="text-xs text-cyan-300"><i class="fa-solid fa-comments mr-1"></i>AI 学伴随时答疑</span>
+                    </div>
+                    <h2 class="text-xl font-bold text-white">迷思图 &amp; AI 学伴：3 个高频错误观念</h2>
+                    <p class="text-sm text-slate-300">点击“揭示正确认知”核对你的理解。以下误判在振动章节出现频率极高，课前先排雷。</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="mc-card bg-space-900 rounded-2xl border border-slate-800 p-5 space-y-3">
+                    <div class="flex items-center gap-2"><i class="fa-solid fa-triangle-exclamation text-rose-400"></i><h3 class="text-white font-bold">迷思：回复力一定是弹力</h3></div>
+                    <p class="text-sm text-rose-200">常见错误认识：简谐振动的回复力就是弹簧的弹力。</p>
+                    <button class="mc-reveal-btn px-3 py-1.5 rounded-lg bg-amber-500/20 text-amber-300 border border-amber-500/30 text-xs font-semibold">揭示正确认知 →</button>
+                    <div class="mc-explain hidden p-3 rounded-xl bg-cyan-500/10 border border-cyan-500/30 text-sm text-slate-200">正确：回复力是按“效果”命名的力，只要方向与位移相反、大小成正比即可；它可以是重力分力（单摆）、静摩擦力、电场力等，<span class="text-cyan-300 font-semibold">未必是弹簧弹力</span>。</div>
+                </div>
+
+                <div class="mc-card bg-space-900 rounded-2xl border border-slate-800 p-5 space-y-3">
+                    <div class="flex items-center gap-2"><i class="fa-solid fa-triangle-exclamation text-rose-400"></i><h3 class="text-white font-bold">迷思：周期与振幅有关</h3></div>
+                    <p class="text-sm text-rose-200">常见错误认识：振幅越大，振动周期越长。</p>
+                    <button class="mc-reveal-btn px-3 py-1.5 rounded-lg bg-amber-500/20 text-amber-300 border border-amber-500/30 text-xs font-semibold">揭示正确认知 →</button>
+                    <div class="mc-explain hidden p-3 rounded-xl bg-cyan-500/10 border border-cyan-500/30 text-sm text-slate-200">正确：对线性回复系统（弹簧、小角单摆），<span class="text-cyan-300 font-semibold">周期由 <span class="math">&omega;</span> 决定、与振幅无关（等时性）</span>；只有非线性系统（大摆角单摆）周期才随振幅变化。</div>
+                </div>
+
+                <div class="mc-card bg-space-900 rounded-2xl border border-slate-800 p-5 space-y-3">
+                    <div class="flex items-center gap-2"><i class="fa-solid fa-triangle-exclamation text-rose-400"></i><h3 class="text-white font-bold">迷思：单摆总在做简谐振动</h3></div>
+                    <p class="text-sm text-rose-200">常见错误认识：单摆的运动天然就是简谐振动。</p>
+                    <button class="mc-reveal-btn px-3 py-1.5 rounded-lg bg-amber-500/20 text-amber-300 border border-amber-500/30 text-xs font-semibold">揭示正确认知 →</button>
+                    <div class="mc-explain hidden p-3 rounded-xl bg-cyan-500/10 border border-cyan-500/30 text-sm text-slate-200">正确：只有小角近似 <span class="math">sin&theta; &approx; &theta;</span> 时单摆才是简谐；大角度下 <span class="math">sin&theta; &ne; &theta;</span> 为非线性振动，周期随振幅增大，<span class="text-cyan-300 font-semibold">不能套用 <span class="math">T = 2&pi;&radic;(l/g)</span></span>。</div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- ==================== 平台适配导出弹窗（雨课堂 / 超星学习通预习回执） ==================== -->
+    <div id="export-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+        <div class="bg-space-900 border border-slate-700 rounded-2xl p-6 w-full max-w-md shadow-2xl">
+            <h3 class="text-lg font-bold text-white mb-3"><i class="fa-solid fa-clipboard-check text-cyan-400 mr-2"></i>预习回执</h3>
+            <textarea id="export-text" rows="6" class="w-full bg-space-950 border border-slate-700 rounded-xl p-3 text-sm text-slate-200"></textarea>
+            <div class="flex justify-end gap-2 mt-4">
+                <button onclick="copyExport()" class="px-3 py-2 rounded-lg bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 text-xs font-semibold">复制</button>
+                <button onclick="closeExportModal()" class="px-3 py-2 rounded-lg bg-slate-700 text-white text-xs font-semibold">关闭</button>
+            </div>
+        </div>
+    </div>
+    <!-- ==================== 核心交互与物理仿真脚本 ==================== -->
+    <script>
+        (function(){
+            'use strict';
+            var titleEl = document.getElementById('chTitle');
+            var CHAPTER_TITLE = (document.querySelector('h1') ? document.querySelector('h1').textContent : '') || '';
+            // 计时器
+            var remain = 15*60, running = true;
+            var timerEl = document.getElementById('timer-display');
+            var pauseIcon = document.getElementById('timer-pause-icon');
+            function fmt(s){ var m=Math.floor(s/60), x=s%60; return (m<10?'0':'')+m+':'+(x<10?'0':'')+x; }
+            function tick(){ if(!running) return; if(remain>0){ remain--; if(timerEl) timerEl.textContent=fmt(remain); var pct=Math.round((1-remain/900)*100); var bar=document.getElementById('overall-progress-bar'); if(bar) bar.style.width=pct+'%'; var txt=document.getElementById('overall-progress-text'); if(txt) txt.textContent=pct+'%'; } }
+            setInterval(tick,1000);
+            window.toggleTimerPause=function(){ running=!running; if(pauseIcon) pauseIcon.className = running?'fa-solid fa-pause':'fa-solid fa-play'; };
+            // 主题
+            window.toggleThemePanel=function(){ var p=document.getElementById('theme-control-panel'); if(!p) return; p.classList.toggle('hidden'); p.classList.toggle('flex'); };
+            var presets={dark:'#070b14',light:'#f8fafc',green:'#e6f2ea',charcoal:'#141619'};
+            window.applyThemePreset=function(k){ var c=presets[k]; if(!c) return; document.body.style.backgroundColor=c; document.body.classList.toggle('theme-light', k==='light'||k==='green'); ['dark','light','green','charcoal'].forEach(function(x){ var b=document.getElementById('preset-btn-'+x); if(b) b.classList.toggle('ring-2', x===k); }); var badge=document.getElementById('theme-contrast-badge'); if(badge) badge.textContent = (k==='dark'||k==='charcoal')?'暗色高反差':'亮色护眼'; };
+            window.applyCustomBgColor=function(hex){ document.body.style.backgroundColor=hex; };
+            // 阶段切换
+            window.switchStage=function(n){ for(var i=1;i<=4;i++){ var sec=document.getElementById('stage-'+i); if(!sec) continue; sec.classList.toggle('hidden', i!==n); var btn=document.getElementById('nav-stage-'+i); if(btn) btn.classList.toggle('stage-active', i===n); var badge=document.getElementById('badge-stage-'+i); if(badge){ badge.classList.toggle('bg-cyan-400', i===n); badge.classList.toggle('text-space-950', i===n); badge.classList.toggle('bg-slate-800', i!==n); badge.classList.toggle('text-slate-400', i!==n);} } };
+            // 闪卡翻转
+            document.querySelectorAll('.flip-card').forEach(function(c){ c.addEventListener('click', function(){ var inner=c.querySelector('.flip-card-inner'); if(inner) inner.classList.toggle('rotate-y-180'); }); });
+            // POE 揭示
+            document.querySelectorAll('.poe-opt').forEach(function(b){ b.addEventListener('click', function(){ var box=b.closest('.poe-sandbox'); if(!box) return; box.querySelectorAll('.poe-opt').forEach(function(o){ o.disabled=true; }); b.classList.add(b.dataset.correct==='1'?'ring-2 ring-emerald-400':'ring-2 ring-rose-400'); var ex=box.querySelector('.poe-explain'); if(ex) ex.classList.remove('hidden'); }); });
+            // 迷思揭示
+            document.querySelectorAll('.mc-reveal-btn').forEach(function(b){ b.addEventListener('click', function(){ var card=b.closest('.mc-card'); if(!card) return; var ex=card.querySelector('.mc-explain'); if(ex) ex.classList.toggle('hidden'); }); });
+            // 回执
+            window.openExportModal=function(){ var m=document.getElementById('export-modal'); if(m) m.classList.remove('hidden'); var t=document.getElementById('export-text'); if(t) t.value='《力学》智慧课程 · '+CHAPTER_TITLE+'\n预习回执生成于 '+new Date().toLocaleString()+'\n已完成：数学脚手架 / POE图像盲测 / 3D闪卡排雷 / 迷思图&AI学伴 四个环节。'; };
+            window.closeExportModal=function(){ var m=document.getElementById('export-modal'); if(m) m.classList.add('hidden'); };
+            window.copyExport=function(){ var t=document.getElementById('export-text'); if(t&&navigator.clipboard) navigator.clipboard.writeText(t.value); };
+            // 初始
+            switchStage(1);
+        })();
+    </script>
+</body>
+</html>
