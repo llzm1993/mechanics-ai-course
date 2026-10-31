@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>大学物理《力学》智慧课程 · 第十一章：万有引力与天体运动（课前15分钟导学）</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        space: {
+                            950: '#070b14',
+                            900: '#0b1120',
+                            800: '#131c31',
+                            700: '#1e293b',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'PingFang SC', 'Microsoft YaHei', 'sans-serif'],
+                        math: ['Cambria Math', 'Times New Roman', 'serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+        :root {
+            --bg-primary: #070b14;
+            --bg-card: #0b1120;
+            --bg-elevated: #131c31;
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --text-muted: #94a3b8;
+            --border-color: #1e293b;
+            --canvas-bg: #070b14;
+            --canvas-grid: rgba(148, 163, 184, 0.06);
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            background-image: 
+                radial-gradient(at 15% 15%, rgba(34, 211, 238, 0.08) 0px, transparent 45%),
+                radial-gradient(at 85% 20%, rgba(244, 63, 94, 0.07) 0px, transparent 45%),
+                radial-gradient(at 50% 85%, rgba(99, 102, 241, 0.08) 0px, transparent 50%);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        /* 主题背景与卡片自适应映射 */
+        .bg-space-950 { background-color: var(--bg-primary) !important; }
+        .bg-space-950\/80, .bg-space-950\/90, .bg-space-950\/70 { background-color: var(--bg-primary) !important; }
+        .bg-space-900 { background-color: var(--bg-card) !important; }
+        .bg-space-900\/90 { background-color: var(--bg-card) !important; }
+        .bg-space-800 { background-color: var(--bg-elevated) !important; }
+        canvas { background-color: var(--canvas-bg); transition: background-color 0.3s ease; }
+
+        /* 浅色/护眼主题下的高对比度文字与边框自适应 */
+        body.theme-light .text-white,
+        body.theme-light .text-slate-100,
+        body.theme-light .text-slate-200 {
+            color: var(--text-primary) !important;
+        }
+        body.theme-light .text-slate-300 {
+            color: var(--text-secondary) !important;
+        }
+        body.theme-light .text-slate-400 {
+            color: var(--text-muted) !important;
+        }
+        body.theme-light .border-slate-800,
+        body.theme-light .border-slate-800\/80,
+        body.theme-light .border-slate-800\/90,
+        body.theme-light .border-slate-700,
+        body.theme-light .border-slate-700\/80 {
+            border-color: var(--border-color) !important;
+        }
+        body.theme-light .from-space-800 {
+            --tw-gradient-from: var(--bg-elevated) !important;
+            --tw-gradient-to: var(--bg-card) !important;
+            --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important;
+        }
+        body.theme-light .from-space-900 {
+            --tw-gradient-from: var(--bg-card) !important;
+            --tw-gradient-to: var(--bg-elevated) !important;
+            --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important;
+        }
+        body.theme-light .bg-indigo-950\/30,
+        body.theme-light .bg-cyan-950\/30,
+        body.theme-light .bg-emerald-950\/30,
+        body.theme-light .bg-rose-950\/30 {
+            background-color: var(--bg-elevated) !important;
+        }
+        body.theme-light .text-cyan-300,
+        body.theme-light .text-cyan-400 {
+            color: #0284c7 !important;
+        }
+        body.theme-light .text-amber-300,
+        body.theme-light .text-amber-400,
+        body.theme-light .text-amber-200 {
+            color: #b45309 !important;
+        }
+        body.theme-light .text-emerald-300,
+        body.theme-light .text-emerald-400,
+        body.theme-light .text-emerald-200 {
+            color: #047857 !important;
+        }
+        body.theme-light .text-rose-300,
+        body.theme-light .text-rose-400 {
+            color: #be123c !important;
+        }
+        body.theme-light .text-indigo-300,
+        body.theme-light .text-indigo-200 {
+            color: #4338ca !important;
+        }
+
+        /* 数学公式规范排版样式（物理量斜体、单位与算子正体） */
+        .math {
+            font-family: 'Cambria Math', 'Times New Roman', serif;
+            font-style: italic;
+            letter-spacing: 0.02em;
+        }
+        .math-rm {
+            font-family: 'Cambria Math', 'Times New Roman', serif;
+            font-style: normal;
+        }
+        .vec {
+            position: relative;
+            display: inline-block;
+            font-weight: 600;
+        }
+        .vec::after {
+            content: "→";
+            position: absolute;
+            top: -0.58em;
+            left: 50%;
+            transform: translateX(-50%) scale(0.75);
+            font-style: normal;
+            font-weight: 700;
+            line-height: 1;
+        }
+        .dot-top {
+            position: relative;
+            display: inline-block;
+        }
+        .dot-top::after {
+            content: "·";
+            position: absolute;
+            top: -0.55em;
+            left: 50%;
+            transform: translateX(-50%) scale(1.4);
+            font-weight: bold;
+        }
+        .ddot-top {
+            position: relative;
+            display: inline-block;
+        }
+        .ddot-top::after {
+            content: "··";
+            position: absolute;
+            top: -0.55em;
+            left: 50%;
+            transform: translateX(-50%) scale(1.1);
+            letter-spacing: -1px;
+            font-weight: bold;
+        }
+        .frac {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            vertical-align: middle;
+            margin: 0 0.16em;
+            font-size: 0.92em;
+        }
+        .frac > span:first-child {
+            border-bottom: 1.5px solid currentColor;
+            padding: 0 0.25em 0.05em;
+            line-height: 1.15;
+        }
+        .frac > span:last-child {
+            padding: 0.05em 0.25em 0;
+            line-height: 1.15;
+        }
+
+        /* 3D 闪卡翻转特效 */
+        .perspective-1000 {
+            perspective: 1200px;
+        }
+        .transform-style-3d {
+            transform-style: preserve-3d;
+            transition: transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .backface-hidden {
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+        }
+        .rotate-y-180 {
+            transform: rotateY(180deg);
+        }
+
+        /* 自定义滑块样式 */
+        input[type=range] {
+            -webkit-appearance: none;
+            background: #1e293b;
+            height: 6px;
+            border-radius: 999px;
+            outline: none;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #22d3ee;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(34, 211, 238, 0.6);
+            border: 2px solid #0f172a;
+            transition: transform 0.15s ease;
+        }
+        input[type=range]::-webkit-slider-thumb:hover {
+            transform: scale(1.15);
+        }
+
+        /* 网格背景装饰 */
+        .bg-grid-pattern {
+            background-size: 28px 28px;
+            background-image: 
+                linear-gradient(to right, var(--canvas-grid) 1px, transparent 1px),
+                linear-gradient(to bottom, var(--canvas-grid) 1px, transparent 1px);
+        }
+
+        /* 滚动条美化 */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0b1120;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+    
+    /* 阶段导航高亮（通用外壳） */
+    .stage-nav-btn.stage-active {
+      background-color: rgba(34,211,238,0.20) !important;
+      color: #67e8f9 !important;
+      border-color: rgba(34,211,238,0.40) !important;
+    }
+    /* 闪卡翻转（配合 ch2 已有的 .transform-style-3d/.backface-hidden/.rotate-y-180/.perspective-1000） */
+    .flip-card-inner.rotate-y-180 { transform: rotateY(180deg); }
+</style>
+</head>
+<body class="min-h-screen flex flex-col selection:bg-cyan-500/30 selection:text-cyan-200">
+
+    <!-- ==================== 顶部固定智慧导航栏 ==================== -->
+    <header class="sticky top-0 z-40 backdrop-blur-xl bg-space-900/90 border-b border-slate-800/80 shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3">
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
+                <!-- 左侧课程标题与徽章 -->
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <a href="../../index.html" class="no-print px-3 py-2 rounded-xl bg-space-800 hover:bg-slate-700 text-cyan-300 border border-slate-700 text-xs font-semibold shadow flex items-center gap-1.5 transition-all mr-1" title="返回课程主页"><i class="fa-solid fa-house"></i><span>🏠 返回课程主页</span></a>
+<div class="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-cyan-500/20">
+                            <i class="fa-solid fa-earth-asia text-white text-lg"></i>
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <span class="text-xs font-semibold uppercase tracking-wider px-2 py-0.5 rounded bg-cyan-500/15 text-cyan-300 border border-cyan-500/30">智慧物理导学</span>
+                                <span class="text-xs text-slate-400 hidden sm:inline">控时长 · 补工具 · 立图像 · 抓迷思</span>
+                            </div>
+                            <h1 class="text-base sm:text-lg font-bold text-white tracking-tight mt-0.5">
+                                大学物理《力学》智慧课程 · 第十一章：万有引力与天体运动（课前15分钟导学）
+                            </h1>
+                        </div>
+                    </div>
+                    <!-- 移动端主题与导出按钮 -->
+                    <div class="flex items-center gap-2 lg:hidden">
+                        <button onclick="toggleThemePanel()" class="px-2.5 py-1.5 rounded-lg bg-space-800 text-cyan-300 border border-slate-700 text-xs font-medium shadow flex items-center gap-1">
+                            <i class="fa-solid fa-palette"></i>
+                            <span>🎨 背景调控</span>
+                        </button>
+                        <button onclick="openExportModal()" class="px-3 py-1.5 rounded-lg bg-gradient-to-r from-indigo-600 to-cyan-600 text-white text-xs font-medium shadow">
+                            <i class="fa-solid fa-clipboard-check mr-1"></i>生成回执
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 中部4环节递进导航条 -->
+                <nav class="flex items-center gap-1.5 overflow-x-auto py-1 no-scrollbar">
+                    <button onclick="switchStage(1)" id="nav-stage-1" class="stage-nav-btn flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-all whitespace-nowrap bg-cyan-500/20 text-cyan-300 border border-cyan-500/40">
+                        <span id="badge-stage-1" class="w-5 h-5 rounded-full bg-cyan-400 text-space-950 font-bold flex items-center justify-center text-xs">1</span>
+                        <span>数学脚手架</span>
+                    </button>
+                    <i class="fa-solid fa-chevron-right text-[10px] text-slate-600"></i>
+                    <button onclick="switchStage(2)" id="nav-stage-2" class="stage-nav-btn flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-all whitespace-nowrap text-slate-400 hover:text-slate-200">
+                        <span id="badge-stage-2" class="w-5 h-5 rounded-full bg-slate-800 text-slate-400 font-bold flex items-center justify-center text-xs">2</span>
+                        <span>POE图像盲测</span>
+                    </button>
+                    <i class="fa-solid fa-chevron-right text-[10px] text-slate-600"></i>
+                    <button onclick="switchStage(3)" id="nav-stage-3" class="stage-nav-btn flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-all whitespace-nowrap text-slate-400 hover:text-slate-200">
+                        <span id="badge-stage-3" class="w-5 h-5 rounded-full bg-slate-800 text-slate-400 font-bold flex items-center justify-center text-xs">3</span>
+                        <span>3D闪卡排雷</span>
+                    </button>
+                    <i class="fa-solid fa-chevron-right text-[10px] text-slate-600"></i>
+                    <button onclick="switchStage(4)" id="nav-stage-4" class="stage-nav-btn flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-all whitespace-nowrap text-slate-400 hover:text-slate-200">
+                        <span id="badge-stage-4" class="w-5 h-5 rounded-full bg-slate-800 text-slate-400 font-bold flex items-center justify-center text-xs">4</span>
+                        <span>迷思图&amp;AI学伴</span>
+                    </button>
+                </nav>
+
+                <!-- 右侧：15分钟计时器（可暂停）、背景调控与回执按钮 -->
+                <div class="hidden lg:flex items-center gap-2.5">
+                    <div class="flex items-center gap-2.5 bg-space-950 px-3 py-1.5 rounded-xl border border-slate-800">
+                        <div class="text-right">
+                            <div class="flex items-center gap-1.5">
+                                <button onclick="toggleTimerPause()" id="timer-pause-btn" class="text-[11px] text-cyan-400 hover:text-cyan-300 transition" title="暂停/继续计时">
+                                    <i id="timer-pause-icon" class="fa-solid fa-pause"></i>
+                                </button>
+                                <span class="text-[11px] text-slate-400">预习控时</span>
+                                <span id="timer-display" class="text-xs font-mono font-bold text-cyan-300">15:00</span>
+                            </div>
+                            <div class="w-24 h-1.5 bg-slate-800 rounded-full overflow-hidden mt-1">
+                                <div id="overall-progress-bar" class="h-full bg-gradient-to-r from-cyan-400 to-emerald-400 transition-all duration-500" style="width: 15%"></div>
+                            </div>
+                        </div>
+                        <span id="overall-progress-text" class="text-xs font-bold text-emerald-400">15%</span>
+                    </div>
+
+                    <!-- 背景与护眼配色调控按钮 -->
+                    <button onclick="toggleThemePanel()" id="theme-toggle-btn" class="px-3 py-2 rounded-xl bg-space-800 hover:bg-slate-700 text-cyan-300 border border-slate-700 text-xs font-semibold shadow flex items-center gap-1.5 transition-all" title="切换护眼背景色与自定义配色">
+                        <i class="fa-solid fa-palette"></i>
+                        <span>🎨 背景调控</span>
+                    </button>
+
+                    <button onclick="openExportModal()" class="px-3.5 py-2 rounded-xl bg-gradient-to-r from-indigo-600 via-cyan-600 to-teal-600 hover:from-indigo-500 hover:to-teal-500 text-white text-xs font-semibold shadow-lg shadow-cyan-500/15 flex items-center gap-2 transition-all">
+                        <i class="fa-solid fa-clipboard-check"></i>
+                        <span>📋 雨课堂/学习通回执</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 展开式背景颜色与护眼主题调控面板 -->
+            <div id="theme-control-panel" class="hidden mt-3 pt-3 border-t border-slate-800/80 flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-space-950/90 p-3 rounded-xl border border-slate-800">
+                <div class="flex flex-wrap items-center gap-2">
+                    <span class="text-xs font-bold text-slate-300 mr-1"><i class="fa-solid fa-eye-low-vision text-cyan-400 mr-1"></i>预设背景主题：</span>
+                    <button onclick="applyThemePreset('dark')" id="preset-btn-dark" class="px-2.5 py-1.5 rounded-lg text-xs font-medium border border-cyan-400 bg-[#070b14] text-slate-100 flex items-center gap-1.5 shadow-sm transition ring-2 ring-cyan-400">
+                        <span class="w-3 h-3 rounded-full bg-[#070b14] border border-cyan-400"></span>🌌 默认深空蓝
+                    </button>
+                    <button onclick="applyThemePreset('light')" id="preset-btn-light" class="px-2.5 py-1.5 rounded-lg text-xs font-medium border border-slate-600 bg-[#f8fafc] text-slate-900 flex items-center gap-1.5 shadow-sm transition">
+                        <span class="w-3 h-3 rounded-full bg-[#ffffff] border border-slate-400"></span>☀️ 明亮护眼白
+                    </button>
+                    <button onclick="applyThemePreset('green')" id="preset-btn-green" class="px-2.5 py-1.5 rounded-lg text-xs font-medium border border-slate-600 bg-[#e6f2ea] text-[#132a1c] flex items-center gap-1.5 shadow-sm transition">
+                        <span class="w-3 h-3 rounded-full bg-[#a3d9b5] border border-emerald-700"></span>🍵 豆沙护眼绿
+                    </button>
+                    <button onclick="applyThemePreset('charcoal')" id="preset-btn-charcoal" class="px-2.5 py-1.5 rounded-lg text-xs font-medium border border-slate-600 bg-[#141619] text-[#e5e7eb] flex items-center gap-1.5 shadow-sm transition">
+                        <span class="w-3 h-3 rounded-full bg-[#272a30] border border-slate-400"></span>🌙 极夜深灰
+                    </button>
+                </div>
+
+                <!-- 自定义颜色拾取器（自动计算明度适配深浅文字与Canvas重绘） -->
+                <div class="flex items-center gap-2.5 self-end sm:self-auto">
+                    <label for="custom-bg-picker" class="text-xs text-slate-300 flex items-center gap-1.5 cursor-pointer">
+                        <span>自定义背景色：</span>
+                        <input type="color" id="custom-bg-picker" value="#070b14" oninput="applyCustomBgColor(this.value)" class="w-7 h-7 rounded cursor-pointer border border-slate-600 bg-transparent p-0">
+                    </label>
+                    <span id="theme-contrast-badge" class="text-[11px] px-2 py-0.5 rounded bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 font-mono">默认深空蓝 · 暗色高反差</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- ==================== 主体内容容器 ==================== -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6">
+
+        <!-- =====================================================================
+             环节一：数学脚手架前置 —— 4分钟“微工具”唤醒
+             ===================================================================== -->
+        <section id="stage-1" class="stage-section space-y-6">
+            <!-- 环节导语横幅 -->
+            <div class="bg-gradient-to-r from-space-800 via-indigo-950/60 to-space-800 rounded-2xl p-5 border border-indigo-500/30 shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div class="space-y-1">
+                    <div class="flex items-center gap-2">
+                        <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">环节 1 / 4 · 预计 4 分钟</span>
+                        <span class="text-xs text-amber-300"><i class="fa-solid fa-screwdriver-wrench mr-1"></i>万有引力与轨道运动的数学工具</span>
+                    </div>
+                    <h2 class="text-xl font-bold text-white">数学脚手架前置：4分钟“微工具”唤醒</h2>
+                    <p class="text-sm text-slate-300">预习第十一章“万有引力与天体运动”前，先打通四个高频数理卡点：<span class="text-cyan-300 font-medium">平方反比引力、引力势能与场强、圆轨道动力学、开普勒定律与宇宙速度</span>。</p>
+                </div>
+            </div>
+
+            <!-- 卡片 A -->
+            <div class="bg-space-900 rounded-2xl border border-slate-800 p-5 space-y-3">
+                <h3 class="text-white font-bold"><i class="fa-solid fa-magnet text-cyan-400 mr-2"></i>微工具 A · 万有引力定律</h3>
+                <p class="text-sm text-slate-300">任何两个质点间存在相互吸引力，方向沿连线、与质量乘积成正比、与距离平方成反比。对均质球体可等效为<span class="math">r</span> 取两球心间距。</p>
+                <div class="text-center text-lg py-2">
+                    <span class="math">F = G<span class="frac"><span>m<sub>1</sub>m<sub>2</sub></span><span>r<sup>2</sup></span></span></span>
+                </div>
+                <div class="p-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-sm text-rose-200">
+                    <i class="fa-solid fa-triangle-exclamation mr-1"></i><strong>常见卡壳点：</strong><span class="math">G</span> 极小（<span class="math">6.67&times;10<sup>&minus;11</sup></span>），日常尺度引力可忽略；<span class="math">r</span> 是<strong>质心间距</strong>，套公式前要先确认两物体能否当质点/球处理，莫把“离地高度”直接当 <span class="math">r</span>。
+                </div>
+            </div>
+
+            <!-- 卡片 B -->
+            <div class="bg-space-900 rounded-2xl border border-slate-800 p-5 space-y-3">
+                <h3 class="text-white font-bold"><i class="fa-solid fa-arrow-down text-cyan-400 mr-2"></i>微工具 B · 引力势能与引力场强</h3>
+                <p class="text-sm text-slate-300">取无穷远处势能为零，则质量为 <span class="math">M</span> 的球外、质量为 <span class="math">m</span> 的物体引力势能为负；引力场强即单位质量所受引力。</p>
+                <div class="text-center text-lg py-2">
+                    <span class="math">E<sub>p</sub> = &minus;<span class="frac"><span>GMm</span><span>r</span></span></span>
+                    <span class="mx-2 text-slate-500">|</span>
+                    <span class="math">g = <span class="frac"><span>GM</span><span>r<sup>2</sup></span></span></span>
+                </div>
+                <div class="p-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-sm text-rose-200">
+                    <i class="fa-solid fa-triangle-exclamation mr-1"></i><strong>常见卡壳点：</strong>势能“负”表示<strong>束缚态</strong>——要归零需做功把它送到无穷远；别再把 <span class="math">g=9.8</span> 当常数带到太空，<span class="math">g</span> 随高度按 <span class="math">1/r<sup>2</sup></span> 衰减。
+                </div>
+            </div>
+
+            <!-- 卡片 C -->
+            <div class="bg-space-900 rounded-2xl border border-slate-800 p-5 space-y-3">
+                <h3 class="text-white font-bold"><i class="fa-solid fa-circle-notch text-cyan-400 mr-2"></i>微工具 C · 圆轨道速度与开普勒第三定律</h3>
+                <p class="text-sm text-slate-300">圆轨道上引力恰好提供向心力；开普勒第三定律指出，同一中心天体下椭圆轨道半长轴三次方与周期平方之比恒定。</p>
+                <div class="text-center text-lg py-2">
+                    <span class="math"><span class="vec">F</span><sub>引</sub> = m<span class="frac"><span>v<sup>2</sup></span><span>r</span></span> = m&omega;<sup>2</sup>r</span>
+                    <span class="mx-2 text-slate-500">,</span>
+                    <span class="math">v = &radic;<span class="frac"><span>GM</span><span>r</span></span></span>
+                    <br>
+                    <span class="math"><span class="frac"><span>a<sup>3</sup></span><span>T<sup>2</sup></span></span> = k（常数）</span>
+                </div>
+                <div class="p-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-sm text-rose-200">
+                    <i class="fa-solid fa-triangle-exclamation mr-1"></i><strong>常见卡壳点：</strong>轨道越高（<span class="math">r</span> 大）线速度 <span class="math">v</span> 反而<strong>越小</strong>，不是越大；椭圆轨道速度“近快远慢”（角动量守恒），并非匀速圆周。
+                </div>
+            </div>
+
+            <!-- 卡片 D -->
+            <div class="bg-space-900 rounded-2xl border border-slate-800 p-5 space-y-3">
+                <h3 class="text-white font-bold"><i class="fa-solid fa-rocket text-cyan-400 mr-2"></i>微工具 D · 宇宙速度与变轨</h3>
+                <p class="text-sm text-slate-300">第一宇宙速度由贴地圆轨道 <span class="math">mg = m v<sub>1</sub><sup>2</sup>/R</span> 得到；变轨时短暂加速并不意味着一直远离。</p>
+                <div class="text-center text-lg py-2">
+                    <span class="math">v<sub>1</sub> = &radic;gR = &radic;<span class="frac"><span>GM</span><span>R</span></span></span>
+                    <span class="mx-2 text-slate-500">,</span>
+                    <span class="math">v<sub>2</sub> = &radic;2&middot;v<sub>1</sub></span>
+                    <span class="mx-2 text-slate-500">,</span>
+                    <span class="math">v<sub>3</sub> &approx; 16.7 km/s</span>
+                </div>
+                <div class="p-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-sm text-rose-200">
+                    <i class="fa-solid fa-triangle-exclamation mr-1"></i><strong>常见卡壳点：</strong>低轨要升到高轨，需先<strong>加速</strong>做离心运动进入椭圆转移轨道，途中反而先“减速”（势能增、动能减）；点火加速 ≠ 一直加速远离。
+                </div>
+            </div>
+        </section>
+
+        <!-- =====================================================================
+             环节二：POE 图像盲测 —— 2个反直觉预测
+             ===================================================================== -->
+        <section id="stage-2" class="stage-section space-y-6 hidden">
+            <div class="bg-gradient-to-r from-space-800 via-indigo-950/60 to-space-800 rounded-2xl p-5 border border-indigo-500/30 shadow-xl">
+                <div class="flex items-center gap-2">
+                    <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">环节 2 / 4 · 预计 4 分钟</span>
+                    <span class="text-xs text-amber-300"><i class="fa-solid fa-eye mr-1"></i>Predict–Observe–Explain 图像盲测</span>
+                </div>
+                <h2 class="text-xl font-bold text-white mt-1">POE 图像盲测：先猜再看再讲</h2>
+                <p class="text-sm text-slate-300 mt-1">先凭直觉选择你的预测，再点击“揭示”查看正确的物理原因。两个情境都容易掉进直觉陷阱。</p>
+            </div>
+
+            <!-- POE 沙盒 1 -->
+            <div class="poe-sandbox bg-space-900 rounded-2xl border border-slate-800 p-5 space-y-3">
+                <h3 class="text-white font-bold"><i class="fa-solid fa-satellite text-cyan-400 mr-2"></i>盲测 1 · 同步卫星的高度能随意设计吗？</h3>
+                <p class="text-sm text-slate-300">通信卫星要与地面某点“相对静止”（同步），它的轨道高度是工程师随便选的，还是被唯一锁定？</p>
+                <div class="grid sm:grid-cols-2 gap-2">
+                    <button class="poe-opt text-left p-3 rounded-xl bg-space-950 border border-slate-800 hover:border-cyan-400 transition" data-correct="1">同步卫星必须在赤道上空约 3.6 万 km 的<strong>唯一固定高度</strong>，周期才恰好等于地球自转周期（24 h）。</button>
+                    <button class="poe-opt text-left p-3 rounded-xl bg-space-950 border border-slate-800 hover:border-cyan-400 transition" data-correct="0">越高越“同步”，只要卫星绕得够快，任何高度都能实现同步。</button>
+                </div>
+                <div class="poe-explain hidden p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-sm text-slate-200">
+                    <strong>解析：</strong>由 <span class="math">T = 2&pi;&radic;<span class="frac"><span>r<sup>3</sup></span><span>GM</span></span></span> 可知，给定周期 <span class="math">T</span> 就唯一确定轨道半径 <span class="math">r</span>。要 <span class="math">T=24 h</span> 且轨道面与赤道共面，半径就被锁死（约 4.2×10⁴ km，距地面约 3.6×10⁴ km），故同步轨道高度固定、不可随意设计。
+                </div>
+            </div>
+
+            <!-- POE 沙盒 2 -->
+            <div class="poe-sandbox bg-space-900 rounded-2xl border border-slate-800 p-5 space-y-3">
+                <h3 class="text-white font-bold"><i class="fa-solid fa-arrows-spin text-cyan-400 mr-2"></i>盲测 2 · 圆轨道上点火向前加速，会立刻远离地球吗？</h3>
+                <p class="text-sm text-slate-300">卫星在某一圆轨道上向前（沿速度方向）点火加速，它会马上越飞越远、持续加速远离吗？</p>
+                <div class="grid sm:grid-cols-2 gap-2">
+                    <button class="poe-opt text-left p-3 rounded-xl bg-space-950 border border-slate-800 hover:border-cyan-400 transition" data-correct="1">加速后做<strong>离心椭圆运动</strong>：加速点速度最大，随后到远地点前一直在“减速”爬升，并非持续加速远离。</button>
+                    <button class="poe-opt text-left p-3 rounded-xl bg-space-950 border border-slate-800 hover:border-cyan-400 transition" data-correct="0">加速就立刻越飞越远，并且会一直加速远离地球。</button>
+                </div>
+                <div class="poe-explain hidden p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-sm text-slate-200">
+                    <strong>解析：</strong>加速瞬间速度变大，所需向心力 <span class="math">mv<sup>2</sup>/r</span> 超过引力，卫星向外偏离进入椭圆（转移轨道）。远离过程中引力做负功，动能减小、势能增大（机械能守恒），所以先加速后“减速”；要到更高圆轨还需在远地点二次点火圆化。
+                </div>
+            </div>
+        </section>
+
+        <!-- =====================================================================
+             环节三：3D 闪卡排雷 —— 8张核心概念/公式/图像
+             ===================================================================== -->
+        <section id="stage-3" class="stage-section space-y-6 hidden">
+            <div class="bg-gradient-to-r from-space-800 via-indigo-950/60 to-space-800 rounded-2xl p-5 border border-indigo-500/30 shadow-xl">
+                <div class="flex items-center gap-2">
+                    <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">环节 3 / 4 · 预计 4 分钟</span>
+                    <span class="text-xs text-amber-300"><i class="fa-solid fa-layer-group mr-1"></i>点击翻转 · 8张核心闪卡</span>
+                </div>
+                <h2 class="text-xl font-bold text-white mt-1">3D 闪卡排雷：点开看反面解释</h2>
+                <p class="text-sm text-slate-300 mt-1">覆盖本章核心概念、定义、公式与图像特征。点击任意卡片翻面，红/黄/绿自评可留到课堂。</p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="flip-card perspective-1000 h-52 cursor-pointer select-none">
+                    <div class="flip-card-inner transform-style-3d relative w-full h-full">
+                        <div class="absolute inset-0 backface-hidden rounded-2xl border border-slate-800 bg-space-900 p-5 flex flex-col justify-center">
+                            <span class="text-xs font-bold text-cyan-300 mb-2">正面 · 概念</span>
+                            <div class="text-white font-semibold">万有引力定律的适用条件是什么？</div>
+                        </div>
+                        <div class="absolute inset-0 backface-hidden rotate-y-180 rounded-2xl border border-cyan-500/40 bg-gradient-to-br from-space-800 to-indigo-950/40 p-5 flex flex-col justify-center">
+                            <span class="text-xs font-bold text-emerald-300 mb-2">反面 · 解释</span>
+                            <div class="text-slate-200 text-sm">适用于<strong>质点</strong>或<strong>均质球体</strong>（<span class="math">r</span> 取质心距）；<span class="math">G=6.67&times;10<sup>&minus;11</sup></span> N·m²/kg²，平方反比、普适。非球对称物体需积分。</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flip-card perspective-1000 h-52 cursor-pointer select-none">
+                    <div class="flip-card-inner transform-style-3d relative w-full h-full">
+                        <div class="absolute inset-0 backface-hidden rounded-2xl border border-slate-800 bg-space-900 p-5 flex flex-col justify-center">
+                            <span class="text-xs font-bold text-cyan-300 mb-2">正面 · 概念</span>
+                            <div class="text-white font-semibold">引力势能为什么是负值？</div>
+                        </div>
+                        <div class="absolute inset-0 backface-hidden rotate-y-180 rounded-2xl border border-cyan-500/40 bg-gradient-to-br from-space-800 to-indigo-950/40 p-5 flex flex-col justify-center">
+                            <span class="text-xs font-bold text-emerald-300 mb-2">反面 · 解释</span>
+                            <div class="text-slate-200 text-sm">取无穷远为零，束缚态需做功才能逃离，故 <span class="math">E<sub>p</sub> = &minus;<span class="frac"><span>GMm</span><span>r</span></span></span> 为负；<span class="math">r&rarr;&infin;</span> 时趋于 0。</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flip-card perspective-1000 h-52 cursor-pointer select-none">
+                    <div class="flip-card-inner transform-style-3d relative w-full h-full">
+                        <div class="absolute inset-0 backface-hidden rounded-2xl border border-slate-800 bg-space-900 p-5 flex flex-col justify-center">
+                            <span class="text-xs font-bold text-cyan-300 mb-2">正面 · 概念</span>
+                            <div class="text-white font-semibold">太空中的引力场强 <span class="math">g</span> 还是 9.8 吗？</div>
+                        </div>
+                        <div class="absolute inset-0 backface-hidden rotate-y-180 rounded-2xl border border-cyan-500/40 bg-gradient-to-br from-space-800 to-indigo-950/40 p-5 flex flex-col justify-center">
+                            <span class="text-xs font-bold text-emerald-300 mb-2">反面 · 解释</span>
+                            <div class="text-slate-200 text-sm">否！<span class="math">g = <span class="frac"><span>GM</span><span>r<sup>2</sup></span></span></span> 随高度按 <span class="math">1/r<sup>2</sup></span> 衰减；地表 9.8 只是 <span class="math">r=R</span> 处的特例。</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flip-card perspective-1000 h-52 cursor-pointer select-none">
+                    <div class="flip-card-inner transform-style-3d relative w-full h-full">
+                        <div class="absolute inset-0 backface-hidden rounded-2xl border border-slate-800 bg-space-900 p-5 flex flex-col justify-center">
+                            <span class="text-xs font-bold text-cyan-300 mb-2">正面 · 概念</span>
+                            <div class="text-white font-semibold">圆轨道越高，线速度越大还是越小？</div>
+                        </div>
+                        <div class="absolute inset-0 backface-hidden rotate-y-180 rounded-2xl border border-cyan-500/40 bg-gradient-to-br from-space-800 to-indigo-950/40 p-5 flex flex-col justify-center">
+                            <span class="text-xs font-bold text-emerald-300 mb-2">反面 · 解释</span>
+                            <div class="text-slate-200 text-sm"><span class="math">v = &radic;<span class="frac"><span>GM</span><span>r</span></span></span>，<span class="math">r</span> 越大 <span class="math">v</span> 越小；同步轨道比近地轨道更慢。</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flip-card perspective-1000 h-52 cursor-pointer select-none">
+                    <div class="flip-card-inner transform-style-3d relative w-full h-full">
+                        <div class="absolute inset-0 backface-hidden rounded-2xl border border-slate-800 bg-space-900 p-5 flex flex-col justify-center">
+                            <span class="text-xs font-bold text-cyan-300 mb-2">正面 · 概念</span>
+                            <div class="text-white font-semibold">椭圆轨道上速度如何变化？</div>
+                        </div>
+                        <div class="absolute inset-0 backface-hidden rotate-y-180 rounded-2xl border border-cyan-500/40 bg-gradient-to-br from-space-800 to-indigo-950/40 p-5 flex flex-col justify-center">
+                            <span class="text-xs font-bold text-emerald-300 mb-2">反面 · 解释</span>
+                            <div class="text-slate-200 text-sm"><strong>近快远慢</strong>（角动量守恒 <span class="math">L=mrv<sub>&perp;</sub>=const</span>）：近地点最快、远地点最慢，并非匀速。</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flip-card perspective-1000 h-52 cursor-pointer select-none">
+                    <div class="flip-card-inner transform-style-3d relative w-full h-full">
+                        <div class="absolute inset-0 backface-hidden rounded-2xl border border-slate-800 bg-space-900 p-5 flex flex-col justify-center">
+                            <span class="text-xs font-bold text-cyan-300 mb-2">正面 · 概念</span>
+                            <div class="text-white font-semibold">开普勒第三定律说什么？</div>
+                        </div>
+                        <div class="absolute inset-0 backface-hidden rotate-y-180 rounded-2xl border border-cyan-500/40 bg-gradient-to-br from-space-800 to-indigo-950/40 p-5 flex flex-col justify-center">
+                            <span class="text-xs font-bold text-emerald-300 mb-2">反面 · 解释</span>
+                            <div class="text-slate-200 text-sm"><span class="math"><span class="frac"><span>a<sup>3</sup></span><span>T<sup>2</sup></span></span> = k</span>（同一中心天体 <span class="math">k</span> 相同）；半长轴越大周期越长。</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flip-card perspective-1000 h-52 cursor-pointer select-none">
+                    <div class="flip-card-inner transform-style-3d relative w-full h-full">
+                        <div class="absolute inset-0 backface-hidden rounded-2xl border border-slate-800 bg-space-900 p-5 flex flex-col justify-center">
+                            <span class="text-xs font-bold text-cyan-300 mb-2">正面 · 概念</span>
+                            <div class="text-white font-semibold">第一宇宙速度的物理意义？</div>
+                        </div>
+                        <div class="absolute inset-0 backface-hidden rotate-y-180 rounded-2xl border border-cyan-500/40 bg-gradient-to-br from-space-800 to-indigo-950/40 p-5 flex flex-col justify-center">
+                            <span class="text-xs font-bold text-emerald-300 mb-2">反面 · 解释</span>
+                            <div class="text-slate-200 text-sm">贴地圆轨道最小发射速度 = 最大环绕速度：<span class="math">v<sub>1</sub> = &radic;gR = &radic;<span class="frac"><span>GM</span><span>R</span></span> &approx; 7.9 km/s</span>。</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flip-card perspective-1000 h-52 cursor-pointer select-none">
+                    <div class="flip-card-inner transform-style-3d relative w-full h-full">
+                        <div class="absolute inset-0 backface-hidden rounded-2xl border border-slate-800 bg-space-900 p-5 flex flex-col justify-center">
+                            <span class="text-xs font-bold text-cyan-300 mb-2">正面 · 概念</span>
+                            <div class="text-white font-semibold">低轨卫星想升到高轨，一直加速就能到吗？</div>
+                        </div>
+                        <div class="absolute inset-0 backface-hidden rotate-y-180 rounded-2xl border border-cyan-500/40 bg-gradient-to-br from-space-800 to-indigo-950/40 p-5 flex flex-col justify-center">
+                            <span class="text-xs font-bold text-emerald-300 mb-2">反面 · 解释</span>
+                            <div class="text-slate-200 text-sm">需先加速进入椭圆转移轨道，到达远地点再加速圆化；途中引力做负功，先“减速”后爬升。</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =====================================================================
+             环节四：迷思图 & AI 学伴 —— 3张迷思卡
+             ===================================================================== -->
+        <section id="stage-4" class="stage-section space-y-6 hidden">
+            <div class="bg-gradient-to-r from-space-800 via-indigo-950/60 to-space-800 rounded-2xl p-5 border border-indigo-500/30 shadow-xl">
+                <div class="flex items-center gap-2">
+                    <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">环节 4 / 4 · 预计 3 分钟</span>
+                    <span class="text-xs text-amber-300"><i class="fa-solid fa-comments mr-1"></i>高频迷思 · 点击揭示</span>
+                </div>
+                <h2 class="text-xl font-bold text-white mt-1">迷思图 &amp; AI 学伴：戳破三个常见误会</h2>
+                <p class="text-sm text-slate-300 mt-1">下面三张卡是同学高频错误观念，点击“揭示正确认知”核对；课堂与 AI 学伴可继续追问。</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="mc-card bg-space-900 rounded-2xl border border-slate-800 p-5 space-y-3">
+                    <div class="flex items-center gap-2"><i class="fa-solid fa-triangle-exclamation text-rose-400"></i><h3 class="text-white font-bold">迷思：引力势能总为正</h3></div>
+                    <p class="text-sm text-rose-200">常见错误认识：势能嘛，当然是正的；或者认为在地球上势能就是零。</p>
+                    <button class="mc-reveal-btn px-3 py-1.5 rounded-lg bg-amber-500/20 text-amber-300 border border-amber-500/30 text-xs font-semibold">揭示正确认知 →</button>
+                    <div class="mc-explain hidden p-3 rounded-xl bg-cyan-500/10 border border-cyan-500/30 text-sm text-slate-200">正确：取无穷远为零，引力势能 <span class="math">E<sub>p</sub> = &minus;<span class="frac"><span>GMm</span><span>r</span></span></span> 为<strong>负</strong>，代表物体被束缚在引力场中；只有把它送到无穷远才归零。</div>
+                </div>
+
+                <div class="mc-card bg-space-900 rounded-2xl border border-slate-800 p-5 space-y-3">
+                    <div class="flex items-center gap-2"><i class="fa-solid fa-triangle-exclamation text-rose-400"></i><h3 class="text-white font-bold">迷思：同步卫星可在任意高度</h3></div>
+                    <p class="text-sm text-rose-200">常见错误认识：想覆盖哪里就放多高，高度是工程师随便定的。</p>
+                    <button class="mc-reveal-btn px-3 py-1.5 rounded-lg bg-amber-500/20 text-amber-300 border border-amber-500/30 text-xs font-semibold">揭示正确认知 →</button>
+                    <div class="mc-explain hidden p-3 rounded-xl bg-cyan-500/10 border border-cyan-500/30 text-sm text-slate-200">正确：同步要求周期 <span class="math">T=24 h</span> 且轨道共赤道面，由 <span class="math">T = 2&pi;&radic;<span class="frac"><span>r<sup>3</sup></span><span>GM</span></span></span> 唯一锁定半径，高度约 3.6×10⁴ km，固定不可随意。</div>
+                </div>
+
+                <div class="mc-card bg-space-900 rounded-2xl border border-slate-800 p-5 space-y-3">
+                    <div class="flex items-center gap-2"><i class="fa-solid fa-triangle-exclamation text-rose-400"></i><h3 class="text-white font-bold">迷思：变轨点火必加速远离</h3></div>
+                    <p class="text-sm text-rose-200">常见错误认识：加速就一路越飞越远、持续加速离开地球。</p>
+                    <button class="mc-reveal-btn px-3 py-1.5 rounded-lg bg-amber-500/20 text-amber-300 border border-amber-500/30 text-xs font-semibold">揭示正确认知 →</button>
+                    <div class="mc-explain hidden p-3 rounded-xl bg-cyan-500/10 border border-cyan-500/30 text-sm text-slate-200">正确：加速只是瞬间提高速度做离心运动；远离中引力做负功，动能减小、势能增大，到远地点前在“减速”，圆化还需二次点火。</div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ==================== 平台适配导出弹窗（雨课堂 / 超星学习通预习回执） ==================== -->
+    <div id="export-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+  <div class="bg-space-900 border border-slate-700 rounded-2xl p-6 w-full max-w-md shadow-2xl">
+    <h3 class="text-lg font-bold text-white mb-3"><i class="fa-solid fa-clipboard-check text-cyan-400 mr-2"></i>预习回执</h3>
+    <textarea id="export-text" rows="6" class="w-full bg-space-950 border border-slate-700 rounded-xl p-3 text-sm text-slate-200"></textarea>
+    <div class="flex justify-end gap-2 mt-4">
+      <button onclick="copyExport()" class="px-3 py-2 rounded-lg bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 text-xs font-semibold">复制</button>
+      <button onclick="closeExportModal()" class="px-3 py-2 rounded-lg bg-slate-700 text-white text-xs font-semibold">关闭</button>
+    </div>
+  </div>
+</div>
+
+    <!-- ==================== 核心交互与物理仿真脚本 ==================== -->
+    <script>
+(function(){
+  'use strict';
+  var titleEl = document.getElementById('chTitle');
+  var CHAPTER_TITLE = (document.querySelector('h1') ? document.querySelector('h1').textContent : '') || '';
+  // 计时器
+  var remain = 15*60, running = true;
+  var timerEl = document.getElementById('timer-display');
+  var pauseIcon = document.getElementById('timer-pause-icon');
+  function fmt(s){ var m=Math.floor(s/60), x=s%60; return (m<10?'0':'')+m+':'+(x<10?'0':'')+x; }
+  function tick(){ if(!running) return; if(remain>0){ remain--; if(timerEl) timerEl.textContent=fmt(remain); var pct=Math.round((1-remain/900)*100); var bar=document.getElementById('overall-progress-bar'); if(bar) bar.style.width=pct+'%'; var txt=document.getElementById('overall-progress-text'); if(txt) txt.textContent=pct+'%'; } }
+  setInterval(tick,1000);
+  window.toggleTimerPause=function(){ running=!running; if(pauseIcon) pauseIcon.className = running?'fa-solid fa-pause':'fa-solid fa-play'; };
+  // 主题
+  window.toggleThemePanel=function(){ var p=document.getElementById('theme-control-panel'); if(!p) return; p.classList.toggle('hidden'); p.classList.toggle('flex'); };
+  var presets={dark:'#070b14',light:'#f8fafc',green:'#e6f2ea',charcoal:'#141619'};
+  window.applyThemePreset=function(k){ var c=presets[k]; if(!c) return; document.body.style.backgroundColor=c; document.body.classList.toggle('theme-light', k==='light'||k==='green'); ['dark','light','green','charcoal'].forEach(function(x){ var b=document.getElementById('preset-btn-'+x); if(b) b.classList.toggle('ring-2', x===k); }); var badge=document.getElementById('theme-contrast-badge'); if(badge) badge.textContent = (k==='dark'||k==='charcoal')?'暗色高反差':'亮色护眼'; };
+  window.applyCustomBgColor=function(hex){ document.body.style.backgroundColor=hex; };
+  // 阶段切换
+  window.switchStage=function(n){ for(var i=1;i<=4;i++){ var sec=document.getElementById('stage-'+i); if(!sec) continue; sec.classList.toggle('hidden', i!==n); var btn=document.getElementById('nav-stage-'+i); if(btn) btn.classList.toggle('stage-active', i===n); var badge=document.getElementById('badge-stage-'+i); if(badge){ badge.classList.toggle('bg-cyan-400', i===n); badge.classList.toggle('text-space-950', i===n); badge.classList.toggle('bg-slate-800', i!==n); badge.classList.toggle('text-slate-400', i!==n);} } };
+  // 闪卡翻转
+  document.querySelectorAll('.flip-card').forEach(function(c){ c.addEventListener('click', function(){ var inner=c.querySelector('.flip-card-inner'); if(inner) inner.classList.toggle('rotate-y-180'); }); });
+  // POE 揭示
+  document.querySelectorAll('.poe-opt').forEach(function(b){ b.addEventListener('click', function(){ var box=b.closest('.poe-sandbox'); if(!box) return; box.querySelectorAll('.poe-opt').forEach(function(o){ o.disabled=true; }); b.classList.add(b.dataset.correct==='1'?'ring-2 ring-emerald-400':'ring-2 ring-rose-400'); var ex=box.querySelector('.poe-explain'); if(ex) ex.classList.remove('hidden'); }); });
+  // 迷思揭示
+  document.querySelectorAll('.mc-reveal-btn').forEach(function(b){ b.addEventListener('click', function(){ var card=b.closest('.mc-card'); if(!card) return; var ex=card.querySelector('.mc-explain'); if(ex) ex.classList.toggle('hidden'); }); });
+  // 回执
+  window.openExportModal=function(){ var m=document.getElementById('export-modal'); if(m) m.classList.remove('hidden'); var t=document.getElementById('export-text'); if(t) t.value='《力学》智慧课程 · '+CHAPTER_TITLE+'\n预习回执生成于 '+new Date().toLocaleString()+'\n已完成：数学脚手架 / POE图像盲测 / 3D闪卡排雷 / 迷思图&AI学伴 四个环节。'; };
+  window.closeExportModal=function(){ var m=document.getElementById('export-modal'); if(m) m.classList.add('hidden'); };
+  window.copyExport=function(){ var t=document.getElementById('export-text'); if(t&&navigator.clipboard) navigator.clipboard.writeText(t.value); };
+  // 初始
+  switchStage(1);
+})();
+</script>
+</body>
+</html>
