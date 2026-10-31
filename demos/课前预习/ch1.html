@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>大学物理《力学》智慧课程 · 第一章：质点运动学（课前15分钟导学）</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        space: {
+                            950: '#070b14',
+                            900: '#0b1120',
+                            800: '#131c31',
+                            700: '#1e293b',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'PingFang SC', 'Microsoft YaHei', 'sans-serif'],
+                        math: ['Cambria Math', 'Times New Roman', 'serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+        :root {
+            --bg-primary: #070b14;
+            --bg-card: #0b1120;
+            --bg-elevated: #131c31;
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --text-muted: #94a3b8;
+            --border-color: #1e293b;
+            --canvas-bg: #070b14;
+            --canvas-grid: rgba(148, 163, 184, 0.06);
+        }
+
+        /* 阶段导航高亮（通用外壳） */
+        .stage-nav-btn.stage-active {
+            background-color: rgba(34,211,238,0.20) !important;
+            color: #67e8f9 !important;
+            border-color: rgba(34,211,238,0.40) !important;
+        }
+        /* 闪卡翻转 */
+        .flip-card-inner.rotate-y-180 { transform: rotateY(180deg); }
+
+        body {
+            background-color: var(--bg-primary);
+            background-image: 
+                radial-gradient(at 15% 15%, rgba(34, 211, 238, 0.08) 0px, transparent 45%),
+                radial-gradient(at 85% 20%, rgba(244, 63, 94, 0.07) 0px, transparent 45%),
+                radial-gradient(at 50% 85%, rgba(99, 102, 241, 0.08) 0px, transparent 50%);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        /* 主题背景与卡片自适应映射 */
+        .bg-space-950 { background-color: var(--bg-primary) !important; }
+        .bg-space-950\/80, .bg-space-950\/90, .bg-space-950\/70 { background-color: var(--bg-primary) !important; }
+        .bg-space-900 { background-color: var(--bg-card) !important; }
+        .bg-space-900\/90 { background-color: var(--bg-card) !important; }
+        .bg-space-800 { background-color: var(--bg-elevated) !important; }
+        canvas { background-color: var(--canvas-bg); transition: background-color 0.3s ease; }
+
+        /* 浅色/护眼主题下的高对比度文字与边框自适应 */
+        body.theme-light .text-white,
+        body.theme-light .text-slate-100,
+        body.theme-light .text-slate-200 {
+            color: var(--text-primary) !important;
+        }
+        body.theme-light .text-slate-300 {
+            color: var(--text-secondary) !important;
+        }
+        body.theme-light .text-slate-400 {
+            color: var(--text-muted) !important;
+        }
+        body.theme-light .border-slate-800,
+        body.theme-light .border-slate-800\/80,
+        body.theme-light .border-slate-800\/90,
+        body.theme-light .border-slate-700,
+        body.theme-light .border-slate-700\/80 {
+            border-color: var(--border-color) !important;
+        }
+        body.theme-light .from-space-800 {
+            --tw-gradient-from: var(--bg-elevated) !important;
+            --tw-gradient-to: var(--bg-card) !important;
+            --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important;
+        }
+        body.theme-light .from-space-900 {
+            --tw-gradient-from: var(--bg-card) !important;
+            --tw-gradient-to: var(--bg-elevated) !important;
+            --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important;
+        }
+        body.theme-light .bg-indigo-950\/30,
+        body.theme-light .bg-cyan-950\/30,
+        body.theme-light .bg-emerald-950\/30,
+        body.theme-light .bg-rose-950\/30 {
+            background-color: var(--bg-elevated) !important;
+        }
+        body.theme-light .text-cyan-300,
+        body.theme-light .text-cyan-400 {
+            color: #0284c7 !important;
+        }
+        body.theme-light .text-amber-300,
+        body.theme-light .text-amber-400,
+        body.theme-light .text-amber-200 {
+            color: #b45309 !important;
+        }
+        body.theme-light .text-emerald-300,
+        body.theme-light .text-emerald-400,
+        body.theme-light .text-emerald-200 {
+            color: #047857 !important;
+        }
+        body.theme-light .text-rose-300,
+        body.theme-light .text-rose-400 {
+            color: #be123c !important;
+        }
+        body.theme-light .text-indigo-300,
+        body.theme-light .text-indigo-200 {
+            color: #4338ca !important;
+        }
+
+        /* 数学公式规范排版样式（物理量斜体、单位与算子正体） */
+        .math {
+            font-family: 'Cambria Math', 'Times New Roman', serif;
+            font-style: italic;
+            letter-spacing: 0.02em;
+        }
+        .math-rm {
+            font-family: 'Cambria Math', 'Times New Roman', serif;
+            font-style: normal;
+        }
+        .vec {
+            position: relative;
+            display: inline-block;
+            font-weight: 600;
+        }
+        .vec::after {
+            content: "→";
+            position: absolute;
+            top: -0.58em;
+            left: 50%;
+            transform: translateX(-50%) scale(0.75);
+            font-style: normal;
+            font-weight: 700;
+            line-height: 1;
+        }
+        .dot-top {
+            position: relative;
+            display: inline-block;
+        }
+        .dot-top::after {
+            content: "·";
+            position: absolute;
+            top: -0.55em;
+            left: 50%;
+            transform: translateX(-50%) scale(1.4);
+            font-weight: bold;
+        }
+        .ddot-top {
+            position: relative;
+            display: inline-block;
+        }
+        .ddot-top::after {
+            content: "··";
+            position: absolute;
+            top: -0.55em;
+            left: 50%;
+            transform: translateX(-50%) scale(1.1);
+            letter-spacing: -1px;
+            font-weight: bold;
+        }
+        .frac {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            vertical-align: middle;
+            margin: 0 0.16em;
+            font-size: 0.92em;
+        }
+        .frac > span:first-child {
+            border-bottom: 1.5px solid currentColor;
+            padding: 0 0.25em 0.05em;
+            line-height: 1.15;
+        }
+        .frac > span:last-child {
+            padding: 0.05em 0.25em 0;
+            line-height: 1.15;
+        }
+
+        /* 3D 闪卡翻转特效 */
+        .perspective-1000 {
+            perspective: 1200px;
+        }
+        .transform-style-3d {
+            transform-style: preserve-3d;
+            transition: transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .backface-hidden {
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+        }
+        .rotate-y-180 {
+            transform: rotateY(180deg);
+        }
+
+        /* 自定义滑块样式 */
+        input[type=range] {
+            -webkit-appearance: none;
+            background: #1e293b;
+            height: 6px;
+            border-radius: 999px;
+            outline: none;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #22d3ee;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(34, 211, 238, 0.6);
+            border: 2px solid #0f172a;
+            transition: transform 0.15s ease;
+        }
+        input[type=range]::-webkit-slider-thumb:hover {
+            transform: scale(1.15);
+        }
+
+        /* 网格背景装饰 */
+        .bg-grid-pattern {
+            background-size: 28px 28px;
+            background-image: 
+                linear-gradient(to right, var(--canvas-grid) 1px, transparent 1px),
+                linear-gradient(to bottom, var(--canvas-grid) 1px, transparent 1px);
+        }
+
+        /* 滚动条美化 */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0b1120;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col selection:bg-cyan-500/30 selection:text-cyan-200">
+
+    <!-- ==================== 顶部固定智慧导航栏 ==================== -->
+    <header class="sticky top-0 z-40 backdrop-blur-xl bg-space-900/90 border-b border-slate-800/80 shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3">
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
+                <!-- 左侧课程标题与徽章 -->
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <a href="../../index.html" class="no-print px-3 py-2 rounded-xl bg-space-800 hover:bg-slate-700 text-cyan-300 border border-slate-700 text-xs font-semibold shadow flex items-center gap-1.5 transition-all mr-1" title="返回课程主页"><i class="fa-solid fa-house"></i><span>🏠 返回课程主页</span></a>
+<div class="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-cyan-500/20">
+                            <i class="fa-solid fa-location-arrow text-white text-lg"></i>
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <span class="text-xs font-semibold uppercase tracking-wider px-2 py-0.5 rounded bg-cyan-500/15 text-cyan-300 border border-cyan-500/30">智慧物理导学</span>
+                                <span class="text-xs text-slate-400 hidden sm:inline">控时长 · 补工具 · 立图像 · 抓迷思</span>
+                            </div>
+                            <h1 class="text-base sm:text-lg font-bold text-white tracking-tight mt-0.5">
+                                大学物理《力学》智慧课程 · 第一章：质点运动学（课前15分钟导学）
+                            </h1>
+                        </div>
+                    </div>
+                    <!-- 移动端主题与导出按钮 -->
+                    <div class="flex items-center gap-2 lg:hidden">
+                        <button onclick="toggleThemePanel()" class="px-2.5 py-1.5 rounded-lg bg-space-800 text-cyan-300 border border-slate-700 text-xs font-medium shadow flex items-center gap-1">
+                            <i class="fa-solid fa-palette"></i>
+                            <span>🎨 背景调控</span>
+                        </button>
+                        <button onclick="openExportModal()" class="px-3 py-1.5 rounded-lg bg-gradient-to-r from-indigo-600 to-cyan-600 text-white text-xs font-medium shadow">
+                            <i class="fa-solid fa-clipboard-check mr-1"></i>生成回执
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 中部4环节递进导航条 -->
+                <nav class="flex items-center gap-1.5 overflow-x-auto py-1 no-scrollbar">
+                    <button onclick="switchStage(1)" id="nav-stage-1" class="stage-nav-btn flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-all whitespace-nowrap bg-cyan-500/20 text-cyan-300 border border-cyan-500/40">
+                        <span id="badge-stage-1" class="w-5 h-5 rounded-full bg-cyan-400 text-space-950 font-bold flex items-center justify-center text-xs">1</span>
+                        <span>数学脚手架</span>
+                    </button>
+                    <i class="fa-solid fa-chevron-right text-[10px] text-slate-600"></i>
+                    <button onclick="switchStage(2)" id="nav-stage-2" class="stage-nav-btn flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-all whitespace-nowrap text-slate-400 hover:text-slate-200">
+                        <span id="badge-stage-2" class="w-5 h-5 rounded-full bg-slate-800 text-slate-400 font-bold flex items-center justify-center text-xs">2</span>
+                        <span>POE图像盲测</span>
+                    </button>
+                    <i class="fa-solid fa-chevron-right text-[10px] text-slate-600"></i>
+                    <button onclick="switchStage(3)" id="nav-stage-3" class="stage-nav-btn flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-all whitespace-nowrap text-slate-400 hover:text-slate-200">
+                        <span id="badge-stage-3" class="w-5 h-5 rounded-full bg-slate-800 text-slate-400 font-bold flex items-center justify-center text-xs">3</span>
+                        <span>3D闪卡排雷</span>
+                    </button>
+                    <i class="fa-solid fa-chevron-right text-[10px] text-slate-600"></i>
+                    <button onclick="switchStage(4)" id="nav-stage-4" class="stage-nav-btn flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-all whitespace-nowrap text-slate-400 hover:text-slate-200">
+                        <span id="badge-stage-4" class="w-5 h-5 rounded-full bg-slate-800 text-slate-400 font-bold flex items-center justify-center text-xs">4</span>
+                        <span>迷思图&amp;AI学伴</span>
+                    </button>
+                </nav>
+
+                <!-- 右侧：15分钟计时器（可暂停）、背景调控与回执按钮 -->
+                <div class="hidden lg:flex items-center gap-2.5">
+                    <div class="flex items-center gap-2.5 bg-space-950 px-3 py-1.5 rounded-xl border border-slate-800">
+                        <div class="text-right">
+                            <div class="flex items-center gap-1.5">
+                                <button onclick="toggleTimerPause()" id="timer-pause-btn" class="text-[11px] text-cyan-400 hover:text-cyan-300 transition" title="暂停/继续计时">
+                                    <i id="timer-pause-icon" class="fa-solid fa-pause"></i>
+                                </button>
+                                <span class="text-[11px] text-slate-400">预习控时</span>
+                                <span id="timer-display" class="text-xs font-mono font-bold text-cyan-300">15:00</span>
+                            </div>
+                            <div class="w-24 h-1.5 bg-slate-800 rounded-full overflow-hidden mt-1">
+                                <div id="overall-progress-bar" class="h-full bg-gradient-to-r from-cyan-400 to-emerald-400 transition-all duration-500" style="width: 15%"></div>
+                            </div>
+                        </div>
+                        <span id="overall-progress-text" class="text-xs font-bold text-emerald-400">15%</span>
+                    </div>
+
+                    <!-- 背景与护眼配色调控按钮 -->
+                    <button onclick="toggleThemePanel()" id="theme-toggle-btn" class="px-3 py-2 rounded-xl bg-space-800 hover:bg-slate-700 text-cyan-300 border border-slate-700 text-xs font-semibold shadow flex items-center gap-1.5 transition-all" title="切换护眼背景色与自定义配色">
+                        <i class="fa-solid fa-palette"></i>
+                        <span>🎨 背景调控</span>
+                    </button>
+
+                    <button onclick="openExportModal()" class="px-3.5 py-2 rounded-xl bg-gradient-to-r from-indigo-600 via-cyan-600 to-teal-600 hover:from-indigo-500 hover:to-teal-500 text-white text-xs font-semibold shadow-lg shadow-cyan-500/15 flex items-center gap-2 transition-all">
+                        <i class="fa-solid fa-clipboard-check"></i>
+                        <span>📋 雨课堂/学习通回执</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 展开式背景颜色与护眼主题调控面板 -->
+            <div id="theme-control-panel" class="hidden mt-3 pt-3 border-t border-slate-800/80 flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-space-950/90 p-3 rounded-xl border border-slate-800">
+                <div class="flex flex-wrap items-center gap-2">
+                    <span class="text-xs font-bold text-slate-300 mr-1"><i class="fa-solid fa-eye-low-vision text-cyan-400 mr-1"></i>预设背景主题：</span>
+                    <button onclick="applyThemePreset('dark')" id="preset-btn-dark" class="px-2.5 py-1.5 rounded-lg text-xs font-medium border border-cyan-400 bg-[#070b14] text-slate-100 flex items-center gap-1.5 shadow-sm transition ring-2 ring-cyan-400">
+                        <span class="w-3 h-3 rounded-full bg-[#070b14] border border-cyan-400"></span>🌌 默认深空蓝
+                    </button>
+                    <button onclick="applyThemePreset('light')" id="preset-btn-light" class="px-2.5 py-1.5 rounded-lg text-xs font-medium border border-slate-600 bg-[#f8fafc] text-slate-900 flex items-center gap-1.5 shadow-sm transition">
+                        <span class="w-3 h-3 rounded-full bg-[#ffffff] border border-slate-400"></span>☀️ 明亮护眼白
+                    </button>
+                    <button onclick="applyThemePreset('green')" id="preset-btn-green" class="px-2.5 py-1.5 rounded-lg text-xs font-medium border border-slate-600 bg-[#e6f2ea] text-[#132a1c] flex items-center gap-1.5 shadow-sm transition">
+                        <span class="w-3 h-3 rounded-full bg-[#a3d9b5] border border-emerald-700"></span>🍵 豆沙护眼绿
+                    </button>
+                    <button onclick="applyThemePreset('charcoal')" id="preset-btn-charcoal" class="px-2.5 py-1.5 rounded-lg text-xs font-medium border border-slate-600 bg-[#141619] text-[#e5e7eb] flex items-center gap-1.5 shadow-sm transition">
+                        <span class="w-3 h-3 rounded-full bg-[#272a30] border border-slate-400"></span>🌙 极夜深灰
+                    </button>
+                </div>
+
+                <!-- 自定义颜色拾取器（自动计算明度适配深浅文字与Canvas重绘） -->
+                <div class="flex items-center gap-2.5 self-end sm:self-auto">
+                    <label for="custom-bg-picker" class="text-xs text-slate-300 flex items-center gap-1.5 cursor-pointer">
+                        <span>自定义背景色：</span>
+                        <input type="color" id="custom-bg-picker" value="#070b14" oninput="applyCustomBgColor(this.value)" class="w-7 h-7 rounded cursor-pointer border border-slate-600 bg-transparent p-0">
+                    </label>
+                    <span id="theme-contrast-badge" class="text-[11px] px-2 py-0.5 rounded bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 font-mono">默认深空蓝 · 暗色高反差</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- ==================== 主体内容容器 ==================== -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6">
+
+    <!-- =====================================================================
+         环节一：数学脚手架前置 —— 质点运动学的"语言"唤醒
+         ===================================================================== -->
+    <section id="stage-1" class="stage-section space-y-6">
+        <!-- 环节导语横幅 -->
+        <div class="bg-gradient-to-r from-space-800 via-indigo-950/60 to-space-800 rounded-2xl p-5 border border-indigo-500/30 shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div class="space-y-1">
+                <div class="flex items-center gap-2">
+                    <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">环节 1 / 4 · 预计 4 分钟</span>
+                    <span class="text-xs text-amber-300"><i class="fa-solid fa-screwdriver-wrench mr-1"></i>矢量与导数脚手架</span>
+                </div>
+                <h2 class="text-xl font-bold text-white">数学脚手架前置：质点运动学的"语言"唤醒</h2>
+                <p class="text-sm text-slate-300">预习第一章"质点运动学"前，先打通三个高频数理卡点：<span class="text-cyan-300 font-medium">位置矢量与位移的矢量运算</span>、<span class="text-amber-300 font-medium">速度 / 加速度的导数定义</span>，以及<span class="text-cyan-300 font-medium">自然坐标系中的加速度分解</span>。</p>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- 卡点1：位置矢量 / 位移 / 伽利略变换 -->
+            <div class="bg-space-900 rounded-2xl border border-slate-800 p-5 space-y-3 shadow-xl">
+                <h3 class="text-base font-bold text-white flex items-center gap-2"><i class="fa-solid fa-location-arrow text-cyan-400"></i>位置矢量、位移与伽利略变换</h3>
+                <p class="text-sm text-slate-300">质点的位置用从原点出发的矢量 <span class="math"><span class="vec">r</span></span> 描述；位移是末位置矢量减初位置矢量，是<strong>矢量差</strong>而非路径长度。</p>
+                <div class="bg-space-950 rounded-xl p-3 border border-slate-800 text-sm space-y-2">
+                    <div class="math text-white text-center"><span class="vec">r</span> = x<span class="math-rm">i</span> + y<span class="math-rm">j</span> + z<span class="math-rm">k</span></div>
+                    <div class="math text-white text-center">&Delta;<span class="vec">r</span> = <span class="vec">r</span><sub>2</sub> &minus; <span class="vec">r</span><sub>1</sub></div>
+                    <div class="math text-cyan-300 text-center"><span class="vec">r</span><sub>P/A</sub> = <span class="vec">r</span><sub>P/B</sub> + <span class="vec">r</span><sub>B/A</sub></div>
+                </div>
+                <div class="p-3 rounded-xl bg-rose-500/10 border border-rose-500/25 text-xs space-y-1">
+                    <div class="font-bold text-rose-300 flex items-center gap-1.5"><i class="fa-solid fa-circle-question"></i> 课前预习常见卡壳点：</div>
+                    <p class="text-slate-300">把"位移大小 |&Delta;<span class="math"><span class="vec">r</span></span>|"当成"路程"。位移只看初末位置，路程看实际轨迹长度；只有单向直线运动时二者才相等，一般 |&Delta;<span class="math"><span class="vec">r</span></span>| &le; 路程。</p>
+                </div>
+            </div>
+
+            <!-- 卡点2：速度 / 加速度导数定义 -->
+            <div class="bg-space-900 rounded-2xl border border-slate-800 p-5 space-y-3 shadow-xl">
+                <h3 class="text-base font-bold text-white flex items-center gap-2"><i class="fa-solid fa-gauge-high text-cyan-400"></i>速度 · 加速度的导数定义</h3>
+                <p class="text-sm text-slate-300">速度是位置矢量对时间的<strong>一阶导数</strong>，加速度是速度对时间的导数（位置的二阶导），都是<strong>瞬时矢量</strong>。</p>
+                <div class="bg-space-950 rounded-xl p-3 border border-slate-800 text-sm space-y-2">
+                    <div class="math text-white text-center"><span class="vec">v</span> = <span class="frac"><span>d<span class="vec">r</span></span><span>dt</span></span> = <span class="vec"><span class="dot-top">r</span></span></div>
+                    <div class="math text-white text-center"><span class="vec">a</span> = <span class="frac"><span>d<span class="vec">v</span></span><span>dt</span></span> = <span class="vec"><span class="ddot-top">r</span></span></div>
+                    <div class="math text-cyan-300 text-center">v = |<span class="vec">v</span>|，方向沿轨迹切线</div>
+                </div>
+                <div class="p-3 rounded-xl bg-rose-500/10 border border-rose-500/25 text-xs space-y-1">
+                    <div class="font-bold text-rose-300 flex items-center gap-1.5"><i class="fa-solid fa-circle-question"></i> 课前预习常见卡壳点：</div>
+                    <p class="text-slate-300">用"平均速度"代替"瞬时速度"，或认为"加速度为零物体就静止"。加速度描述速度<em>变化率</em>，与速度大小无必然联系（如匀速圆周运动速率不变但加速度不为零）。</p>
+                </div>
+            </div>
+
+            <!-- 卡点3：抛体参数方程 / 自然坐标系 -->
+            <div class="bg-space-900 rounded-2xl border border-slate-800 p-5 space-y-3 shadow-xl">
+                <h3 class="text-base font-bold text-white flex items-center gap-2"><i class="fa-solid fa-arrows-spin text-cyan-400"></i>抛体参数方程与自然坐标系</h3>
+                <p class="text-sm text-slate-300">抛体运动可分解为水平匀速与竖直匀变速；在<strong>自然坐标系</strong>中加速度拆为切向与法向两个正交分量。</p>
+                <div class="bg-space-950 rounded-xl p-3 border border-slate-800 text-sm space-y-2">
+                    <div class="math text-white text-center">x = v<sub>0</sub>cos&theta;·t</div>
+                    <div class="math text-white text-center">y = v<sub>0</sub>sin&theta;·t &minus; <span class="frac"><span>1</span><span>2</span></span>gt<sup>2</sup></div>
+                    <div class="math text-cyan-300 text-center">a<sub>t</sub> = <span class="frac"><span>dv</span><span>dt</span></span> ， a<sub>n</sub> = <span class="frac"><span>v<sup>2</sup></span><span>&rho;</span></span></div>
+                </div>
+                <div class="p-3 rounded-xl bg-rose-500/10 border border-rose-500/25 text-xs space-y-1">
+                    <div class="font-bold text-rose-300 flex items-center gap-1.5"><i class="fa-solid fa-circle-question"></i> 课前预习常见卡壳点：</div>
+                    <p class="text-slate-300">误以为"自然坐标系的 a<sub>t</sub> 永远存在"。当速率不变（如匀速圆周运动）时 a<sub>t</sub>=0，只有法向分量 a<sub>n</sub>=v<sup>2</sup>/&rho; 指向曲率中心。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- =====================================================================
+         环节二：POE 图像盲测
+         ===================================================================== -->
+    <section id="stage-2" class="stage-section hidden space-y-6">
+        <div class="bg-gradient-to-r from-space-800 via-indigo-950/60 to-space-800 rounded-2xl p-5 border border-indigo-500/30 shadow-xl">
+            <div class="space-y-1">
+                <div class="flex items-center gap-2">
+                    <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">环节 2 / 4 · 预计 4 分钟</span>
+                    <span class="text-xs text-amber-300"><i class="fa-solid fa-eye mr-1"></i>反直觉图像预测</span>
+                </div>
+                <h2 class="text-xl font-bold text-white">POE 图像盲测：先预测，再揭示</h2>
+                <p class="text-sm text-slate-300">先凭直觉选择，点击选项后揭示正确解析。重点检验你对"最高点速度方向"和"曲线运动加速度方向"的图像直觉。</p>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- POE 1 -->
+            <div class="poe-sandbox bg-space-900 rounded-2xl border border-slate-800 p-5 space-y-3">
+                <h3 class="text-white font-bold"><i class="fa-solid fa-arrow-up-right-dots text-cyan-400 mr-1"></i>预测 1：斜抛运动到最高点时，速度方向如何？</h3>
+                <p class="text-sm text-slate-300">一个物体以仰角斜向上抛出，到达轨迹最高点瞬间，它的速度矢量指向哪？</p>
+                <div class="grid sm:grid-cols-2 gap-2">
+                    <button class="poe-opt text-left p-3 rounded-xl bg-space-950 border border-slate-800 hover:border-cyan-400 transition" data-correct="1">水平方向（沿轨迹切线，竖直分量为 0）</button>
+                    <button class="poe-opt text-left p-3 rounded-xl bg-space-950 border border-slate-800 hover:border-cyan-400 transition" data-correct="0">速度为零（瞬时静止）</button>
+                </div>
+                <div class="poe-explain hidden p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-sm text-slate-200"><strong>解析：</strong>最高点是竖直速度 v<sub>y</sub> 由正变负的转折点，此时 v<sub>y</sub>=0，但水平速度 v<sub>x</sub>=v<sub>0</sub>cos&theta; 不变，故合速度水平。速度为零只发生在竖直上抛的顶端；斜抛最高点速度并不为零。</div>
+            </div>
+
+            <!-- POE 2 -->
+            <div class="poe-sandbox bg-space-900 rounded-2xl border border-slate-800 p-5 space-y-3">
+                <h3 class="text-white font-bold"><i class="fa-solid fa-rotate text-cyan-400 mr-1"></i>预测 2：匀速圆周运动中，加速度方向始终指向？</h3>
+                <p class="text-sm text-slate-300">质点做速率不变的圆周运动，它的加速度（向心加速度）方向指向哪里？</p>
+                <div class="grid sm:grid-cols-2 gap-2">
+                    <button class="poe-opt text-left p-3 rounded-xl bg-space-950 border border-slate-800 hover:border-cyan-400 transition" data-correct="1">始终指向圆心（法向）</button>
+                    <button class="poe-opt text-left p-3 rounded-xl bg-space-950 border border-slate-800 hover:border-cyan-400 transition" data-correct="0">沿运动切线方向</button>
+                </div>
+                <div class="poe-explain hidden p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-sm text-slate-200"><strong>解析：</strong>匀速圆周运动速率不变，切向加速度 a<sub>t</sub>=dv/dt=0；速度方向持续改变，因此只有法向加速度 a<sub>n</sub>=v<sup>2</sup>/R 指向圆心。加速度指向圆心而非切线。</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- =====================================================================
+         环节三：3D 闪卡排雷
+         ===================================================================== -->
+    <section id="stage-3" class="stage-section hidden space-y-6">
+        <div class="bg-gradient-to-r from-space-800 via-indigo-950/60 to-space-800 rounded-2xl p-5 border border-indigo-500/30 shadow-xl">
+            <div class="space-y-1">
+                <div class="flex items-center gap-2">
+                    <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">环节 3 / 4 · 预计 4 分钟</span>
+                    <span class="text-xs text-amber-300"><i class="fa-solid fa-layer-group mr-1"></i>概念 / 公式 / 图像排雷</span>
+                </div>
+                <h2 class="text-xl font-bold text-white">3D 闪卡排雷：点击翻转，自查核心概念</h2>
+                <p class="text-sm text-slate-300">8 张核心闪卡，正面是概念 / 问题，背面是定义、公式或图像特征。点击卡片翻转自查。</p>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <!-- 闪卡 1 -->
+            <div class="flip-card perspective-1000 h-52 cursor-pointer select-none">
+                <div class="flip-card-inner transform-style-3d relative w-full h-full">
+                    <div class="absolute inset-0 backface-hidden rounded-2xl border border-slate-800 bg-space-900 p-5 flex flex-col justify-center">
+                        <span class="text-xs font-bold text-cyan-300 mb-2">正面 · 概念</span>
+                        <div class="text-white font-semibold">什么是位置矢量？</div>
+                    </div>
+                    <div class="absolute inset-0 backface-hidden rotate-y-180 rounded-2xl border border-cyan-500/40 bg-gradient-to-br from-space-800 to-indigo-950/40 p-5 flex flex-col justify-center">
+                        <span class="text-xs font-bold text-emerald-300 mb-2">反面 · 解释</span>
+                        <div class="text-slate-200 text-sm">从参考系原点指向质点所在位置的矢量 <span class="math"><span class="vec">r</span></span>，是描述质点空间位置的"坐标矢量"，决定质点在某时刻的位置。</div>
+                    </div>
+                </div>
+            </div>
+            <!-- 闪卡 2 -->
+            <div class="flip-card perspective-1000 h-52 cursor-pointer select-none">
+                <div class="flip-card-inner transform-style-3d relative w-full h-full">
+                    <div class="absolute inset-0 backface-hidden rounded-2xl border border-slate-800 bg-space-900 p-5 flex flex-col justify-center">
+                        <span class="text-xs font-bold text-cyan-300 mb-2">正面 · 概念</span>
+                        <div class="text-white font-semibold">位移和路程有什么区别？</div>
+                    </div>
+                    <div class="absolute inset-0 backface-hidden rotate-y-180 rounded-2xl border border-cyan-500/40 bg-gradient-to-br from-space-800 to-indigo-950/40 p-5 flex flex-col justify-center">
+                        <span class="text-xs font-bold text-emerald-300 mb-2">反面 · 解释</span>
+                        <div class="text-slate-200 text-sm">位移是初末位置矢量差（矢量，与路径无关）；路程是轨迹实际长度（标量，&ge;|位移|）。单向直线运动时二者才相等。</div>
+                    </div>
+                </div>
+            </div>
+            <!-- 闪卡 3 -->
+            <div class="flip-card perspective-1000 h-52 cursor-pointer select-none">
+                <div class="flip-card-inner transform-style-3d relative w-full h-full">
+                    <div class="absolute inset-0 backface-hidden rounded-2xl border border-slate-800 bg-space-900 p-5 flex flex-col justify-center">
+                        <span class="text-xs font-bold text-cyan-300 mb-2">正面 · 公式</span>
+                        <div class="text-white font-semibold">瞬时速度如何定义？</div>
+                    </div>
+                    <div class="absolute inset-0 backface-hidden rotate-y-180 rounded-2xl border border-cyan-500/40 bg-gradient-to-br from-space-800 to-indigo-950/40 p-5 flex flex-col justify-center">
+                        <span class="text-xs font-bold text-emerald-300 mb-2">反面 · 解释</span>
+                        <div class="text-slate-200 text-sm">位置矢量对时间的一阶导数 <span class="math"><span class="vec">v</span> = <span class="frac"><span>d<span class="vec">r</span></span><span>dt</span></span></span>，方向沿轨迹切线，描述位置变化的快慢与方向。</div>
+                    </div>
+                </div>
+            </div>
+            <!-- 闪卡 4 -->
+            <div class="flip-card perspective-1000 h-52 cursor-pointer select-none">
+                <div class="flip-card-inner transform-style-3d relative w-full h-full">
+                    <div class="absolute inset-0 backface-hidden rounded-2xl border border-slate-800 bg-space-900 p-5 flex flex-col justify-center">
+                        <span class="text-xs font-bold text-cyan-300 mb-2">正面 · 公式</span>
+                        <div class="text-white font-semibold">加速度的物理意义？</div>
+                    </div>
+                    <div class="absolute inset-0 backface-hidden rotate-y-180 rounded-2xl border border-cyan-500/40 bg-gradient-to-br from-space-800 to-indigo-950/40 p-5 flex flex-col justify-center">
+                        <span class="text-xs font-bold text-emerald-300 mb-2">反面 · 解释</span>
+                        <div class="text-slate-200 text-sm">速度对时间的导数（位置的二阶导）<span class="math"><span class="vec">a</span> = <span class="vec"><span class="ddot-top">r</span></span></span>，描述速度变化的快慢，不描述速度大小本身。</div>
+                    </div>
+                </div>
+            </div>
+            <!-- 闪卡 5 -->
+            <div class="flip-card perspective-1000 h-52 cursor-pointer select-none">
+                <div class="flip-card-inner transform-style-3d relative w-full h-full">
+                    <div class="absolute inset-0 backface-hidden rounded-2xl border border-slate-800 bg-space-900 p-5 flex flex-col justify-center">
+                        <span class="text-xs font-bold text-cyan-300 mb-2">正面 · 图像</span>
+                        <div class="text-white font-semibold">抛体运动为何能分解？</div>
+                    </div>
+                    <div class="absolute inset-0 backface-hidden rotate-y-180 rounded-2xl border border-cyan-500/40 bg-gradient-to-br from-space-800 to-indigo-950/40 p-5 flex flex-col justify-center">
+                        <span class="text-xs font-bold text-emerald-300 mb-2">反面 · 解释</span>
+                        <div class="text-slate-200 text-sm">水平方向不受力 &rarr; 匀速；竖直方向受重力 &rarr; 匀变速。两个方向独立（运动独立性），合轨迹为抛物线。</div>
+                    </div>
+                </div>
+            </div>
+            <!-- 闪卡 6 -->
+            <div class="flip-card perspective-1000 h-52 cursor-pointer select-none">
+                <div class="flip-card-inner transform-style-3d relative w-full h-full">
+                    <div class="absolute inset-0 backface-hidden rounded-2xl border border-slate-800 bg-space-900 p-5 flex flex-col justify-center">
+                        <span class="text-xs font-bold text-cyan-300 mb-2">正面 · 公式</span>
+                        <div class="text-white font-semibold">a<sub>t</sub> = dv/dt 描述什么？</div>
+                    </div>
+                    <div class="absolute inset-0 backface-hidden rotate-y-180 rounded-2xl border border-cyan-500/40 bg-gradient-to-br from-space-800 to-indigo-950/40 p-5 flex flex-col justify-center">
+                        <span class="text-xs font-bold text-emerald-300 mb-2">反面 · 解释</span>
+                        <div class="text-slate-200 text-sm">切向加速度，改变速度的<em>大小</em>（速率），沿轨迹切线方向；速率不变时 a<sub>t</sub>=0。</div>
+                    </div>
+                </div>
+            </div>
+            <!-- 闪卡 7 -->
+            <div class="flip-card perspective-1000 h-52 cursor-pointer select-none">
+                <div class="flip-card-inner transform-style-3d relative w-full h-full">
+                    <div class="absolute inset-0 backface-hidden rounded-2xl border border-slate-800 bg-space-900 p-5 flex flex-col justify-center">
+                        <span class="text-xs font-bold text-cyan-300 mb-2">正面 · 公式</span>
+                        <div class="text-white font-semibold">a<sub>n</sub> = v<sup>2</sup>/&rho; 描述什么？</div>
+                    </div>
+                    <div class="absolute inset-0 backface-hidden rotate-y-180 rounded-2xl border border-cyan-500/40 bg-gradient-to-br from-space-800 to-indigo-950/40 p-5 flex flex-col justify-center">
+                        <span class="text-xs font-bold text-emerald-300 mb-2">反面 · 解释</span>
+                        <div class="text-slate-200 text-sm">法向（向心）加速度，改变速度的<em>方向</em>，指向曲率中心；&rho; 为曲率半径，匀速圆周中即 v<sup>2</sup>/R。</div>
+                    </div>
+                </div>
+            </div>
+            <!-- 闪卡 8 -->
+            <div class="flip-card perspective-1000 h-52 cursor-pointer select-none">
+                <div class="flip-card-inner transform-style-3d relative w-full h-full">
+                    <div class="absolute inset-0 backface-hidden rounded-2xl border border-slate-800 bg-space-900 p-5 flex flex-col justify-center">
+                        <span class="text-xs font-bold text-cyan-300 mb-2">正面 · 公式</span>
+                        <div class="text-white font-semibold">相对运动的速度怎么叠加？</div>
+                    </div>
+                    <div class="absolute inset-0 backface-hidden rotate-y-180 rounded-2xl border border-cyan-500/40 bg-gradient-to-br from-space-800 to-indigo-950/40 p-5 flex flex-col justify-center">
+                        <span class="text-xs font-bold text-emerald-300 mb-2">反面 · 解释</span>
+                        <div class="text-slate-200 text-sm"><span class="math"><span class="vec">v</span><sub>P/A</sub> = <span class="vec">v</span><sub>P/B</sub> + <span class="vec">v</span><sub>B/A</sub></span>，即绝对速度 = 相对速度 + 牵连速度（伽利略变换，低速近似）。</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- =====================================================================
+         环节四：迷思图 & AI 学伴
+         ===================================================================== -->
+    <section id="stage-4" class="stage-section hidden space-y-6">
+        <div class="bg-gradient-to-r from-space-800 via-indigo-950/60 to-space-800 rounded-2xl p-5 border border-indigo-500/30 shadow-xl">
+            <div class="space-y-1">
+                <div class="flex items-center gap-2">
+                    <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">环节 4 / 4 · 预计 3 分钟</span>
+                    <span class="text-xs text-amber-300"><i class="fa-solid fa-comments mr-1"></i>高频迷思纠正</span>
+                </div>
+                <h2 class="text-xl font-bold text-white">迷思图 &amp; AI 学伴：揭开三类典型误区</h2>
+                <p class="text-sm text-slate-300">点击"揭示正确认知"查看解析。带着这些纠偏点进入课堂，能更快抓住运动学的本质。</p>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- 迷思 1 -->
+            <div class="mc-card bg-space-900 rounded-2xl border border-slate-800 p-5 space-y-3">
+                <div class="flex items-center gap-2"><i class="fa-solid fa-triangle-exclamation text-rose-400"></i><h3 class="text-white font-bold">迷思：位移等于路程</h3></div>
+                <p class="text-sm text-rose-200">常见错误认识：位移的大小就等于物体运动走过的路程。</p>
+                <button class="mc-reveal-btn px-3 py-1.5 rounded-lg bg-amber-500/20 text-amber-300 border border-amber-500/30 text-xs font-semibold">揭示正确认知 →</button>
+                <div class="mc-explain hidden p-3 rounded-xl bg-cyan-500/10 border border-cyan-500/30 text-sm text-slate-200">正确：位移是矢量差 |&Delta;<span class="math"><span class="vec">r</span></span>|，路程是轨迹总长。一般 |&Delta;<span class="math"><span class="vec">r</span></span>| &le; 路程，仅当单向直线运动时取等号。</div>
+            </div>
+            <!-- 迷思 2 -->
+            <div class="mc-card bg-space-900 rounded-2xl border border-slate-800 p-5 space-y-3">
+                <div class="flex items-center gap-2"><i class="fa-solid fa-triangle-exclamation text-rose-400"></i><h3 class="text-white font-bold">迷思：曲线运动加速度必沿切线</h3></div>
+                <p class="text-sm text-rose-200">常见错误认识：物体做曲线运动时，加速度一定沿着运动轨迹的切线方向。</p>
+                <button class="mc-reveal-btn px-3 py-1.5 rounded-lg bg-amber-500/20 text-amber-300 border border-amber-500/30 text-xs font-semibold">揭示正确认知 →</button>
+                <div class="mc-explain hidden p-3 rounded-xl bg-cyan-500/10 border border-cyan-500/30 text-sm text-slate-200">正确：曲线运动中法向分量 a<sub>n</sub>=v<sup>2</sup>/&rho; 负责改变方向，普遍存在（如圆周、抛体）；只有切向分量才沿切线。加速度一般不与速度共线。</div>
+            </div>
+            <!-- 迷思 3 -->
+            <div class="mc-card bg-space-900 rounded-2xl border border-slate-800 p-5 space-y-3">
+                <div class="flex items-center gap-2"><i class="fa-solid fa-triangle-exclamation text-rose-400"></i><h3 class="text-white font-bold">迷思：最高点加速度为 0</h3></div>
+                <p class="text-sm text-rose-200">常见错误认识：斜抛到最高点时速度最小，所以加速度也为零。</p>
+                <button class="mc-reveal-btn px-3 py-1.5 rounded-lg bg-amber-500/20 text-amber-300 border border-amber-500/30 text-xs font-semibold">揭示正确认知 →</button>
+                <div class="mc-explain hidden p-3 rounded-xl bg-cyan-500/10 border border-cyan-500/30 text-sm text-slate-200">正确：全程只受重力，加速度恒为 g 向下，最高点也不例外。"速度最小"&ne;"加速度为零"——加速度由受力决定，不由速度大小决定。</div>
+            </div>
+        </div>
+    </section>
+
+</main>
+
+
+<div id="export-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+  <div class="bg-space-900 border border-slate-700 rounded-2xl p-6 w-full max-w-md shadow-2xl">
+    <h3 class="text-lg font-bold text-white mb-3"><i class="fa-solid fa-clipboard-check text-cyan-400 mr-2"></i>预习回执</h3>
+    <textarea id="export-text" rows="6" class="w-full bg-space-950 border border-slate-700 rounded-xl p-3 text-sm text-slate-200"></textarea>
+    <div class="flex justify-end gap-2 mt-4">
+      <button onclick="copyExport()" class="px-3 py-2 rounded-lg bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 text-xs font-semibold">复制</button>
+      <button onclick="closeExportModal()" class="px-3 py-2 rounded-lg bg-slate-700 text-white text-xs font-semibold">关闭</button>
+    </div>
+  </div>
+</div>
+
+    <!-- ==================== 核心交互与物理仿真脚本 ==================== -->
+    <script>
+(function(){
+  'use strict';
+  var titleEl = document.getElementById('chTitle');
+  var CHAPTER_TITLE = (document.querySelector('h1') ? document.querySelector('h1').textContent : '') || '';
+  // 计时器
+  var remain = 15*60, running = true;
+  var timerEl = document.getElementById('timer-display');
+  var pauseIcon = document.getElementById('timer-pause-icon');
+  function fmt(s){ var m=Math.floor(s/60), x=s%60; return (m<10?'0':'')+m+':'+(x<10?'0':'')+x; }
+  function tick(){ if(!running) return; if(remain>0){ remain--; if(timerEl) timerEl.textContent=fmt(remain); var pct=Math.round((1-remain/900)*100); var bar=document.getElementById('overall-progress-bar'); if(bar) bar.style.width=pct+'%'; var txt=document.getElementById('overall-progress-text'); if(txt) txt.textContent=pct+'%'; } }
+  setInterval(tick,1000);
+  window.toggleTimerPause=function(){ running=!running; if(pauseIcon) pauseIcon.className = running?'fa-solid fa-pause':'fa-solid fa-play'; };
+  // 主题
+  window.toggleThemePanel=function(){ var p=document.getElementById('theme-control-panel'); if(!p) return; p.classList.toggle('hidden'); p.classList.toggle('flex'); };
+  var presets={dark:'#070b14',light:'#f8fafc',green:'#e6f2ea',charcoal:'#141619'};
+  window.applyThemePreset=function(k){ var c=presets[k]; if(!c) return; document.body.style.backgroundColor=c; document.body.classList.toggle('theme-light', k==='light'||k==='green'); ['dark','light','green','charcoal'].forEach(function(x){ var b=document.getElementById('preset-btn-'+x); if(b) b.classList.toggle('ring-2', x===k); }); var badge=document.getElementById('theme-contrast-badge'); if(badge) badge.textContent = (k==='dark'||k==='charcoal')?'暗色高反差':'亮色护眼'; };
+  window.applyCustomBgColor=function(hex){ document.body.style.backgroundColor=hex; };
+  // 阶段切换
+  window.switchStage=function(n){ for(var i=1;i<=4;i++){ var sec=document.getElementById('stage-'+i); if(!sec) continue; sec.classList.toggle('hidden', i!==n); var btn=document.getElementById('nav-stage-'+i); if(btn) btn.classList.toggle('stage-active', i===n); var badge=document.getElementById('badge-stage-'+i); if(badge){ badge.classList.toggle('bg-cyan-400', i===n); badge.classList.toggle('text-space-950', i===n); badge.classList.toggle('bg-slate-800', i!==n); badge.classList.toggle('text-slate-400', i!==n);} } };
+  // 闪卡翻转
+  document.querySelectorAll('.flip-card').forEach(function(c){ c.addEventListener('click', function(){ var inner=c.querySelector('.flip-card-inner'); if(inner) inner.classList.toggle('rotate-y-180'); }); });
+  // POE 揭示
+  document.querySelectorAll('.poe-opt').forEach(function(b){ b.addEventListener('click', function(){ var box=b.closest('.poe-sandbox'); if(!box) return; box.querySelectorAll('.poe-opt').forEach(function(o){ o.disabled=true; }); b.classList.add(b.dataset.correct==='1'?'ring-2 ring-emerald-400':'ring-2 ring-rose-400'); var ex=box.querySelector('.poe-explain'); if(ex) ex.classList.remove('hidden'); }); });
+  // 迷思揭示
+  document.querySelectorAll('.mc-reveal-btn').forEach(function(b){ b.addEventListener('click', function(){ var card=b.closest('.mc-card'); if(!card) return; var ex=card.querySelector('.mc-explain'); if(ex) ex.classList.toggle('hidden'); }); });
+  // 回执
+  window.openExportModal=function(){ var m=document.getElementById('export-modal'); if(m) m.classList.remove('hidden'); var t=document.getElementById('export-text'); if(t) t.value='《力学》智慧课程 · '+CHAPTER_TITLE+'\n预习回执生成于 '+new Date().toLocaleString()+'\n已完成：数学脚手架 / POE图像盲测 / 3D闪卡排雷 / 迷思图&AI学伴 四个环节。'; };
+  window.closeExportModal=function(){ var m=document.getElementById('export-modal'); if(m) m.classList.add('hidden'); };
+  window.copyExport=function(){ var t=document.getElementById('export-text'); if(t&&navigator.clipboard) navigator.clipboard.writeText(t.value); };
+  // 初始
+  switchStage(1);
+})();
+</script>
+
+</body>
+</html>
