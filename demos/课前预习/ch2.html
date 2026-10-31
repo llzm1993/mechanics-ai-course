@@ -1,0 +1,2877 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>大学物理《力学》智慧课程 · 第二章：惯性系下质点动力学（课前15分钟导学）</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        space: {
+                            950: '#070b14',
+                            900: '#0b1120',
+                            800: '#131c31',
+                            700: '#1e293b',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'PingFang SC', 'Microsoft YaHei', 'sans-serif'],
+                        math: ['Cambria Math', 'Times New Roman', 'serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+        :root {
+            --bg-primary: #070b14;
+            --bg-card: #0b1120;
+            --bg-elevated: #131c31;
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --text-muted: #94a3b8;
+            --border-color: #1e293b;
+            --canvas-bg: #070b14;
+            --canvas-grid: rgba(148, 163, 184, 0.06);
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            background-image: 
+                radial-gradient(at 15% 15%, rgba(34, 211, 238, 0.08) 0px, transparent 45%),
+                radial-gradient(at 85% 20%, rgba(244, 63, 94, 0.07) 0px, transparent 45%),
+                radial-gradient(at 50% 85%, rgba(99, 102, 241, 0.08) 0px, transparent 50%);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        /* 主题背景与卡片自适应映射 */
+        .bg-space-950 { background-color: var(--bg-primary) !important; }
+        .bg-space-950\/80, .bg-space-950\/90, .bg-space-950\/70 { background-color: var(--bg-primary) !important; }
+        .bg-space-900 { background-color: var(--bg-card) !important; }
+        .bg-space-900\/90 { background-color: var(--bg-card) !important; }
+        .bg-space-800 { background-color: var(--bg-elevated) !important; }
+        canvas { background-color: var(--canvas-bg); transition: background-color 0.3s ease; }
+
+        /* 浅色/护眼主题下的高对比度文字与边框自适应 */
+        body.theme-light .text-white,
+        body.theme-light .text-slate-100,
+        body.theme-light .text-slate-200 {
+            color: var(--text-primary) !important;
+        }
+        body.theme-light .text-slate-300 {
+            color: var(--text-secondary) !important;
+        }
+        body.theme-light .text-slate-400 {
+            color: var(--text-muted) !important;
+        }
+        body.theme-light .border-slate-800,
+        body.theme-light .border-slate-800\/80,
+        body.theme-light .border-slate-800\/90,
+        body.theme-light .border-slate-700,
+        body.theme-light .border-slate-700\/80 {
+            border-color: var(--border-color) !important;
+        }
+        body.theme-light .from-space-800 {
+            --tw-gradient-from: var(--bg-elevated) !important;
+            --tw-gradient-to: var(--bg-card) !important;
+            --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important;
+        }
+        body.theme-light .from-space-900 {
+            --tw-gradient-from: var(--bg-card) !important;
+            --tw-gradient-to: var(--bg-elevated) !important;
+            --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important;
+        }
+        body.theme-light .bg-indigo-950\/30,
+        body.theme-light .bg-cyan-950\/30,
+        body.theme-light .bg-emerald-950\/30,
+        body.theme-light .bg-rose-950\/30 {
+            background-color: var(--bg-elevated) !important;
+        }
+        body.theme-light .text-cyan-300,
+        body.theme-light .text-cyan-400 {
+            color: #0284c7 !important;
+        }
+        body.theme-light .text-amber-300,
+        body.theme-light .text-amber-400,
+        body.theme-light .text-amber-200 {
+            color: #b45309 !important;
+        }
+        body.theme-light .text-emerald-300,
+        body.theme-light .text-emerald-400,
+        body.theme-light .text-emerald-200 {
+            color: #047857 !important;
+        }
+        body.theme-light .text-rose-300,
+        body.theme-light .text-rose-400 {
+            color: #be123c !important;
+        }
+        body.theme-light .text-indigo-300,
+        body.theme-light .text-indigo-200 {
+            color: #4338ca !important;
+        }
+
+        /* 数学公式规范排版样式（物理量斜体、单位与算子正体） */
+        .math {
+            font-family: 'Cambria Math', 'Times New Roman', serif;
+            font-style: italic;
+            letter-spacing: 0.02em;
+        }
+        .math-rm {
+            font-family: 'Cambria Math', 'Times New Roman', serif;
+            font-style: normal;
+        }
+        .vec {
+            position: relative;
+            display: inline-block;
+            font-weight: 600;
+        }
+        .vec::after {
+            content: "→";
+            position: absolute;
+            top: -0.58em;
+            left: 50%;
+            transform: translateX(-50%) scale(0.75);
+            font-style: normal;
+            font-weight: 700;
+            line-height: 1;
+        }
+        .dot-top {
+            position: relative;
+            display: inline-block;
+        }
+        .dot-top::after {
+            content: "·";
+            position: absolute;
+            top: -0.55em;
+            left: 50%;
+            transform: translateX(-50%) scale(1.4);
+            font-weight: bold;
+        }
+        .ddot-top {
+            position: relative;
+            display: inline-block;
+        }
+        .ddot-top::after {
+            content: "··";
+            position: absolute;
+            top: -0.55em;
+            left: 50%;
+            transform: translateX(-50%) scale(1.1);
+            letter-spacing: -1px;
+            font-weight: bold;
+        }
+        .frac {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            vertical-align: middle;
+            margin: 0 0.16em;
+            font-size: 0.92em;
+        }
+        .frac > span:first-child {
+            border-bottom: 1.5px solid currentColor;
+            padding: 0 0.25em 0.05em;
+            line-height: 1.15;
+        }
+        .frac > span:last-child {
+            padding: 0.05em 0.25em 0;
+            line-height: 1.15;
+        }
+
+        /* 3D 闪卡翻转特效 */
+        .perspective-1000 {
+            perspective: 1200px;
+        }
+        .transform-style-3d {
+            transform-style: preserve-3d;
+            transition: transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .backface-hidden {
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+        }
+        .rotate-y-180 {
+            transform: rotateY(180deg);
+        }
+
+        /* 自定义滑块样式 */
+        input[type=range] {
+            -webkit-appearance: none;
+            background: #1e293b;
+            height: 6px;
+            border-radius: 999px;
+            outline: none;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #22d3ee;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(34, 211, 238, 0.6);
+            border: 2px solid #0f172a;
+            transition: transform 0.15s ease;
+        }
+        input[type=range]::-webkit-slider-thumb:hover {
+            transform: scale(1.15);
+        }
+
+        /* 网格背景装饰 */
+        .bg-grid-pattern {
+            background-size: 28px 28px;
+            background-image: 
+                linear-gradient(to right, var(--canvas-grid) 1px, transparent 1px),
+                linear-gradient(to bottom, var(--canvas-grid) 1px, transparent 1px);
+        }
+
+        /* 滚动条美化 */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0b1120;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col selection:bg-cyan-500/30 selection:text-cyan-200">
+
+    <!-- ==================== 顶部固定智慧导航栏 ==================== -->
+    <header class="sticky top-0 z-40 backdrop-blur-xl bg-space-900/90 border-b border-slate-800/80 shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3">
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
+                <!-- 左侧课程标题与徽章 -->
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <a href="../../index.html" class="no-print px-3 py-2 rounded-xl bg-space-800 hover:bg-slate-700 text-cyan-300 border border-slate-700 text-xs font-semibold shadow flex items-center gap-1.5 transition-all mr-1" title="返回课程主页"><i class="fa-solid fa-house"></i><span>🏠 返回课程主页</span></a>
+<div class="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-cyan-500/20">
+                            <i class="fa-solid fa-scale-balanced text-white text-lg"></i>
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <span class="text-xs font-semibold uppercase tracking-wider px-2 py-0.5 rounded bg-cyan-500/15 text-cyan-300 border border-cyan-500/30">智慧物理导学</span>
+                                <span class="text-xs text-slate-400 hidden sm:inline">控时长 · 补工具 · 立图像 · 抓迷思</span>
+                            </div>
+                            <h1 class="text-base sm:text-lg font-bold text-white tracking-tight mt-0.5">
+                                大学物理《力学》智慧课程 · 第二章：惯性系下质点动力学（课前15分钟导学）
+                            </h1>
+                        </div>
+                    </div>
+                    <!-- 移动端主题与导出按钮 -->
+                    <div class="flex items-center gap-2 lg:hidden">
+                        <button onclick="toggleThemePanel()" class="px-2.5 py-1.5 rounded-lg bg-space-800 text-cyan-300 border border-slate-700 text-xs font-medium shadow flex items-center gap-1">
+                            <i class="fa-solid fa-palette"></i>
+                            <span>🎨 背景调控</span>
+                        </button>
+                        <button onclick="openExportModal()" class="px-3 py-1.5 rounded-lg bg-gradient-to-r from-indigo-600 to-cyan-600 text-white text-xs font-medium shadow">
+                            <i class="fa-solid fa-clipboard-check mr-1"></i>生成回执
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 中部4环节递进导航条 -->
+                <nav class="flex items-center gap-1.5 overflow-x-auto py-1 no-scrollbar">
+                    <button onclick="switchStage(1)" id="nav-stage-1" class="stage-nav-btn flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-all whitespace-nowrap bg-cyan-500/20 text-cyan-300 border border-cyan-500/40">
+                        <span id="badge-stage-1" class="w-5 h-5 rounded-full bg-cyan-400 text-space-950 font-bold flex items-center justify-center text-xs">1</span>
+                        <span>数学脚手架</span>
+                    </button>
+                    <i class="fa-solid fa-chevron-right text-[10px] text-slate-600"></i>
+                    <button onclick="switchStage(2)" id="nav-stage-2" class="stage-nav-btn flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-all whitespace-nowrap text-slate-400 hover:text-slate-200">
+                        <span id="badge-stage-2" class="w-5 h-5 rounded-full bg-slate-800 text-slate-400 font-bold flex items-center justify-center text-xs">2</span>
+                        <span>POE图像盲测</span>
+                    </button>
+                    <i class="fa-solid fa-chevron-right text-[10px] text-slate-600"></i>
+                    <button onclick="switchStage(3)" id="nav-stage-3" class="stage-nav-btn flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-all whitespace-nowrap text-slate-400 hover:text-slate-200">
+                        <span id="badge-stage-3" class="w-5 h-5 rounded-full bg-slate-800 text-slate-400 font-bold flex items-center justify-center text-xs">3</span>
+                        <span>3D闪卡排雷</span>
+                    </button>
+                    <i class="fa-solid fa-chevron-right text-[10px] text-slate-600"></i>
+                    <button onclick="switchStage(4)" id="nav-stage-4" class="stage-nav-btn flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-all whitespace-nowrap text-slate-400 hover:text-slate-200">
+                        <span id="badge-stage-4" class="w-5 h-5 rounded-full bg-slate-800 text-slate-400 font-bold flex items-center justify-center text-xs">4</span>
+                        <span>迷思图&amp;AI学伴</span>
+                    </button>
+                </nav>
+
+                <!-- 右侧：15分钟计时器（可暂停）、背景调控与回执按钮 -->
+                <div class="hidden lg:flex items-center gap-2.5">
+                    <div class="flex items-center gap-2.5 bg-space-950 px-3 py-1.5 rounded-xl border border-slate-800">
+                        <div class="text-right">
+                            <div class="flex items-center gap-1.5">
+                                <button onclick="toggleTimerPause()" id="timer-pause-btn" class="text-[11px] text-cyan-400 hover:text-cyan-300 transition" title="暂停/继续计时">
+                                    <i id="timer-pause-icon" class="fa-solid fa-pause"></i>
+                                </button>
+                                <span class="text-[11px] text-slate-400">预习控时</span>
+                                <span id="timer-display" class="text-xs font-mono font-bold text-cyan-300">15:00</span>
+                            </div>
+                            <div class="w-24 h-1.5 bg-slate-800 rounded-full overflow-hidden mt-1">
+                                <div id="overall-progress-bar" class="h-full bg-gradient-to-r from-cyan-400 to-emerald-400 transition-all duration-500" style="width: 15%"></div>
+                            </div>
+                        </div>
+                        <span id="overall-progress-text" class="text-xs font-bold text-emerald-400">15%</span>
+                    </div>
+
+                    <!-- 背景与护眼配色调控按钮 -->
+                    <button onclick="toggleThemePanel()" id="theme-toggle-btn" class="px-3 py-2 rounded-xl bg-space-800 hover:bg-slate-700 text-cyan-300 border border-slate-700 text-xs font-semibold shadow flex items-center gap-1.5 transition-all" title="切换护眼背景色与自定义配色">
+                        <i class="fa-solid fa-palette"></i>
+                        <span>🎨 背景调控</span>
+                    </button>
+
+                    <button onclick="openExportModal()" class="px-3.5 py-2 rounded-xl bg-gradient-to-r from-indigo-600 via-cyan-600 to-teal-600 hover:from-indigo-500 hover:to-teal-500 text-white text-xs font-semibold shadow-lg shadow-cyan-500/15 flex items-center gap-2 transition-all">
+                        <i class="fa-solid fa-clipboard-check"></i>
+                        <span>📋 雨课堂/学习通回执</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 展开式背景颜色与护眼主题调控面板 -->
+            <div id="theme-control-panel" class="hidden mt-3 pt-3 border-t border-slate-800/80 flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-space-950/90 p-3 rounded-xl border border-slate-800">
+                <div class="flex flex-wrap items-center gap-2">
+                    <span class="text-xs font-bold text-slate-300 mr-1"><i class="fa-solid fa-eye-low-vision text-cyan-400 mr-1"></i>预设背景主题：</span>
+                    <button onclick="applyThemePreset('dark')" id="preset-btn-dark" class="px-2.5 py-1.5 rounded-lg text-xs font-medium border border-cyan-400 bg-[#070b14] text-slate-100 flex items-center gap-1.5 shadow-sm transition ring-2 ring-cyan-400">
+                        <span class="w-3 h-3 rounded-full bg-[#070b14] border border-cyan-400"></span>🌌 默认深空蓝
+                    </button>
+                    <button onclick="applyThemePreset('light')" id="preset-btn-light" class="px-2.5 py-1.5 rounded-lg text-xs font-medium border border-slate-600 bg-[#f8fafc] text-slate-900 flex items-center gap-1.5 shadow-sm transition">
+                        <span class="w-3 h-3 rounded-full bg-[#ffffff] border border-slate-400"></span>☀️ 明亮护眼白
+                    </button>
+                    <button onclick="applyThemePreset('green')" id="preset-btn-green" class="px-2.5 py-1.5 rounded-lg text-xs font-medium border border-slate-600 bg-[#e6f2ea] text-[#132a1c] flex items-center gap-1.5 shadow-sm transition">
+                        <span class="w-3 h-3 rounded-full bg-[#a3d9b5] border border-emerald-700"></span>🍵 豆沙护眼绿
+                    </button>
+                    <button onclick="applyThemePreset('charcoal')" id="preset-btn-charcoal" class="px-2.5 py-1.5 rounded-lg text-xs font-medium border border-slate-600 bg-[#141619] text-[#e5e7eb] flex items-center gap-1.5 shadow-sm transition">
+                        <span class="w-3 h-3 rounded-full bg-[#272a30] border border-slate-400"></span>🌙 极夜深灰
+                    </button>
+                </div>
+
+                <!-- 自定义颜色拾取器（自动计算明度适配深浅文字与Canvas重绘） -->
+                <div class="flex items-center gap-2.5 self-end sm:self-auto">
+                    <label for="custom-bg-picker" class="text-xs text-slate-300 flex items-center gap-1.5 cursor-pointer">
+                        <span>自定义背景色：</span>
+                        <input type="color" id="custom-bg-picker" value="#070b14" oninput="applyCustomBgColor(this.value)" class="w-7 h-7 rounded cursor-pointer border border-slate-600 bg-transparent p-0">
+                    </label>
+                    <span id="theme-contrast-badge" class="text-[11px] px-2 py-0.5 rounded bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 font-mono">默认深空蓝 · 暗色高反差</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- ==================== 主体内容容器 ==================== -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6">
+
+        <!-- =====================================================================
+             环节一：数学脚手架前置 —— 3分钟“微工具”唤醒
+             ===================================================================== -->
+        <section id="stage-1" class="stage-section space-y-6">
+            <!-- 环节导语横幅 -->
+            <div class="bg-gradient-to-r from-space-800 via-indigo-950/60 to-space-800 rounded-2xl p-5 border border-indigo-500/30 shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div class="space-y-1">
+                    <div class="flex items-center gap-2">
+                        <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">环节 1 / 4 · 预计 3 分钟</span>
+                        <span class="text-xs text-amber-300"><i class="fa-solid fa-screwdriver-wrench mr-1"></i>微元受力与变力积分脚手架</span>
+                    </div>
+                    <h2 class="text-xl font-bold text-white">数学脚手架前置：3分钟“微工具”唤醒</h2>
+                    <p class="text-sm text-slate-300">预习第二章“变力动力学与绳张力”前，先打通两个高频数理卡点：<span class="text-cyan-300 font-medium">绳微元小角度近似与二阶小量取舍</span>，以及<span class="text-amber-300 font-medium">变力微分方程的链式消元与分离变量积分</span>。</p>
+                </div>
+                <!-- 微切片切换器 -->
+                <div class="flex bg-space-950 p-1.5 rounded-xl border border-slate-800 shrink-0">
+                    <button onclick="switchMathSlice('A')" id="btn-slice-A" class="px-3.5 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all bg-cyan-500 text-space-950 shadow">
+                        微切片 A：微元弧段法向力与小角度近似
+                    </button>
+                    <button onclick="switchMathSlice('B')" id="btn-slice-B" class="px-3.5 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all text-slate-400 hover:text-white">
+                        微切片 B：变力链式消元与分离变量
+                    </button>
+                </div>
+            </div>
+
+            <!-- 子模块 A：微元弧段法向合力与小角度近似实验器 -->
+            <div id="math-slice-A" class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <!-- 左侧交互式双视图 Canvas -->
+                <div class="lg:col-span-7 bg-space-900 rounded-2xl border border-slate-800 p-4 sm:p-5 flex flex-col justify-between shadow-xl">
+                    <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+                        <div>
+                            <h3 class="text-base font-bold text-white flex items-center gap-2">
+                                <i class="fa-solid fa-bezier-curve text-cyan-400"></i>
+                                <span>绳微元弧段 <span class="math">&Delta;s</span> 法向合力：<span class="math">sin<span class="frac"><span>&Delta;&theta;</span><span>2</span></span> &approx; <span class="frac"><span>&Delta;&theta;</span><span>2</span></span></span> 与高阶小量取舍</span>
+                            </h3>
+                            <p class="text-xs text-slate-400">左图：弯曲绳微元两端张力 <span class="math">T</span> 与 <span class="math">T+&Delta;T</span> 正交分解 · 右图：一阶主项 vs 二阶小量量级对比</p>
+                        </div>
+                        <button onclick="animateShrinkAngle()" class="px-3 py-1.5 rounded-lg bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 border border-cyan-500/30 text-xs font-semibold flex items-center gap-1.5 transition">
+                            <i class="fa-solid fa-compress"></i>
+                            <span>一键演示 &Delta;&theta; &rarr; 1&deg; 极限逼近</span>
+                        </button>
+                    </div>
+
+                    <!-- Canvas 画布容器 -->
+                    <div class="relative w-full h-72 sm:h-80 bg-space-950 rounded-xl border border-slate-800/90 overflow-hidden bg-grid-pattern">
+                        <canvas id="ropeElementCanvas" class="w-full h-full block"></canvas>
+                        <!-- 图例浮层 -->
+                        <div class="absolute bottom-2.5 left-3 right-3 flex flex-wrap items-center justify-between gap-2 bg-space-900/90 backdrop-blur px-3 py-1.5 rounded-lg border border-slate-800 text-[11px]">
+                            <div class="flex items-center gap-3">
+                                <span class="flex items-center gap-1 text-cyan-400"><span class="w-2.5 h-2.5 rounded-full bg-cyan-400"></span>两端张力 <span class="math"><span class="vec">T</span>, <span class="vec">T</span>+&Delta;<span class="vec">T</span></span></span>
+                                <span class="flex items-center gap-1 text-amber-400 font-semibold"><span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span>指向圆心法向分力 <span class="math">F<sub>n</sub></span></span>
+                                <span class="flex items-center gap-1 text-rose-400"><span class="w-2.5 h-2.5 rounded-full bg-rose-400"></span>二阶无穷小项 <span class="math">&Delta;T sin(&Delta;&theta;/2)</span></span>
+                            </div>
+                            <span id="rope-limit-hint" class="text-emerald-400 font-mono">当 &Delta;&theta;&rarr;0 时 F<sub>n</sub> &rarr; T d&theta;</span>
+                        </div>
+                    </div>
+
+                    <!-- 底部交互滑块 -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4 bg-space-950/80 p-3.5 rounded-xl border border-slate-800/80">
+                        <div>
+                            <div class="flex justify-between text-xs mb-1.5">
+                                <span class="text-amber-300 font-medium">拖动缩小微元圆心角 <span class="math">&Delta;&theta;</span> (60&deg; &rarr; 1&deg;)</span>
+                                <span id="val-rope-dtheta" class="font-mono text-amber-400 font-semibold">24.0&deg; (0.4189 rad)</span>
+                            </div>
+                            <input type="range" id="slider-rope-dtheta" min="1" max="60" step="0.5" value="24" class="w-full" oninput="updateRopeElementSim()">
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-xs mb-1.5">
+                                <span class="text-slate-300">粗糙摩擦系数 <span class="math">&mu;</span> (决定 <span class="math">&Delta;T &approx; &mu;T&Delta;&theta;</span>)</span>
+                                <span id="val-rope-mu" class="font-mono text-cyan-400 font-semibold">&mu; = 0.40</span>
+                            </div>
+                            <input type="range" id="slider-rope-mu" min="0.1" max="0.8" step="0.05" value="0.40" class="w-full" oninput="updateRopeElementSim()">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 右侧微元受力推导与高阶小量取舍顿悟 -->
+                <div class="lg:col-span-5 flex flex-col justify-between gap-4">
+                    <div class="bg-space-900 rounded-2xl border border-slate-800 p-5 space-y-4 shadow-xl flex-1">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold uppercase tracking-wider px-2.5 py-1 rounded bg-amber-500/15 text-amber-300 border border-amber-500/30">
+                                绳张力微元法核心基本功
+                            </span>
+                            <span id="rope-error-badge" class="text-xs font-mono px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">近似误差 0.73%</span>
+                        </div>
+
+                        <!-- 痛点问题框 -->
+                        <div class="p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/25 text-xs space-y-1">
+                            <div class="font-bold text-rose-300 flex items-center gap-1.5">
+                                <i class="fa-solid fa-circle-question"></i> 课前预习常见卡壳点：
+                            </div>
+                            <p class="text-slate-300">“圆柱缠绕绳和旋转圆环例题中，微元弧段两端张力明明与切线夹角是 <span class="math"><span class="frac"><span>&Delta;&theta;</span><span>2</span></span></span>，为什么法向合力最后直接写成了 <span class="math">dN = T d&theta;</span>？那个 <span class="math">&Delta;T sin<span class="frac"><span>&Delta;&theta;</span><span>2</span></span></span> 去哪了？”</p>
+                        </div>
+
+                        <!-- 实时动态数值演算面板 -->
+                        <div class="bg-space-950 rounded-xl p-4 border border-slate-800 space-y-3">
+                            <div class="text-xs font-semibold text-slate-400 border-b border-slate-800 pb-2 flex justify-between">
+                                <span>半角近似与高阶无穷小实时演算：</span>
+                                <span id="live-half-angle" class="text-cyan-400 font-mono">&Delta;&theta;/2 = 12.0&deg;</span>
+                            </div>
+
+                            <div class="grid grid-cols-3 gap-2 text-xs text-center">
+                                <div class="p-2 rounded-lg bg-space-900 border border-slate-800">
+                                    <div class="text-slate-400"><span class="math">sin(&Delta;&theta;/2)</span></div>
+                                    <div id="live-sin-half" class="text-sm font-mono font-bold text-cyan-400 mt-1">0.20791</div>
+                                </div>
+                                <div class="p-2 rounded-lg bg-space-900 border border-slate-800">
+                                    <div class="text-slate-400">弧度 <span class="math">&Delta;&theta;/2</span></div>
+                                    <div id="live-rad-half" class="text-sm font-mono font-bold text-amber-400 mt-1">0.20944</div>
+                                </div>
+                                <div class="p-2 rounded-lg bg-space-900 border border-slate-800">
+                                    <div class="text-slate-400">二阶/一阶占比</div>
+                                    <div id="live-second-order-ratio" class="text-sm font-mono font-bold text-rose-400 mt-1">8.38%</div>
+                                </div>
+                            </div>
+
+                            <!-- 严格三步化简卡片 -->
+                            <div class="p-3 rounded-xl bg-gradient-to-r from-cyan-950/60 to-indigo-950/60 border border-cyan-500/30 space-y-2 text-xs">
+                                <div class="text-slate-300 font-medium">沿指向圆心法向列力平衡（向心合外力）：</div>
+                                <div class="math text-sm text-center text-white py-0.5">
+                                    F<sub>n</sub> = T sin<span class="frac"><span>&Delta;&theta;</span><span>2</span></span> + (T + &Delta;T) sin<span class="frac"><span>&Delta;&theta;</span><span>2</span></span> = <span class="text-cyan-300 font-bold">2T sin<span class="frac"><span>&Delta;&theta;</span><span>2</span></span></span> + <span class="text-rose-400">&Delta;T sin<span class="frac"><span>&Delta;&theta;</span><span>2</span></span></span>
+                                </div>
+                                <div class="text-[11px] text-slate-300 leading-relaxed">
+                                    1. <strong>小角度近似</strong>：当 <span class="math">&Delta;&theta; &rarr; d&theta;</span> 时，<span class="math">sin(d&theta;/2) &approx; d&theta;/2</span>，故第一项 <span class="math text-cyan-300">2T(d&theta;/2) = T d&theta;</span>（<strong>一阶无穷小主项</strong>）。<br>
+                                    2. <strong>舍弃二阶小量</strong>：第二项 <span class="math text-rose-300">dT &middot; (d&theta;/2)</span> 是两个无穷小量的乘积（<span class="math">&propto; (d&theta;)<sup>2</sup></span>），相比 <span class="math">T d&theta;</span> 占比趋于 0，严格等于 0！
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button onclick="switchMathSlice('B')" class="w-full py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-space-950 font-bold text-sm shadow-lg shadow-cyan-500/20 flex items-center justify-center gap-2 transition">
+                        <span>已掌握微元法向力 <span class="math">dN = T d&theta;</span>，进入微切片 B：变力链式消元</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 子模块 B：变力动力学链式消元法与分离变量定积分 -->
+            <div id="math-slice-B" class="hidden grid-cols-1 lg:grid-cols-12 gap-6">
+                <!-- 左侧：三类变力微分方程积分策略切换器 -->
+                <div class="lg:col-span-6 bg-space-900 rounded-2xl border border-slate-800 p-5 space-y-4 shadow-xl">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-base font-bold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-code-branch text-cyan-400"></i>
+                            <span>变力动力学：三类变力 <span class="math">F(t), F(x), F(v)</span> 积分导航器</span>
+                        </h3>
+                        <span class="text-xs px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">牛顿第二定律微积分化</span>
+                    </div>
+
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                        在大学物理第二章中，力 <span class="math">F</span> 不再是常数！不能再盲目套用高中匀变速公式 <span class="math">v = v<sub>0</sub> + at</span> 或 <span class="math">v<sup>2</sup> &minus; v<sub>0</sub><sup>2</sup> = 2ax</span>。点击下方三种变力类型，掌握对应的<strong>分离变量积分公式</strong>：
+                    </p>
+
+                    <!-- 3种变力类型选项卡 -->
+                    <div class="grid grid-cols-3 gap-2">
+                        <button onclick="showForceStrategy(1)" id="force-tab-1" class="p-2.5 rounded-xl text-xs font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 text-center transition">
+                            ① 时间相关力 <span class="math">F(t)</span>
+                        </button>
+                        <button onclick="showForceStrategy(2)" id="force-tab-2" class="p-2.5 rounded-xl text-xs font-bold bg-space-950 text-slate-400 border border-slate-800 hover:text-white text-center transition">
+                            ② 位置相关力 <span class="math">F(x)</span>
+                        </button>
+                        <button onclick="showForceStrategy(3)" id="force-tab-3" class="p-2.5 rounded-xl text-xs font-bold bg-space-950 text-slate-400 border border-slate-800 hover:text-white text-center transition">
+                            ③ 速度相关阻力 <span class="math">F(v)</span>
+                        </button>
+                    </div>
+
+                    <!-- 动态展示策略详情面板 -->
+                    <div id="force-strategy-panel" class="bg-space-950 rounded-xl p-4 border border-slate-800 space-y-3 min-h-[210px] flex flex-col justify-between">
+                        <!-- 默认展示②位置相关力或①，由JS初始化填充 -->
+                    </div>
+                </div>
+
+                <!-- 右侧：30秒迷你实战检核题 -->
+                <div class="lg:col-span-6 bg-space-900 rounded-2xl border border-slate-800 p-5 space-y-4 shadow-xl flex flex-col justify-between">
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-base font-bold text-white flex items-center gap-2">
+                                <i class="fa-solid fa-bolt text-amber-400"></i>
+                                <span>核心利器：链式消元法 <span class="math">m a = m <span class="frac"><span>dv</span><span>dt</span></span> = m v <span class="frac"><span>dv</span><span>dx</span></span></span></span>
+                            </h3>
+                            <span class="text-xs px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">消去时间 dt</span>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                            <div class="p-3.5 rounded-xl bg-space-950 border border-slate-800">
+                                <div class="font-bold text-rose-300 mb-1"><i class="fa-solid fa-ban mr-1"></i>高中惯性误区（把变力当恒力）</div>
+                                <p class="text-slate-300">看到 <span class="math">F(x) = 6x</span>，先算出终点处 <span class="math">a = 6x/m</span>，然后直接代入 <span class="math">v<sup>2</sup> = 2ax</span> —— <strong>结果整整大了一倍！</strong></p>
+                            </div>
+                            <div class="p-3.5 rounded-xl bg-cyan-950/30 border border-cyan-500/40">
+                                <div class="font-bold text-cyan-300 mb-1"><i class="fa-solid fa-check mr-1"></i>大学分离变量定积分</div>
+                                <div class="math text-sm text-white py-0.5">
+                                    &int;<sub>v<sub>0</sub></sub><sup>v</sup> m v dv = &int;<sub>x<sub>0</sub></sub><sup>x</sup> F(x) dx
+                                </div>
+                                <p class="text-slate-300 mt-0.5">左端积出动能增量 <span class="math">&frac12;mv<sup>2</sup></span>，右端积出变力做功！</p>
+                            </div>
+                        </div>
+
+                        <!-- ⚡ 30秒迷你实战检核题（纯正HTML数学排版，绝无LaTeX源码） -->
+                        <div class="bg-indigo-950/30 rounded-xl p-4 border border-indigo-500/30 space-y-3">
+                            <div class="text-xs font-bold text-indigo-300 flex items-center gap-1.5">
+                                <i class="fa-solid fa-bolt text-amber-400"></i>
+                                <span>30秒迷你实战检核：</span>
+                            </div>
+                            <p class="text-xs sm:text-sm text-slate-200 leading-relaxed">
+                                一质量 <span class="math">m = 1</span> <span class="math-rm">kg</span> 的滑块在光滑水平面上受位置相关变力 <span class="math">F(x) = 6x</span> <span class="math-rm">(N)</span> 作用，在 <span class="math">x = 0</span> 处由静止出发（<span class="math">v<sub>0</sub> = 0</span>）。利用 <span class="math">m v dv = F(x) dx</span> 定积分计算，当滑块运动到 <span class="math">x = 2</span> <span class="math-rm">m</span> 时，速率 <span class="math">v</span> 为多少？
+                            </p>
+                            <div class="grid grid-cols-3 gap-2.5 pt-1">
+                                <button onclick="checkCh2MiniQuiz(1, true)" id="ch2-quiz-opt-1" class="py-2.5 px-3 rounded-lg bg-space-900 hover:bg-slate-800 border border-slate-700 text-xs sm:text-sm font-medium text-slate-200 transition">
+                                    A. <span class="math">v = 2&radic;6</span> <span class="math-rm">m/s</span>
+                                </button>
+                                <button onclick="checkCh2MiniQuiz(2, false)" id="ch2-quiz-opt-2" class="py-2.5 px-3 rounded-lg bg-space-900 hover:bg-slate-800 border border-slate-700 text-xs sm:text-sm font-medium text-slate-200 transition">
+                                    B. <span class="math">v = 4&radic;3</span> <span class="math-rm">m/s</span>
+                                </button>
+                                <button onclick="checkCh2MiniQuiz(3, false)" id="ch2-quiz-opt-3" class="py-2.5 px-3 rounded-lg bg-space-900 hover:bg-slate-800 border border-slate-700 text-xs sm:text-sm font-medium text-slate-200 transition">
+                                    C. <span class="math">v = 6</span> <span class="math-rm">m/s</span>
+                                </button>
+                            </div>
+                            <div id="ch2-mini-quiz-feedback" class="hidden text-xs p-3 rounded-lg leading-relaxed"></div>
+                        </div>
+                    </div>
+
+                    <button onclick="completeStage1AndNext()" class="w-full py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 text-space-950 font-bold text-sm shadow-lg shadow-emerald-500/20 flex items-center justify-center gap-2 transition">
+                        <span>数学工具已唤醒！进入环节二：POE 物理图像盲测</span>
+                        <i class="fa-solid fa-rocket"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- =====================================================================
+             环节二：物理图像先行 —— HTML5 交互仿真“预测—观察（POE）”盲测
+             ===================================================================== -->
+        <section id="stage-2" class="stage-section hidden space-y-6">
+            <!-- 环节导语横幅 -->
+            <div class="bg-gradient-to-r from-space-800 via-cyan-950/50 to-space-800 rounded-2xl p-5 border border-cyan-500/30 shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div class="space-y-1">
+                    <div class="flex items-center gap-2">
+                        <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">环节 2 / 4 · 预计 4 分钟</span>
+                        <span class="text-xs text-cyan-300"><i class="fa-solid fa-eye mr-1"></i>Predict (先猜) &rarr; Observe (后看) &rarr; Explain (顿悟)</span>
+                    </div>
+                    <h2 class="text-xl font-bold text-white">物理图像先行：POE 交互沙盒盲测</h2>
+                    <p class="text-sm text-slate-300">课前不死磕长篇黑板推演，先凭直觉完成两个震撼的<strong>动力学沙盒盲测</strong>：提交预测后即可解锁实时参数仿真！</p>
+                </div>
+                <!-- 两个沙盒切换按钮 -->
+                <div class="flex bg-space-950 p-1.5 rounded-xl border border-slate-800 shrink-0">
+                    <button onclick="switchPoeSandbox(1)" id="btn-poe-1" class="px-3.5 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all bg-amber-400 text-space-950 shadow">
+                        沙盒 1：系船柱缠绕绳欧拉指数自锁
+                    </button>
+                    <button onclick="switchPoeSandbox(2)" id="btn-poe-2" class="px-3.5 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all text-slate-400 hover:text-white">
+                        沙盒 2：空气阻力斜抛弹道与最高点加速度
+                    </button>
+                </div>
+            </div>
+
+            <!-- ==================== 沙盒 1：圆柱缠绕绳（系船柱）欧拉公式指数自锁效应 ==================== -->
+            <div id="poe-sandbox-1" class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <!-- 左侧：第1步【盲测预测】与第3步【物理图像顿悟】 -->
+                <div class="lg:col-span-5 flex flex-col justify-between gap-4">
+                    <div class="bg-space-900 rounded-2xl border border-slate-800 p-5 space-y-4 shadow-xl">
+                        <div class="flex items-center justify-between">
+                            <span class="px-2.5 py-1 rounded-md text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                                第一步：盲测预测 (Predict)
+                            </span>
+                            <span id="poe1-status-badge" class="text-xs text-slate-400">选择下方预测解锁仿真</span>
+                        </div>
+
+                        <p class="text-sm text-slate-200 leading-relaxed">
+                            码头上万吨巨轮因海浪对缆绳产生 <span class="math">G = 1000</span> <span class="math-rm">N</span> 的拉力，缆绳与粗糙木桩间的静摩擦系数 <span class="math">&mu; = 0.4</span>。若水手将缆绳在木桩上<strong>仅仅缠绕 2 圈</strong>（总包角 <span class="math">&theta;<sub>0</sub> = 4&pi; &approx; 12.57</span> <span class="math-rm">rad</span>），在绳的自由端<strong>至少需要多大的拉力 <span class="math">F<sub>A</sub></span></strong> 就能稳稳拉住巨轮不滑脱？
+                        </p>
+
+                        <!-- 4个候选预测按钮 -->
+                        <div class="grid grid-cols-1 gap-2.5">
+                            <button onclick="submitPoe1Prediction(1)" id="poe1-opt-1" class="poe1-opt-btn text-left p-3 rounded-xl bg-space-950 hover:bg-slate-800/80 border border-slate-800 transition flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <span class="w-7 h-7 rounded-lg bg-slate-800 text-amber-300 font-bold flex items-center justify-center text-xs">A</span>
+                                    <div>
+                                        <div class="text-xs sm:text-sm font-semibold text-slate-200">约 <span class="math">500</span> <span class="math-rm">N</span>（省力一半）</div>
+                                        <div class="text-[11px] text-slate-400">类似动滑轮的线性省力直觉</div>
+                                    </div>
+                                </div>
+                            </button>
+
+                            <button onclick="submitPoe1Prediction(2)" id="poe1-opt-2" class="poe1-opt-btn text-left p-3 rounded-xl bg-space-950 hover:bg-slate-800/80 border border-slate-800 transition flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <span class="w-7 h-7 rounded-lg bg-slate-800 text-amber-300 font-bold flex items-center justify-center text-xs">B</span>
+                                    <div>
+                                        <div class="text-xs sm:text-sm font-semibold text-slate-200">约 <span class="math">200</span> <span class="math-rm">N</span>（每绕一圈减掉 <span class="math">400</span> <span class="math-rm">N</span>）</div>
+                                        <div class="text-[11px] text-slate-400">认为每圈摩擦力简单相加</div>
+                                    </div>
+                                </div>
+                            </button>
+
+                            <button onclick="submitPoe1Prediction(3)" id="poe1-opt-3" class="poe1-opt-btn text-left p-3 rounded-xl bg-space-950 hover:bg-slate-800/80 border border-slate-800 transition flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <span class="w-7 h-7 rounded-lg bg-slate-800 text-amber-300 font-bold flex items-center justify-center text-xs">C</span>
+                                    <div>
+                                        <div class="text-xs sm:text-sm font-semibold text-slate-200">仅需约 <span class="math">6.5</span> <span class="math-rm">N</span>（一根手指即可拉住！）</div>
+                                        <div class="text-[11px] text-slate-400">摩擦力与正压力正反馈带来的指数级衰减</div>
+                                    </div>
+                                </div>
+                            </button>
+
+                            <button onclick="submitPoe1Prediction(4)" id="poe1-opt-4" class="poe1-opt-btn text-left p-3 rounded-xl bg-space-950 hover:bg-slate-800/80 border border-slate-800 transition flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <span class="w-7 h-7 rounded-lg bg-slate-800 text-amber-300 font-bold flex items-center justify-center text-xs">D</span>
+                                    <div>
+                                        <div class="text-xs sm:text-sm font-semibold text-slate-200">与绕多少圈无关，仍需 <span class="math">600</span> <span class="math-rm">N</span></div>
+                                        <div class="text-[11px] text-slate-400">误把定滑轮接触面积无关套用到弯曲包角上</div>
+                                    </div>
+                                </div>
+                            </button>
+                        </div>
+
+                        <!-- 第三步：物理图像顿悟（预测后展开） -->
+                        <div id="poe1-explain-box" class="hidden p-4 rounded-xl bg-gradient-to-br from-emerald-950/50 to-cyan-950/50 border border-emerald-500/40 space-y-2">
+                            <div id="poe1-feedback-title" class="text-xs font-bold text-emerald-300"></div>
+                            <p class="text-xs text-slate-200 leading-relaxed">
+                                <strong>💡 欧拉公式指数自锁顿悟 (例 2.3.3-3)：</strong><br>
+                                对微元弧段 <span class="math">d&theta;</span>，法向支持力 <span class="math">dN = T d&theta;</span>，最大静摩擦力 <span class="math">df = &mu; dN = &mu; T d&theta;</span>。因此张力增量满足 <span class="math"><span class="frac"><span>dT</span><span>T</span></span> = &mu; d&theta;</span>！<br>
+                                <strong>正反馈循环</strong>：张力 <span class="math">T</span> 稍有增大 &rarr; 把绳子更紧地压向木桩（<span class="math">dN</span> 增大）&rarr; 产生更大的静摩擦力 <span class="math">df</span> &rarr; 承受更大的张力 <span class="math">T+dT</span>！积分得<strong>欧拉公式 <span class="math text-amber-300">F<sub>A</sub> = G e<sup>&minus;&mu;&theta;<sub>0</sub></sup></span></strong>，绕 2 圈即可缩小 <span class="math">e<sup>5.03</sup> &approx; 152</span> 倍，仅需 <span class="math">6.56</span> <span class="math-rm">N</span>！
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 右侧：第2步【交互观察 Canvas】 -->
+                <div class="lg:col-span-7 bg-space-900 rounded-2xl border border-slate-800 p-4 sm:p-5 flex flex-col justify-between shadow-xl">
+                    <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+                        <div class="flex items-center gap-2">
+                            <span class="px-2.5 py-1 rounded-md text-xs font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">
+                                第二步：交互观察 (Observe)
+                            </span>
+                            <span class="text-xs text-slate-400">左图：木桩缠绕缆绳与微元 <span class="math">d&theta;</span> 放大 · 右图：<span class="math">T(&theta;)</span> 指数增长曲线</span>
+                        </div>
+                        <span id="capstan-ratio-badge" class="text-xs font-mono px-2.5 py-1 rounded bg-rose-500/20 text-rose-300 border border-rose-500/30 font-bold">
+                            省力倍数：152.4 倍
+                        </span>
+                    </div>
+
+                    <!-- Canvas 容器 -->
+                    <div class="relative w-full h-72 sm:h-80 bg-space-950 rounded-xl border border-slate-800 overflow-hidden bg-grid-pattern">
+                        <canvas id="capstanCanvas" class="w-full h-full block"></canvas>
+
+                        <!-- 锁屏遮罩提示 -->
+                        <div id="poe1-lock-banner" class="absolute top-3 left-3 right-3 bg-amber-500/15 backdrop-blur-md border border-amber-400/40 rounded-lg px-3 py-2 flex items-center justify-between">
+                            <span class="text-xs text-amber-200"><i class="fa-solid fa-lock mr-1.5"></i>盲测模式：请先在左侧选择你对自由端最小拉力 F<sub>A</sub> 的直觉预测！</span>
+                            <button onclick="submitPoe1Prediction(3)" class="text-[11px] underline text-cyan-300 shrink-0 ml-2">直接解锁</button>
+                        </div>
+
+                        <!-- 底部图例 -->
+                        <div class="absolute bottom-2.5 left-3 right-3 flex flex-wrap items-center justify-between gap-2 bg-space-900/90 backdrop-blur px-3 py-1.5 rounded-lg border border-slate-800 text-[11px]">
+                            <div class="flex items-center gap-3">
+                                <span class="flex items-center gap-1 text-rose-400 font-bold"><span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span>巨轮负载 <span class="math">G = 1000</span> <span class="math-rm">N</span></span>
+                                <span class="flex items-center gap-1 text-emerald-400 font-bold"><span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>水手自由端 <span id="capstan-fa-legend" class="math">F<sub>A</sub> = ?</span></span>
+                                <span class="flex items-center gap-1 text-amber-300"><span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span>微元 <span class="math">dT = &mu; T d&theta;</span></span>
+                            </div>
+                            <span class="text-slate-400 font-mono"><span class="math">F<sub>A</sub> = G &middot; e<sup>&minus;&mu;&theta;<sub>0</sub></sup></span></span>
+                        </div>
+                    </div>
+
+                    <!-- 沙盒 1 控制滑块 -->
+                    <div id="poe1-controls" class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4 bg-space-950/90 p-3.5 rounded-xl border border-slate-800 opacity-60 pointer-events-none transition-opacity">
+                        <div>
+                            <div class="flex justify-between text-xs mb-1.5">
+                                <span class="text-slate-300">缠绕圈数 <span class="math">N</span> (<span class="math">&theta;<sub>0</sub> = 2&pi;N</span>)</span>
+                                <span id="val-capstan-turns" class="font-mono text-amber-400 font-semibold">2.00 圈 (12.57 rad)</span>
+                            </div>
+                            <input type="range" id="slider-capstan-turns" min="0.25" max="3.0" step="0.25" value="2.0" class="w-full" oninput="updateCapstanSim()">
+                            <div class="flex justify-between text-[10px] text-slate-500 mt-1">
+                                <span>0.25 圈 (90&deg;)</span>
+                                <span>1.5 圈</span>
+                                <span>3.0 圈 (自锁达 1800 倍!)</span>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-xs mb-1.5">
+                                <span class="text-slate-300">桩绳静摩擦系数 <span class="math">&mu;</span></span>
+                                <span id="val-capstan-mu" class="font-mono text-cyan-400 font-semibold">&mu; = 0.40</span>
+                            </div>
+                            <input type="range" id="slider-capstan-mu" min="0.10" max="0.70" step="0.05" value="0.40" class="w-full" oninput="updateCapstanSim()">
+                            <div class="flex justify-between text-[10px] text-slate-500 mt-1">
+                                <span>光滑冰桩 (0.1)</span>
+                                <span>麻绳木桩 (0.4)</span>
+                                <span>粗糙铁桩 (0.7)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==================== 沙盒 2：线性空气阻力下的斜抛运动轨迹变形与最高点加速度 ==================== -->
+            <div id="poe-sandbox-2" class="hidden grid-cols-1 lg:grid-cols-12 gap-6">
+                <!-- 左侧：预测与顿悟 -->
+                <div class="lg:col-span-5 flex flex-col justify-between gap-4">
+                    <div class="bg-space-900 rounded-2xl border border-slate-800 p-5 space-y-4 shadow-xl">
+                        <div class="flex items-center justify-between">
+                            <span class="px-2.5 py-1 rounded-md text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                                第一步：盲测预测 (Predict)
+                            </span>
+                            <span class="text-xs text-slate-400">习题 2-12 物理图像盲测</span>
+                        </div>
+
+                        <p class="text-sm text-slate-200 leading-relaxed">
+                            当空气阻力 <span class="math"><span class="vec">f</span> = &minus;k<span class="vec">v</span></span> 不可忽略时，斜向上抛出的小球轨迹与理想真空抛物线相比有何变形？<strong>小球到达轨迹最高点瞬间，其合加速度大小 <span class="math">a</span> 与重力加速度 <span class="math">g</span> 的关系是？</strong>
+                        </p>
+
+                        <div class="grid grid-cols-1 gap-2.5">
+                            <button onclick="submitPoe2Prediction(1)" id="poe2-opt-1" class="poe2-opt-btn text-left p-3 rounded-xl bg-space-950 hover:bg-slate-800/80 border border-slate-800 transition flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <span class="w-7 h-7 rounded-lg bg-slate-800 text-amber-300 font-bold flex items-center justify-center text-xs">A</span>
+                                    <div>
+                                        <div class="text-xs sm:text-sm font-semibold text-slate-200">轨迹依然左右对称，最高点速度为 0 故 <span class="math">a = g</span></div>
+                                        <div class="text-[11px] text-slate-400">误把竖直上抛最高点套用到斜抛最高点</div>
+                                    </div>
+                                </div>
+                            </button>
+                            <button onclick="submitPoe2Prediction(2)" id="poe2-opt-2" class="poe2-opt-btn text-left p-3 rounded-xl bg-space-950 hover:bg-slate-800/80 border border-slate-800 transition flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <span class="w-7 h-7 rounded-lg bg-slate-800 text-amber-300 font-bold flex items-center justify-center text-xs">B</span>
+                                    <div>
+                                        <div class="text-xs sm:text-sm font-semibold text-slate-200">下降段比上升段更陡峭（左缓右陡），且最高点 <span class="math">a &gt; g</span></div>
+                                        <div class="text-[11px] text-slate-400">最高点仍有水平速度与水平阻力，与重力正交合成</div>
+                                    </div>
+                                </div>
+                            </button>
+                            <button onclick="submitPoe2Prediction(3)" id="poe2-opt-3" class="poe2-opt-btn text-left p-3 rounded-xl bg-space-950 hover:bg-slate-800/80 border border-slate-800 transition flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <span class="w-7 h-7 rounded-lg bg-slate-800 text-amber-300 font-bold flex items-center justify-center text-xs">C</span>
+                                    <div>
+                                        <div class="text-xs sm:text-sm font-semibold text-slate-200">下降段更平缓，且阻力抵消重力使最高点 <span class="math">a &lt; g</span></div>
+                                        <div class="text-[11px] text-slate-400">混淆了竖直方向阻力与水平方向阻力的合成</div>
+                                    </div>
+                                </div>
+                            </button>
+                        </div>
+
+                        <div id="poe2-explain-box" class="hidden p-4 rounded-xl bg-gradient-to-br from-emerald-950/50 to-cyan-950/50 border border-emerald-500/40 space-y-2">
+                            <div id="poe2-feedback-title" class="text-xs font-bold text-emerald-300"></div>
+                            <p class="text-xs text-slate-200 leading-relaxed">
+                                <strong>💡 含阻斜抛图像顿悟：</strong><br>
+                                1. <strong>为什么最高点 <span class="math">a &gt; g</span>？</strong>在最高点仅竖直速度 <span class="math">v<sub>y</sub> = 0</span>，小球仍有向右的水平速度 <span class="math">v<sub>x</sub> &gt; 0</span>！因此空气阻力 <span class="math"><span class="vec">f</span> = &minus;kv<sub>x</sub><span class="vec">i</span></span> 水平向左，与竖直向下的重力 <span class="math">m<span class="vec">g</span></span> <strong>相互垂直</strong>，合加速度 <span class="math text-amber-300">a<sub>最高点</sub> = &radic;(g<sup>2</sup> + (kv<sub>x</sub>/m)<sup>2</sup>) &gt; g</span>！<br>
+                                2. <strong>为什么左缓右陡？</strong>水平分运动 <span class="math">m dv<sub>x</sub>/dt = &minus;kv<sub>x</sub></span> 导致 <span class="math">v<sub>x</sub>(t) = v<sub>0x</sub>e<sup>&minus;(k/m)t</sup></span> 指数衰减，水平射程存在不可逾越的<strong>竖直渐近线 <span class="math">x<sub>max</sub> = m v<sub>0x</sub> / k</span></strong>，迫使下降段急剧变陡！
+                            </p>
+                        </div>
+                    </div>
+
+                    <button onclick="switchStage(3)" class="w-full py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-space-950 font-bold text-sm shadow-lg flex items-center justify-center gap-2 transition">
+                        <span>物理图像已建立！进入环节三：3D 概念闪卡排雷</span>
+                        <i class="fa-solid fa-layer-group"></i>
+                    </button>
+                </div>
+
+                <!-- 右侧：含阻斜抛弹道对比与最高点矢量定格动画 -->
+                <div class="lg:col-span-7 bg-space-900 rounded-2xl border border-slate-800 p-4 sm:p-5 flex flex-col justify-between shadow-xl">
+                    <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+                        <div class="flex items-center gap-2">
+                            <button onclick="jumpToApex()" class="px-3 py-1.5 rounded-lg bg-amber-400 text-space-950 text-xs font-bold shadow flex items-center gap-1.5 transition hover:bg-amber-300">
+                                <i class="fa-solid fa-crosshairs"></i>
+                                <span>定格最高点受力 (<span class="math">a &gt; g</span>)</span>
+                            </button>
+                            <button onclick="restartProjectileSim()" class="px-3 py-1.5 rounded-lg bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-300 text-xs font-semibold border border-indigo-500/30 transition">
+                                <i class="fa-solid fa-play mr-1"></i>重放弹道动画
+                            </button>
+                        </div>
+                        <span id="apex-acc-readout" class="text-xs font-mono text-emerald-400 bg-space-950 px-2.5 py-1 rounded border border-slate-800">
+                            最高点 a = 1.12 g (&gt; g!)
+                        </span>
+                    </div>
+
+                    <div class="relative w-full h-72 sm:h-80 bg-space-950 rounded-xl border border-slate-800 overflow-hidden bg-grid-pattern">
+                        <canvas id="dragProjectileCanvas" class="w-full h-full block"></canvas>
+                        <div class="absolute bottom-2.5 left-3 right-3 flex flex-wrap items-center justify-between gap-2 bg-space-900/90 backdrop-blur px-3 py-1.5 rounded-lg border border-slate-800 text-[11px]">
+                            <div class="flex items-center gap-3">
+                                <span class="flex items-center gap-1 text-slate-400"><span class="w-3 h-0.5 bg-slate-400"></span>理想真空抛物线</span>
+                                <span class="flex items-center gap-1 text-cyan-400 font-bold"><span class="w-2.5 h-2.5 rounded-full bg-cyan-400"></span>含阻弹道 (左缓右陡)</span>
+                                <span class="flex items-center gap-1 text-amber-400"><span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span>阻力 <span class="math">&minus;k<span class="vec">v</span></span></span>
+                                <span class="flex items-center gap-1 text-rose-400 font-bold"><span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span>合加速度 <span class="math"><span class="vec">a</span></span></span>
+                            </div>
+                            <span class="text-rose-300 font-mono">右侧红虚线：渐近线 <span class="math">x<sub>max</sub> = mv<sub>0x</sub>/k</span></span>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4 bg-space-950/90 p-3.5 rounded-xl border border-slate-800">
+                        <div>
+                            <div class="flex justify-between text-xs mb-1.5">
+                                <span class="text-slate-300">阻尼率 <span class="math">&gamma; = k / m</span> (空气阻力强度)</span>
+                                <span id="val-drag-k" class="font-mono text-amber-400 font-semibold">0.45 s<sup>&minus;1</sup></span>
+                            </div>
+                            <input type="range" id="slider-drag-k" min="0.10" max="0.90" step="0.05" value="0.45" class="w-full" oninput="updateDragParams()">
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-xs mb-1.5">
+                                <span class="text-slate-300">初始发射仰角 <span class="math">&theta;<sub>0</sub></span></span>
+                                <span id="val-drag-angle" class="font-mono text-cyan-400 font-semibold">55&deg;</span>
+                            </div>
+                            <input type="range" id="slider-drag-angle" min="30" max="75" step="5" value="55" class="w-full" oninput="updateDragParams()">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =====================================================================
+             环节三：靶向概念排雷 —— 精选 8 张 3D 翻转闪卡 + 3 张课后重度推导卡
+             ===================================================================== -->
+        <section id="stage-3" class="stage-section hidden space-y-6">
+            <!-- 顶部模式分流控制栏 -->
+            <div class="bg-gradient-to-r from-space-800 via-indigo-950/50 to-space-800 rounded-2xl p-5 border border-indigo-500/30 shadow-xl flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                <div class="space-y-1">
+                    <div class="flex items-center gap-2">
+                        <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">环节 3 / 4 · 预计 5 分钟</span>
+                        <span class="text-xs text-emerald-400"><i class="fa-solid fa-filter mr-1"></i>课前概念排雷 vs 课后推导巩固分流</span>
+                    </div>
+                    <h2 class="text-xl font-bold text-white">靶向概念排雷：第二章 3D 翻转闪卡自检</h2>
+                    <p class="text-sm text-slate-300">课前只刷 <strong>8 张核心概念与易错辨析卡</strong>；像欧拉公式微元积分、旋转圆环张力、含阻斜抛轨迹方程等 3 张重度推导卡留作课后复习！</p>
+                </div>
+
+                <!-- 课前精选 vs 全章完整模式切换器 -->
+                <div class="flex flex-col sm:flex-row bg-space-950 p-1.5 rounded-xl border border-slate-800 gap-1.5 shrink-0">
+                    <button onclick="setFlashcardMode('preclass')" id="mode-btn-preclass" class="px-3.5 py-2 rounded-lg text-xs font-bold transition-all bg-gradient-to-r from-cyan-500 to-indigo-500 text-space-950 shadow flex items-center gap-1.5">
+                        <span>⚡ 课前预习精选模式</span>
+                        <span class="px-1.5 py-0.5 rounded bg-space-950/20 text-[10px]">推荐·8张概念辨析卡</span>
+                    </button>
+                    <button onclick="setFlashcardMode('full')" id="mode-btn-full" class="px-3.5 py-2 rounded-lg text-xs font-bold transition-all text-slate-400 hover:text-white flex items-center gap-1.5">
+                        <span>📚 全章完整模式</span>
+                        <span class="px-1.5 py-0.5 rounded bg-slate-800 text-[10px] text-amber-300">含3张课后微元推导卡·共11张</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 闪卡主体交互区 -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                <!-- 左侧：卡片索引矩阵与掌握度概览 -->
+                <div class="lg:col-span-4 bg-space-900 rounded-2xl border border-slate-800 p-5 space-y-4 shadow-xl">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-sm font-bold text-white">第二章闪卡导航矩阵</h3>
+                        <span id="deck-counter-badge" class="text-xs font-mono text-cyan-400">已评 0 / 8 张</span>
+                    </div>
+
+                    <!-- 编号矩阵按钮 -->
+                    <div id="flashcard-pills-container" class="grid grid-cols-4 gap-2">
+                        <!-- 由 JS 动态渲染 -->
+                    </div>
+
+                    <!-- 掌握度实时统计图例 -->
+                    <div class="bg-space-950 rounded-xl p-3.5 border border-slate-800 space-y-2.5">
+                        <div class="text-xs text-slate-400 font-medium">当前自评分布（实时同步至环节四热力图）：</div>
+                        <div class="grid grid-cols-3 gap-2 text-center">
+                            <div class="p-2 rounded-lg bg-rose-500/10 border border-rose-500/30">
+                                <div id="count-red" class="text-base font-bold text-rose-400 font-mono">0</div>
+                                <div class="text-[11px] text-rose-300">🔴 需重来</div>
+                            </div>
+                            <div class="p-2 rounded-lg bg-amber-500/10 border border-amber-500/30">
+                                <div id="count-yellow" class="text-base font-bold text-amber-400 font-mono">0</div>
+                                <div class="text-[11px] text-amber-300">🟡 有点模糊</div>
+                            </div>
+                            <div class="p-2 rounded-lg bg-emerald-500/10 border border-emerald-500/30">
+                                <div id="count-green" class="text-base font-bold text-emerald-400 font-mono">0</div>
+                                <div class="text-[11px] text-emerald-300">🟢 已掌握</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-3 rounded-xl bg-indigo-950/30 border border-indigo-500/20 text-xs text-slate-300 space-y-1">
+                        <div class="font-semibold text-indigo-300"><i class="fa-solid fa-keyboard mr-1"></i>快捷键与操作提示：</div>
+                        <p>支持鼠标点击或按 <kbd class="px-1.5 py-0.5 bg-space-950 rounded border border-slate-700">空格</kbd> 3D翻转卡片，<kbd class="px-1.5 py-0.5 bg-space-950 rounded border border-slate-700">&larr;</kbd> <kbd class="px-1.5 py-0.5 bg-space-950 rounded border border-slate-700">&rarr;</kbd> 切换上下张。</p>
+                    </div>
+                </div>
+
+                <!-- 右侧：3D 翻转大卡片与自评操作台 -->
+                <div class="lg:col-span-8 space-y-4">
+                    <!-- 3D 翻转舞台 -->
+                    <div class="perspective-1000 w-full h-[370px] sm:h-[390px] cursor-pointer select-none" onclick="flipCurrentCard()">
+                        <div id="flashcard-3d-inner" class="w-full h-full relative transform-style-3d">
+                            
+                            <!-- 卡片正面 (问题与情境) -->
+                            <div class="absolute inset-0 backface-hidden bg-gradient-to-br from-space-800 via-space-900 to-indigo-950/80 rounded-2xl border-2 border-slate-700/80 hover:border-cyan-500/60 p-6 sm:p-8 flex flex-col justify-between shadow-2xl transition-colors">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-2">
+                                        <span id="card-front-tag" class="px-3 py-1 rounded-full text-xs font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">
+                                            卡片 #1 · 摩擦力微观机制
+                                        </span>
+                                        <span id="card-postclass-badge" class="hidden px-2.5 py-1 rounded-full text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40">
+                                            🔒 课后推导巩固
+                                        </span>
+                                    </div>
+                                    <span id="card-status-pill" class="text-xs px-2.5 py-0.5 rounded bg-slate-800 text-slate-400">未自评</span>
+                                </div>
+
+                                <div class="my-auto py-4 space-y-4">
+                                    <div class="text-xs uppercase tracking-widest text-slate-400 font-semibold flex items-center gap-2">
+                                        <i class="fa-solid fa-circle-question text-cyan-400 text-base"></i>
+                                        <span>核心概念排雷提问 (点击卡片或按空格翻转)</span>
+                                    </div>
+                                    <h3 id="card-front-question" class="text-lg sm:text-2xl font-bold text-white leading-snug">
+                                        <!-- 动态填充 -->
+                                    </h3>
+                                    <p id="card-front-hint" class="text-xs sm:text-sm text-slate-400 bg-space-950/70 p-3 rounded-xl border border-slate-800/80">
+                                        <!-- 动态填充思考脚手架 -->
+                                    </p>
+                                </div>
+
+                                <div class="flex items-center justify-between text-xs text-slate-400 border-t border-slate-800/80 pt-3">
+                                    <span><i class="fa-regular fa-hand-pointer mr-1 text-cyan-400"></i>点击卡片翻转查看解析与避坑指南</span>
+                                    <span class="font-mono text-cyan-400">正面 (Question) &rarr;</span>
+                                </div>
+                            </div>
+
+                            <!-- 卡片背面 (解析、公式与避坑指南) -->
+                            <div class="absolute inset-0 backface-hidden rotate-y-180 bg-gradient-to-br from-space-900 via-indigo-950/60 to-space-900 rounded-2xl border-2 border-cyan-500/50 p-6 sm:p-7 flex flex-col justify-between shadow-2xl overflow-y-auto">
+                                <div class="flex items-center justify-between border-b border-slate-800 pb-2.5">
+                                    <span id="card-back-tag" class="text-xs font-bold text-cyan-300">
+                                        <i class="fa-solid fa-check-double mr-1"></i>概念真相与公式拆解
+                                    </span>
+                                    <span class="text-xs text-slate-400">点击卡片返回正面</span>
+                                </div>
+
+                                <div class="my-auto py-3 space-y-3 text-xs sm:text-sm">
+                                    <div id="card-back-answer" class="text-slate-100 leading-relaxed space-y-2">
+                                        <!-- 动态填充答案 -->
+                                    </div>
+                                    <div id="card-back-formula" class="p-3 rounded-xl bg-space-950 border border-cyan-500/30 text-center text-cyan-300 font-semibold">
+                                        <!-- 动态填充核心公式 -->
+                                    </div>
+                                    <div class="p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-200 text-xs">
+                                        <span class="font-bold text-amber-300"><i class="fa-solid fa-triangle-exclamation mr-1"></i>避坑指南：</span>
+                                        <span id="card-back-pitfall"></span>
+                                    </div>
+                                </div>
+
+                                <div class="flex items-center justify-between text-[11px] text-slate-400 border-t border-slate-800 pt-2">
+                                    <span>请根据掌握情况点击下方红/黄/绿按钮</span>
+                                    <span class="font-mono text-amber-300">&larr; 背面 (Answer)</span>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- 卡片底部自评按钮与翻页控制栏 -->
+                    <div class="bg-space-900 rounded-2xl border border-slate-800 p-4 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-xl">
+                        <div class="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-start">
+                            <button onclick="prevCard()" class="px-3.5 py-2 rounded-xl bg-space-950 hover:bg-slate-800 text-slate-300 border border-slate-800 text-xs font-medium transition">
+                                <i class="fa-solid fa-arrow-left mr-1"></i>上一张
+                            </button>
+                            <button onclick="flipCurrentCard()" class="px-3.5 py-2 rounded-xl bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-300 border border-indigo-500/30 text-xs font-medium transition">
+                                <i class="fa-solid fa-arrows-rotate mr-1"></i>翻转卡片
+                            </button>
+                            <button onclick="nextCard()" class="px-3.5 py-2 rounded-xl bg-space-950 hover:bg-slate-800 text-slate-300 border border-slate-800 text-xs font-medium transition">
+                                下一张<i class="fa-solid fa-arrow-right ml-1"></i>
+                            </button>
+                        </div>
+
+                        <!-- 三色自评按钮 -->
+                        <div class="grid grid-cols-3 gap-2.5 w-full sm:w-auto">
+                            <button onclick="rateCurrentCard('red')" class="px-3.5 py-2.5 rounded-xl bg-rose-500/15 hover:bg-rose-500/30 text-rose-300 border border-rose-500/40 text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-sm">
+                                <span>🔴 需重来</span>
+                            </button>
+                            <button onclick="rateCurrentCard('yellow')" class="px-3.5 py-2.5 rounded-xl bg-amber-500/15 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-sm">
+                                <span>🟡 有点模糊</span>
+                            </button>
+                            <button onclick="rateCurrentCard('green')" class="px-3.5 py-2.5 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/40 text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-sm">
+                                <span>🟢 已掌握</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =====================================================================
+             环节四：学情反哺课堂 —— 迷思热力图 & 苏格拉底 AI 预习学伴
+             ===================================================================== -->
+        <section id="stage-4" class="stage-section hidden space-y-6">
+            <!-- 环节导语横幅 -->
+            <div class="bg-gradient-to-r from-space-800 via-emerald-950/40 to-space-800 rounded-2xl p-5 border border-emerald-500/30 shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div class="space-y-1">
+                    <div class="flex items-center gap-2">
+                        <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">环节 4 / 4 · 预计 3 分钟</span>
+                        <span class="text-xs text-cyan-300"><i class="fa-solid fa-chart-pie mr-1"></i>以学定教 · 闭环反馈</span>
+                    </div>
+                    <h2 class="text-xl font-bold text-white">学情反哺课堂：迷思热力图 &amp; 苏格拉底 AI 学伴</h2>
+                    <p class="text-sm text-slate-300">左侧将你的闪卡自评与班级预习大数据融合，自动划分<strong>课堂 3 分钟速过区与重点精讲靶区</strong>；右侧苏格拉底 AI 针对你的薄弱项进行三步启发追问。</p>
+                </div>
+                <button onclick="openExportModal()" class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 text-space-950 font-bold text-xs sm:text-sm shadow-lg shrink-0 flex items-center gap-2">
+                    <i class="fa-solid fa-file-export"></i>
+                    <span>完成预习 · 生成学习通/雨课堂回执码</span>
+                </button>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <!-- 左侧：第二章预习迷思热力图与教学策略分区 -->
+                <div class="lg:col-span-6 bg-space-900 rounded-2xl border border-slate-800 p-5 space-y-5 shadow-xl">
+                    <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                        <div>
+                            <h3 class="text-base font-bold text-white flex items-center gap-2">
+                                <i class="fa-solid fa-fire text-rose-400"></i>
+                                <span>第二章《惯性系下质点动力学》预习迷思热力图</span>
+                            </h3>
+                            <p class="text-xs text-slate-400 mt-0.5">融合个人闪卡自评状态与全班 132 名同学预习盲区分布</p>
+                        </div>
+                        <span class="text-[11px] px-2.5 py-1 rounded bg-space-950 border border-slate-800 text-cyan-300">实时联动更新</span>
+                    </div>
+
+                    <!-- 8大核心概念热力条列表 -->
+                    <div id="heatmap-list" class="space-y-2.5">
+                        <!-- 由 JS 动态渲染 -->
+                    </div>
+
+                    <!-- 自动生成的两大课堂教学策略分区 -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                        <div class="p-3.5 rounded-xl bg-emerald-950/30 border border-emerald-500/30 space-y-1.5">
+                            <div class="text-xs font-bold text-emerald-300 flex items-center justify-between">
+                                <span>🟢 课堂 3 分钟速过区</span>
+                                <span class="font-mono text-[11px]">掌握率 &gt; 85%</span>
+                            </div>
+                            <ul class="text-xs text-slate-300 space-y-1 list-disc list-inside">
+                                <li>直角坐标系牛顿第二定律分量展开</li>
+                                <li>常力作用下连接体隔离体法受力图</li>
+                                <li>竖直圆周运动绳模型与轻杆模型临界速率</li>
+                            </ul>
+                        </div>
+
+                        <div class="p-3.5 rounded-xl bg-rose-950/30 border border-rose-500/30 space-y-1.5">
+                            <div class="text-xs font-bold text-rose-300 flex items-center justify-between">
+                                <span>🔴 课堂重点精讲靶区</span>
+                                <span class="font-mono text-[11px]">高频痛点</span>
+                            </div>
+                            <ul id="focus-zone-list" class="text-xs text-slate-300 space-y-1 list-disc list-inside">
+                                <li>旋转圆环/缠绕绳微元法向力二阶小量取舍</li>
+                                <li>非静止物体通过场作用时牛顿第三定律边界</li>
+                                <li>变力 <span class="math">F(x)</span> 与 <span class="math">F(v)</span> 链式消元与分离变量积分</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 右侧：苏格拉底 AI 预习学伴（三步启发式追问） -->
+                <div class="lg:col-span-6 bg-space-900 rounded-2xl border border-slate-800 p-5 flex flex-col justify-between shadow-xl h-[620px]">
+                    <!-- 顶部 AI 头部与快捷痛点按钮 -->
+                    <div class="space-y-3 border-b border-slate-800 pb-3">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-2.5">
+                                <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-cyan-400 flex items-center justify-center text-space-950 font-bold shadow">
+                                    <i class="fa-solid fa-robot text-base"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-sm sm:text-base font-bold text-white">苏格拉底 AI 预习学伴</h3>
+                                    <p class="text-[11px] text-cyan-300">不直接给冗长推导 · 用三步启发追问带你顿悟动力学痛点</p>
+                                </div>
+                            </div>
+                            <button onclick="resetSocraticChat()" class="text-xs text-slate-400 hover:text-white px-2 py-1 rounded bg-space-950 border border-slate-800">
+                                <i class="fa-solid fa-broom mr-1"></i>清空对话
+                            </button>
+                        </div>
+
+                        <!-- 3个高频卡点快捷提问按钮 -->
+                        <div class="space-y-1.5">
+                            <div class="text-[11px] text-slate-400">点击第二章高频痛点开启苏格拉底三步启发：</div>
+                            <div class="flex flex-wrap gap-1.5">
+                                <button onclick="startSocraticTopic(1)" class="text-left text-xs px-2.5 py-1.5 rounded-lg bg-indigo-500/15 hover:bg-indigo-500/30 text-indigo-200 border border-indigo-500/30 transition">
+                                    ① 为什么微元法向力里 <span class="math">&Delta;T&middot;sin(&Delta;&theta;/2)</span> 可以直接扔掉？
+                                </button>
+                                <button onclick="startSocraticTopic(2)" class="text-left text-xs px-2.5 py-1.5 rounded-lg bg-cyan-500/15 hover:bg-cyan-500/30 text-cyan-200 border border-cyan-500/30 transition">
+                                    ② 遇到变力问题，怎么一秒判断对 <span class="math">t</span> 还是对 <span class="math">x</span> 积分？
+                                </button>
+                                <button onclick="startSocraticTopic(3)" class="text-left text-xs px-2.5 py-1.5 rounded-lg bg-amber-500/15 hover:bg-amber-500/30 text-amber-200 border border-amber-500/30 transition">
+                                    ③ 为什么运动电荷之间不严格满足牛顿第三定律？
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 中部对话流容器 -->
+                    <div id="socratic-chat-box" class="flex-1 overflow-y-auto py-4 space-y-3 pr-1">
+                        <!-- 初始欢迎气泡 -->
+                        <div class="flex items-start gap-2.5">
+                            <div class="w-7 h-7 rounded-lg bg-indigo-500/30 border border-indigo-400/40 flex items-center justify-center text-cyan-300 text-xs shrink-0 mt-0.5">AI</div>
+                            <div class="bg-space-950 border border-slate-800 rounded-2xl rounded-tl-none p-3.5 text-xs sm:text-sm text-slate-200 space-y-2 max-w-[90%]">
+                                <p>同学你好！我是你的《力学》第二章苏格拉底学伴。预习“变力动力学与绳张力微元”时，最怕一上来就陷进积分细节里。</p>
+                                <p class="text-cyan-300">点击上方 ①、②、③ 痛点话题，或直接在下方输入你的疑问，我们用“三步追问法”一起想通它的物理图像！</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 底部自由提问输入框 -->
+                    <form onsubmit="handleCustomQuestion(event)" class="pt-3 border-t border-slate-800 flex gap-2">
+                        <input type="text" id="socratic-input" placeholder="输入你卡壳的概念，如：为什么砖块立放和横放摩擦力一样大？" class="flex-1 bg-space-950 border border-slate-700 focus:border-cyan-400 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-white outline-none">
+                        <button type="submit" class="px-4 py-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-space-950 font-bold text-xs sm:text-sm transition shrink-0">
+                            <i class="fa-solid fa-paper-plane mr-1"></i>追问
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ==================== 平台适配导出弹窗（雨课堂 / 超星学习通预习回执） ==================== -->
+    <div id="export-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/75 backdrop-blur-sm p-4">
+        <div class="bg-space-900 border border-slate-700 rounded-2xl max-w-lg w-full p-6 space-y-5 shadow-2xl">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 rounded-xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400">
+                        <i class="fa-solid fa-clipboard-check text-lg"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-base font-bold text-white">第二章课前15分钟智慧预习 · 诊断回执单</h3>
+                        <p class="text-xs text-slate-400">支持一键复制回执码粘贴至 雨课堂 / 超星学习通</p>
+                    </div>
+                </div>
+                <button onclick="closeExportModal()" class="text-slate-400 hover:text-white text-lg">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- 平台切换选项卡 -->
+            <div class="grid grid-cols-2 gap-2 bg-space-950 p-1 rounded-xl border border-slate-800 text-xs">
+                <button onclick="selectPlatform('rain')" id="plat-rain" class="py-2 rounded-lg font-bold bg-cyan-500 text-space-950 transition">
+                    🌧️ 雨课堂 (Rain Classroom)
+                </button>
+                <button onclick="selectPlatform('xuexitong')" id="plat-xuexitong" class="py-2 rounded-lg font-bold text-slate-400 hover:text-white transition">
+                    ⭐ 超星学习通 (Xuexitong)
+                </button>
+            </div>
+
+            <!-- 个人诊断摘要数据 -->
+            <div class="bg-space-950 rounded-xl p-4 border border-slate-800 space-y-3 text-xs">
+                <div class="flex justify-between items-center border-b border-slate-800 pb-2">
+                    <span class="text-slate-400">预习章节：《力学》第二章 惯性系下质点动力学</span>
+                    <span id="modal-duration-text" class="text-cyan-400 font-mono">用时 04:20</span>
+                </div>
+                <div class="grid grid-cols-3 gap-2 text-center">
+                    <div class="p-2 rounded bg-space-900">
+                        <div class="text-slate-400">微元与变力脚手架</div>
+                        <div id="modal-math-stat" class="font-bold text-emerald-400 mt-0.5">已唤醒</div>
+                    </div>
+                    <div class="p-2 rounded bg-space-900">
+                        <div class="text-slate-400">POE双沙盒盲测</div>
+                        <div id="modal-poe-stat" class="font-bold text-amber-400 mt-0.5">已完成</div>
+                    </div>
+                    <div class="p-2 rounded bg-space-900">
+                        <div class="text-slate-400">概念闪卡排雷</div>
+                        <div id="modal-card-stat" class="font-bold text-cyan-400 mt-0.5">8 / 8 张</div>
+                    </div>
+                </div>
+                <div>
+                    <div class="text-slate-400 mb-1">待课堂重点关注的个人迷思点：</div>
+                    <div id="modal-weak-points" class="text-rose-300 font-medium bg-rose-950/30 border border-rose-500/30 rounded-lg p-2">
+                        旋转圆环/缠绕绳法向微元二阶小量取舍、场相互作用与牛顿第三定律适用边界
+                    </div>
+                </div>
+                <div>
+                    <div class="text-slate-400 mb-1">平台加密预习回执码（复制粘贴至作业框即可）：</div>
+                    <div id="modal-receipt-code" class="font-mono text-[11px] bg-space-900 p-2.5 rounded-lg border border-cyan-500/30 text-cyan-300 break-all select-all">
+                        【雨课堂预习回执】MECH-CH2#MATH:OK#POE:PASS#CARDS:G5Y2R1#FOCUS:EulerCapstan2ndOrder#CODE:9D41B
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex items-center justify-end gap-3">
+                <span id="copy-toast" class="text-xs text-emerald-400 hidden"><i class="fa-solid fa-check mr-1"></i>已复制到剪贴板！</span>
+                <button onclick="copyReceiptCode()" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-emerald-500 text-space-950 font-bold text-xs sm:text-sm shadow-lg flex items-center gap-2">
+                    <i class="fa-regular fa-copy"></i>
+                    <span>一键复制预习回执码</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== 核心交互与物理仿真脚本 ==================== -->
+    <script>
+        // ===================== 全局状态管理 =====================
+        const appState = {
+            currentStage: 1,
+            stagesVisited: { 1: true, 2: false, 3: false, 4: false },
+            mathQuizDone: false,
+            poe1Predicted: false,
+            poe1Choice: null,
+            poe2Predicted: false,
+            poe2Choice: null,
+            flashcardMode: 'preclass', // 'preclass' (8张) | 'full' (11张)
+            currentCardIndex: 0,
+            isCardFlipped: false,
+            selectedPlatform: 'rain',
+            startTime: Date.now(),
+            remainSeconds: 15 * 60,
+            timerPaused: false,
+            isLightTheme: false
+        };
+
+        // ===================== 背景颜色与护眼主题调控系统 =====================
+        const themePresets = {
+            dark: {
+                name: '默认深空蓝',
+                isLight: false,
+                bgPrimary: '#070b14',
+                bgCard: '#0b1120',
+                bgElevated: '#131c31',
+                textPrimary: '#f8fafc',
+                textSecondary: '#cbd5e1',
+                textMuted: '#94a3b8',
+                borderColor: '#1e293b',
+                canvasGrid: 'rgba(148, 163, 184, 0.06)'
+            },
+            light: {
+                name: '明亮护眼白',
+                isLight: true,
+                bgPrimary: '#f8fafc',
+                bgCard: '#ffffff',
+                bgElevated: '#e2e8f0',
+                textPrimary: '#0f172a',
+                textSecondary: '#334155',
+                textMuted: '#64748b',
+                borderColor: '#cbd5e1',
+                canvasGrid: 'rgba(15, 23, 42, 0.06)'
+            },
+            green: {
+                name: '豆沙护眼绿',
+                isLight: true,
+                bgPrimary: '#e6f2ea',
+                bgCard: '#f4fbf7',
+                bgElevated: '#d3e8da',
+                textPrimary: '#132a1c',
+                textSecondary: '#274c35',
+                textMuted: '#4c755b',
+                borderColor: '#b7d7c2',
+                canvasGrid: 'rgba(19, 42, 28, 0.06)'
+            },
+            charcoal: {
+                name: '极夜深灰',
+                isLight: false,
+                bgPrimary: '#121316',
+                bgCard: '#1a1c20',
+                bgElevated: '#262930',
+                textPrimary: '#f3f4f6',
+                textSecondary: '#d1d5db',
+                textMuted: '#9ca3af',
+                borderColor: '#374151',
+                canvasGrid: 'rgba(209, 213, 219, 0.06)'
+            }
+        };
+
+        function toggleThemePanel() {
+            const panel = document.getElementById('theme-control-panel');
+            if (panel.classList.contains('hidden')) {
+                panel.classList.remove('hidden');
+                panel.classList.add('flex');
+            } else {
+                panel.classList.add('hidden');
+                panel.classList.remove('flex');
+            }
+        }
+
+        function applyThemeVariables(cfg) {
+            const root = document.documentElement;
+            root.style.setProperty('--bg-primary', cfg.bgPrimary);
+            root.style.setProperty('--bg-card', cfg.bgCard);
+            root.style.setProperty('--bg-elevated', cfg.bgElevated);
+            root.style.setProperty('--text-primary', cfg.textPrimary);
+            root.style.setProperty('--text-secondary', cfg.textSecondary);
+            root.style.setProperty('--text-muted', cfg.textMuted);
+            root.style.setProperty('--border-color', cfg.borderColor);
+            root.style.setProperty('--canvas-bg', cfg.bgPrimary);
+            root.style.setProperty('--canvas-grid', cfg.canvasGrid);
+
+            appState.isLightTheme = cfg.isLight;
+            if (cfg.isLight) {
+                document.body.classList.add('theme-light');
+            } else {
+                document.body.classList.remove('theme-light');
+            }
+
+            const picker = document.getElementById('custom-bg-picker');
+            if (picker) picker.value = cfg.bgPrimary;
+            const badge = document.getElementById('theme-contrast-badge');
+            if (badge) {
+                badge.textContent = `${cfg.name} · ${cfg.isLight ? '浅色高反差' : '暗色高反差'}`;
+            }
+
+            // 实时触发所有可见 Canvas 重绘，确保深浅主题下矢量与标注清晰易读
+            if (appState.currentStage === 1) updateRopeElementSim();
+            if (appState.currentStage === 2) {
+                updateCapstanSim();
+                drawDragProjectileFrame();
+            }
+        }
+
+        function applyThemePreset(key) {
+            const cfg = themePresets[key];
+            if (!cfg) return;
+            ['dark', 'light', 'green', 'charcoal'].forEach(k => {
+                const btn = document.getElementById(`preset-btn-${k}`);
+                if (btn) {
+                    if (k === key) btn.classList.add('ring-2', 'ring-cyan-400');
+                    else btn.classList.remove('ring-2', 'ring-cyan-400');
+                }
+            });
+            applyThemeVariables(cfg);
+        }
+
+        function shiftHexBrightness(hex, delta) {
+            const num = parseInt(hex.replace('#', ''), 16);
+            const r = Math.min(255, Math.max(0, (num >> 16) + delta));
+            const g = Math.min(255, Math.max(0, ((num >> 8) & 0x00FF) + delta));
+            const b = Math.min(255, Math.max(0, (num & 0x0000FF) + delta));
+            return '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+        }
+
+        function applyCustomBgColor(hexColor) {
+            const hex = hexColor.replace('#', '');
+            const r = parseInt(hex.substring(0, 2), 16);
+            const g = parseInt(hex.substring(2, 4), 16);
+            const b = parseInt(hex.substring(4, 6), 16);
+            const yiq = (r * 299 + g * 587 + b * 114) / 1000;
+            const isLight = yiq >= 140;
+
+            const customCfg = {
+                name: '自定义背景',
+                isLight: isLight,
+                bgPrimary: hexColor,
+                bgCard: isLight ? shiftHexBrightness(hexColor, 18) : shiftHexBrightness(hexColor, 14),
+                bgElevated: isLight ? shiftHexBrightness(hexColor, -14) : shiftHexBrightness(hexColor, 28),
+                textPrimary: isLight ? '#0f172a' : '#f8fafc',
+                textSecondary: isLight ? '#334155' : '#cbd5e1',
+                textMuted: isLight ? '#64748b' : '#94a3b8',
+                borderColor: isLight ? shiftHexBrightness(hexColor, -32) : shiftHexBrightness(hexColor, 42),
+                canvasGrid: isLight ? 'rgba(15, 23, 42, 0.06)' : 'rgba(148, 163, 184, 0.07)'
+            };
+            applyThemeVariables(customCfg);
+        }
+
+        // ===================== 15分钟倒计时（支持暂停/继续）与整体进度更新 =====================
+        function toggleTimerPause() {
+            appState.timerPaused = !appState.timerPaused;
+            const icon = document.getElementById('timer-pause-icon');
+            if (icon) {
+                icon.className = appState.timerPaused ? 'fa-solid fa-play text-amber-400' : 'fa-solid fa-pause';
+            }
+        }
+
+        setInterval(() => {
+            if (!appState.timerPaused && appState.remainSeconds > 0) {
+                appState.remainSeconds--;
+                const mins = String(Math.floor(appState.remainSeconds / 60)).padStart(2, '0');
+                const secs = String(appState.remainSeconds % 60).padStart(2, '0');
+                const el = document.getElementById('timer-display');
+                if (el) el.textContent = `${mins}:${secs}`;
+            }
+        }, 1000);
+
+        function updateOverallProgress() {
+            let score = 15;
+            if (appState.mathQuizDone) score += 15;
+            if (appState.poe1Predicted) score += 15;
+            if (appState.poe2Predicted) score += 10;
+            const ratedCount = flashcardsData.slice(0, 8).filter(c => c.status !== 'unrated').length;
+            score += Math.round((ratedCount / 8) * 35);
+            if (appState.stagesVisited[4]) score += 10;
+            score = Math.min(100, score);
+
+            document.getElementById('overall-progress-bar').style.width = `${score}%`;
+            document.getElementById('overall-progress-text').textContent = `${score}%`;
+        }
+
+        // ===================== 顶栏4环节切换逻辑 =====================
+        function switchStage(stageNum) {
+            appState.currentStage = stageNum;
+            appState.stagesVisited[stageNum] = true;
+
+            for (let i = 1; i <= 4; i++) {
+                const sec = document.getElementById(`stage-${i}`);
+                const btn = document.getElementById(`nav-stage-${i}`);
+                const badge = document.getElementById(`badge-stage-${i}`);
+                if (i === stageNum) {
+                    sec.classList.remove('hidden');
+                    btn.className = "stage-nav-btn flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-all whitespace-nowrap bg-cyan-500/20 text-cyan-300 border border-cyan-500/40";
+                    badge.className = "w-5 h-5 rounded-full bg-cyan-400 text-space-950 font-bold flex items-center justify-center text-xs";
+                } else {
+                    sec.classList.add('hidden');
+                    const visited = appState.stagesVisited[i];
+                    btn.className = "stage-nav-btn flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-all whitespace-nowrap text-slate-400 hover:text-slate-200";
+                    badge.className = visited
+                        ? "w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-bold flex items-center justify-center text-xs"
+                        : "w-5 h-5 rounded-full bg-slate-800 text-slate-400 font-bold flex items-center justify-center text-xs";
+                }
+            }
+
+            setTimeout(() => {
+                if (stageNum === 1) resizeAndDrawRopeElement();
+                if (stageNum === 2) {
+                    resizeAndDrawCapstan();
+                    resizeAndDrawDragProjectile();
+                }
+                if (stageNum === 3) renderFlashcardDeck();
+                if (stageNum === 4) renderHeatmap();
+            }, 50);
+
+            updateOverallProgress();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // 通用矢量箭头绘制函数
+        function drawArrow(ctx, x1, y1, x2, y2, color, width = 2.5, dashed = false) {
+            const headLen = 9;
+            const angle = Math.atan2(y2 - y1, x2 - x1);
+            ctx.save();
+            ctx.strokeStyle = color;
+            ctx.fillStyle = color;
+            ctx.lineWidth = width;
+            if (dashed) ctx.setLineDash([5, 4]);
+            ctx.beginPath();
+            ctx.moveTo(x1, y1);
+            ctx.lineTo(x2, y2);
+            ctx.stroke();
+
+            ctx.setLineDash([]);
+            ctx.beginPath();
+            ctx.moveTo(x2, y2);
+            ctx.lineTo(x2 - headLen * Math.cos(angle - Math.PI / 6), y2 - headLen * Math.sin(angle - Math.PI / 6));
+            ctx.lineTo(x2 - headLen * Math.cos(angle + Math.PI / 6), y2 - headLen * Math.sin(angle + Math.PI / 6));
+            ctx.closePath();
+            ctx.fill();
+            ctx.restore();
+        }
+
+        // =========================================================================
+        // 环节一：数学脚手架前置 —— 微切片 A（微元弧段法向力与小角度近似） & 微切片 B
+        // =========================================================================
+        function switchMathSlice(slice) {
+            const sliceA = document.getElementById('math-slice-A');
+            const sliceB = document.getElementById('math-slice-B');
+            const btnA = document.getElementById('btn-slice-A');
+            const btnB = document.getElementById('btn-slice-B');
+
+            if (slice === 'A') {
+                sliceA.classList.remove('hidden');
+                sliceA.classList.add('grid');
+                sliceB.classList.add('hidden');
+                sliceB.classList.remove('grid');
+                btnA.className = "px-3.5 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all bg-cyan-500 text-space-950 shadow";
+                btnB.className = "px-3.5 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all text-slate-400 hover:text-white";
+                setTimeout(resizeAndDrawRopeElement, 30);
+            } else {
+                sliceA.classList.add('hidden');
+                sliceA.classList.remove('grid');
+                sliceB.classList.remove('hidden');
+                sliceB.classList.add('grid');
+                btnB.className = "px-3.5 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all bg-cyan-500 text-space-950 shadow";
+                btnA.className = "px-3.5 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all text-slate-400 hover:text-white";
+                showForceStrategy(2);
+            }
+        }
+
+        function animateShrinkAngle() {
+            const slider = document.getElementById('slider-rope-dtheta');
+            let current = parseFloat(slider.value);
+            if (current <= 2) current = 55;
+            const timer = setInterval(() => {
+                current = Math.max(1, current - 1.5);
+                slider.value = current;
+                updateRopeElementSim();
+                if (current <= 1) clearInterval(timer);
+            }, 30);
+        }
+
+        function resizeAndDrawRopeElement() {
+            const canvas = document.getElementById('ropeElementCanvas');
+            if (!canvas) return;
+            const rect = canvas.parentElement.getBoundingClientRect();
+            canvas.width = rect.width * window.devicePixelRatio;
+            canvas.height = rect.height * window.devicePixelRatio;
+            updateRopeElementSim();
+        }
+
+        function updateRopeElementSim() {
+            const canvas = document.getElementById('ropeElementCanvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const dpr = window.devicePixelRatio || 1;
+            const w = canvas.width / dpr;
+            const h = canvas.height / dpr;
+
+            ctx.save();
+            ctx.scale(dpr, dpr);
+            ctx.clearRect(0, 0, w, h);
+
+            const dThetaDeg = parseFloat(document.getElementById('slider-rope-dtheta').value);
+            const mu = parseFloat(document.getElementById('slider-rope-mu').value);
+            const dThetaRad = (dThetaDeg * Math.PI) / 180;
+            const halfRad = dThetaRad / 2;
+            const sinHalf = Math.sin(halfRad);
+            const relErr = Math.abs((halfRad - sinHalf) / sinHalf) * 100;
+
+            // 一阶项 2T*(dTheta/2) = T*dTheta vs 二阶项 dT*sin(dTheta/2) ≈ (mu*T*dTheta)*sin(dTheta/2)
+            const firstOrder = dThetaRad;
+            const secondOrder = (mu * dThetaRad) * sinHalf;
+            const ratioPct = (secondOrder / (2 * sinHalf)) * 100;
+
+            // 更新右侧数值读数
+            document.getElementById('val-rope-dtheta').textContent = `${dThetaDeg.toFixed(1)}° (${dThetaRad.toFixed(4)} rad)`;
+            document.getElementById('val-rope-mu').textContent = `μ = ${mu.toFixed(2)}`;
+            document.getElementById('live-half-angle').textContent = `Δθ/2 = ${(dThetaDeg / 2).toFixed(1)}°`;
+            document.getElementById('live-sin-half').textContent = sinHalf.toFixed(5);
+            document.getElementById('live-rad-half').textContent = halfRad.toFixed(5);
+            document.getElementById('live-second-order-ratio').textContent = `${ratioPct.toFixed(2)}%`;
+
+            const errBadge = document.getElementById('rope-error-badge');
+            if (dThetaDeg <= 8) {
+                errBadge.className = "text-xs font-mono px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30";
+                errBadge.textContent = `极限成立 · 误差 ${relErr.toFixed(3)}%`;
+            } else if (dThetaDeg <= 25) {
+                errBadge.className = "text-xs font-mono px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30";
+                errBadge.textContent = `近似误差 ${relErr.toFixed(2)}%`;
+            } else {
+                errBadge.className = "text-xs font-mono px-2 py-0.5 rounded bg-rose-500/20 text-rose-300 border border-rose-500/30";
+                errBadge.textContent = `角度偏大 · 误差 ${relErr.toFixed(2)}%`;
+            }
+
+            // 中间分隔虚线
+            ctx.strokeStyle = 'rgba(148, 163, 184, 0.18)';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(w * 0.54, 14);
+            ctx.lineTo(w * 0.54, h - 38);
+            ctx.stroke();
+
+            // ============ 左半画布：微元弧段 Δs 受力分解几何图 ============
+            const cx = w * 0.27;
+            const cy = h * 0.76;
+            const R = Math.min(w * 0.24, h * 0.48);
+
+            ctx.fillStyle = appState.isLightTheme ? '#0f172a' : '#e2e8f0';
+            ctx.font = 'bold 12px Inter, sans-serif';
+            ctx.fillText('① 绳微元弧段 Δs 两端张力分解', 14, 24);
+
+            // 绘制圆柱辅助虚线圆弧
+            ctx.strokeStyle = 'rgba(148, 163, 184, 0.22)';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.arc(cx, cy, R, -Math.PI * 0.88, -Math.PI * 0.12);
+            ctx.stroke();
+
+            // 视觉放大半角以便在小角度时仍能看清几何结构（同时标注真实角度）
+            const visHalf = Math.max(0.08, halfRad * 0.85);
+            const angLeft = -Math.PI / 2 - visHalf;
+            const angRight = -Math.PI / 2 + visHalf;
+
+            // 绘制圆心角扇形与半径连线
+            ctx.fillStyle = 'rgba(34, 211, 238, 0.08)';
+            ctx.beginPath();
+            ctx.moveTo(cx, cy);
+            ctx.arc(cx, cy, R, angLeft, angRight);
+            ctx.closePath();
+            ctx.fill();
+
+            ctx.strokeStyle = 'rgba(148, 163, 184, 0.4)';
+            ctx.setLineDash([4, 4]);
+            ctx.beginPath();
+            ctx.moveTo(cx, cy);
+            ctx.lineTo(cx + R * Math.cos(angLeft), cy + R * Math.sin(angLeft));
+            ctx.moveTo(cx, cy);
+            ctx.lineTo(cx + R * Math.cos(angRight), cy + R * Math.sin(angRight));
+            ctx.moveTo(cx, cy + 8);
+            ctx.lineTo(cx, cy - R - 25);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // 高亮绘制绳微元弧段 Δs
+            ctx.strokeStyle = '#fbbf24';
+            ctx.lineWidth = 6;
+            ctx.lineCap = 'round';
+            ctx.beginPath();
+            ctx.arc(cx, cy, R, angLeft, angRight);
+            ctx.stroke();
+
+            // 左右端点坐标
+            const lx = cx + R * Math.cos(angLeft);
+            const ly = cy + R * Math.sin(angLeft);
+            const rx = cx + R * Math.cos(angRight);
+            const ry = cy + R * Math.sin(angRight);
+
+            // 左端张力 T（沿左端点切线向左下偏 Δθ/2）
+            const tLen = 58;
+            const lTanX = -Math.cos(visHalf);
+            const lTanY = Math.sin(visHalf);
+            drawArrow(ctx, lx, ly, lx + lTanX * tLen, ly + lTanY * tLen, '#22d3ee', 2.8);
+
+            // 右端张力 T+ΔT（沿右端点切线向右下偏 Δθ/2）
+            const rLen = tLen * (1 + mu * dThetaRad * 0.7);
+            const rTanX = Math.cos(visHalf);
+            const rTanY = Math.sin(visHalf);
+            drawArrow(ctx, rx, ry, rx + rTanX * rLen, ry + rTanY * rLen, '#38bdf8', 3.0);
+
+            // 顶点处绘制指向圆心的法向合力 Fn 与支持力 dN
+            const topX = cx;
+            const topY = cy - R;
+            const fnLen = Math.max(22, 68 * Math.sin(visHalf));
+            drawArrow(ctx, topX, topY, topX, topY + fnLen, '#fbbf24', 3.2);
+            drawArrow(ctx, topX, topY, topX, topY - fnLen, '#10b981', 2.6, true);
+
+            ctx.fillStyle = '#22d3ee';
+            ctx.font = 'bold 11px Inter, sans-serif';
+            ctx.fillText('T (倾角 Δθ/2)', lx + lTanX * tLen - 16, ly + lTanY * tLen + 14);
+            ctx.fillStyle = '#38bdf8';
+            ctx.fillText('T+ΔT', rx + rTanX * rLen - 8, ry + rTanY * rLen + 14);
+            ctx.fillStyle = '#fbbf24';
+            ctx.fillText('Fn = 2Tsin(Δθ/2)', topX + 8, topY + fnLen - 2);
+            ctx.fillStyle = '#10b981';
+            ctx.fillText('支持力 dN', topX + 8, topY - fnLen + 10);
+            ctx.fillStyle = appState.isLightTheme ? '#334155' : '#94a3b8';
+            ctx.fillText(`圆心 O (Δθ=${dThetaDeg.toFixed(0)}°)`, cx - 35, cy + 16);
+
+            // ============ 右半画布：一阶主项 vs 二阶无穷小量级柱状对比 ============
+            const bx = w * 0.59;
+            ctx.fillStyle = appState.isLightTheme ? '#0f172a' : '#e2e8f0';
+            ctx.font = 'bold 12px Inter, sans-serif';
+            ctx.fillText('② 一阶无穷小 vs 二阶无穷小量级对比', bx, 24);
+
+            const chartBot = h - 58;
+            const maxBarH = h - 115;
+
+            // 柱 1：一阶主项 T·Δθ (归一化为 100% 基准高度)
+            const barW = 48;
+            const x1 = bx + 28;
+            const h1 = maxBarH * 0.85;
+            ctx.fillStyle = 'rgba(34, 211, 238, 0.25)';
+            ctx.strokeStyle = '#22d3ee';
+            ctx.lineWidth = 2;
+            ctx.fillRect(x1, chartBot - h1, barW, h1);
+            ctx.strokeRect(x1, chartBot - h1, barW, h1);
+
+            // 柱 2：二阶小量 ΔT·sin(Δθ/2) 相对于一阶项的真实比例高度
+            const x2 = bx + 118;
+            const h2 = Math.max(2, h1 * (ratioPct / 100));
+            ctx.fillStyle = 'rgba(244, 63, 94, 0.35)';
+            ctx.strokeStyle = '#f43f5e';
+            ctx.fillRect(x2, chartBot - h2, barW, h2);
+            ctx.strokeRect(x2, chartBot - h2, barW, h2);
+
+            ctx.fillStyle = '#22d3ee';
+            ctx.font = 'bold 11px Inter, sans-serif';
+            ctx.fillText('一阶主项', x1 + 2, chartBot + 16);
+            ctx.fillText('2T sin(Δθ/2)', x1 - 8, chartBot - h1 - 8);
+
+            ctx.fillStyle = '#f43f5e';
+            ctx.fillText('二阶小量(舍去)', x2 - 12, chartBot + 16);
+            ctx.fillText(`${ratioPct.toFixed(1)}%`, x2 + 8, chartBot - h2 - 8);
+
+            ctx.restore();
+        }
+
+        // 微切片 B：三类变力微分方程积分策略切换
+        function showForceStrategy(type) {
+            for (let i = 1; i <= 3; i++) {
+                const btn = document.getElementById(`force-tab-${i}`);
+                btn.className = i === type
+                    ? "p-2.5 rounded-xl text-xs font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 text-center transition"
+                    : "p-2.5 rounded-xl text-xs font-bold bg-space-950 text-slate-400 border border-slate-800 hover:text-white text-center transition";
+            }
+
+            const panel = document.getElementById('force-strategy-panel');
+            if (type === 1) {
+                panel.innerHTML = `
+                    <div class="space-y-2">
+                        <div class="flex items-center justify-between text-xs">
+                            <span class="font-bold text-cyan-300">类型 ①：力只随时间变化 <span class="math">F = F(t)</span></span>
+                            <span class="text-slate-400">典型场景：脉冲推力、简谐驱动力</span>
+                        </div>
+                        <div class="p-3 rounded-xl bg-space-900 border border-slate-800 text-center space-y-1.5">
+                            <div class="text-sm sm:text-base math text-white">
+                                m <span class="frac"><span>dv</span><span>dt</span></span> = F(t) &nbsp;&rArr;&nbsp; m dv = F(t) dt
+                            </div>
+                            <div class="text-sm sm:text-base math text-emerald-300">
+                                &int;<sub>v<sub>0</sub></sub><sup>v</sup> m dv = &int;<sub>t<sub>0</sub></sub><sup>t</sup> F(t) dt
+                            </div>
+                        </div>
+                        <p class="text-xs text-slate-300">💡 <strong>策略口诀：</strong>题目给的是时间的函数 <span class="math">F(t)</span>，直接把 <span class="math">dt</span> 乘到右边积分，先求出 <span class="math">v(t)</span>，再积分一次求 <span class="math">x(t) = &int; v(t) dt</span>。</p>
+                    </div>
+                `;
+            } else if (type === 2) {
+                panel.innerHTML = `
+                    <div class="space-y-2">
+                        <div class="flex items-center justify-between text-xs">
+                            <span class="font-bold text-amber-300">类型 ②：力随空间位置变化 <span class="math">F = F(x)</span></span>
+                            <span class="text-slate-400">典型场景：弹簧弹力 <span class="math">&minus;kx</span>、万有引力、非均匀链条</span>
+                        </div>
+                        <div class="p-3 rounded-xl bg-space-900 border border-cyan-500/30 text-center space-y-1.5">
+                            <div class="text-sm sm:text-base math text-white">
+                                m <span class="frac"><span>dv</span><span>dt</span></span> = m <span class="frac"><span>dv</span><span><span class="text-amber-400 font-bold">dx</span></span></span> &middot; <span class="frac"><span><span class="text-amber-400 font-bold">dx</span></span><span>dt</span></span> = m v <span class="frac"><span>dv</span><span>dx</span></span> = F(x)
+                            </div>
+                            <div class="text-sm sm:text-base math text-cyan-300">
+                                &int;<sub>v<sub>0</sub></sub><sup>v</sup> m v dv = &int;<sub>x<sub>0</sub></sub><sup>x</sup> F(x) dx &nbsp;&rArr;&nbsp; <span class="frac"><span>1</span><span>2</span></span>mv<sup>2</sup> &minus; <span class="frac"><span>1</span><span>2</span></span>mv<sub>0</sub><sup>2</sup> = &int;<sub>x<sub>0</sub></sub><sup>x</sup> F(x) dx
+                            </div>
+                        </div>
+                        <p class="text-xs text-slate-300">💡 <strong>策略口诀：</strong>右端只有位置 <span class="math">x</span> 没有时间 <span class="math">t</span>，必须用<strong>链式法则 <span class="math">a = v dv/dx</span></strong> 消去 <span class="math">dt</span>！这就是第三章动能定理的微积分起源。</p>
+                    </div>
+                `;
+            } else {
+                panel.innerHTML = `
+                    <div class="space-y-2">
+                        <div class="flex items-center justify-between text-xs">
+                            <span class="font-bold text-rose-300">类型 ③：流体阻力随速度变化 <span class="math">F = &minus;k v<sup>n</sup></span></span>
+                            <span class="text-slate-400">典型场景：雨滴收尾速度、快艇阻力制动、斜抛空气阻力</span>
+                        </div>
+                        <div class="p-3 rounded-xl bg-space-900 border border-slate-800 text-center space-y-1.5">
+                            <div class="text-xs sm:text-sm math text-cyan-300">
+                                求速度与时间 <span class="math">v(t)</span>：&int;<sub>v<sub>0</sub></sub><sup>v</sup> <span class="frac"><span>m dv</span><span>F(v)</span></span> = &int;<sub>0</sub><sup>t</sup> dt
+                            </div>
+                            <div class="text-xs sm:text-sm math text-amber-300">
+                                求速度与位移 <span class="math">v(x)</span>：&int;<sub>v<sub>0</sub></sub><sup>v</sup> <span class="frac"><span>m v dv</span><span>F(v)</span></span> = &int;<sub>0</sub><sup>x</sup> dx
+                            </div>
+                        </div>
+                        <p class="text-xs text-slate-300">💡 <strong>策略口诀：</strong>把所有含 <span class="math">v</span> 的项统统除到等号左边与 <span class="math">dv</span> 放一起（分离变量），右边只留 <span class="math">dt</span> 或 <span class="math">dx</span>！</p>
+                    </div>
+                `;
+            }
+        }
+
+        // 30秒迷你检核题判分
+        function checkCh2MiniQuiz(optIndex, isCorrect) {
+            const fb = document.getElementById('ch2-mini-quiz-feedback');
+            fb.classList.remove('hidden');
+
+            for (let i = 1; i <= 3; i++) {
+                const btn = document.getElementById(`ch2-quiz-opt-${i}`);
+                if (i === optIndex) {
+                    btn.className = isCorrect
+                        ? "py-2.5 px-3 rounded-lg bg-emerald-500/25 border-2 border-emerald-400 text-xs sm:text-sm font-bold text-emerald-200 transition"
+                        : "py-2.5 px-3 rounded-lg bg-amber-500/25 border-2 border-amber-400 text-xs sm:text-sm font-bold text-amber-200 transition";
+                } else {
+                    btn.className = "py-2.5 px-3 rounded-lg bg-space-900 hover:bg-slate-800 border border-slate-700 text-xs sm:text-sm font-medium text-slate-200 transition";
+                }
+            }
+
+            if (isCorrect) {
+                appState.mathQuizDone = true;
+                fb.className = "text-xs p-3 rounded-lg bg-emerald-500/20 border border-emerald-500/40 text-emerald-200";
+                fb.innerHTML = `<i class="fa-solid fa-circle-check mr-1 text-emerald-400"></i><strong>完全正确！</strong>由 <span class="math">&int;<sub>0</sub><sup>v</sup> 1&middot;v dv = &int;<sub>0</sub><sup>2</sup> 6x dx</span> 得 <span class="math"><span class="frac"><span>1</span><span>2</span></span>v<sup>2</sup> = 3x<sup>2</sup>|<sub>0</sub><sup>2</sup> = 12</span>，故 <span class="math">v = &radic;24 = 2&radic;6</span> <span class="math-rm">m/s</span>。你已成功掌握变力分离变量定积分！`;
+                updateOverallProgress();
+            } else {
+                fb.className = "text-xs p-3 rounded-lg bg-amber-500/20 border border-amber-500/40 text-amber-200";
+                fb.innerHTML = `<i class="fa-solid fa-lightbulb mr-1 text-amber-400"></i><strong>避坑提示：</strong>千万不能把 <span class="math">x = 2</span> <span class="math-rm">m</span> 处的瞬时加速度 <span class="math">a = 12</span> <span class="math-rm">m/s<sup>2</sup></span> 代入高中匀变速公式 <span class="math">v<sup>2</sup> = 2ax = 48</span>（误选 B）！请用 <span class="math">&int;<sub>0</sub><sup>v</sup> v dv = &int;<sub>0</sub><sup>2</sup> 6x dx</span> 选择 A 体验正确积分。`;
+            }
+        }
+
+        function completeStage1AndNext() {
+            appState.mathQuizDone = true;
+            switchStage(2);
+        }
+
+        // =========================================================================
+        // 环节二：POE 物理图像盲测 —— 沙盒 1（欧拉系船柱） & 沙盒 2（含阻斜抛）
+        // =========================================================================
+        function switchPoeSandbox(num) {
+            const sb1 = document.getElementById('poe-sandbox-1');
+            const sb2 = document.getElementById('poe-sandbox-2');
+            const b1 = document.getElementById('btn-poe-1');
+            const b2 = document.getElementById('btn-poe-2');
+
+            if (num === 1) {
+                sb1.classList.remove('hidden');
+                sb1.classList.add('grid');
+                sb2.classList.add('hidden');
+                sb2.classList.remove('grid');
+                b1.className = "px-3.5 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all bg-amber-400 text-space-950 shadow";
+                b2.className = "px-3.5 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all text-slate-400 hover:text-white";
+                setTimeout(resizeAndDrawCapstan, 30);
+            } else {
+                sb1.classList.add('hidden');
+                sb1.classList.remove('grid');
+                sb2.classList.remove('hidden');
+                sb2.classList.add('grid');
+                b2.className = "px-3.5 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all bg-amber-400 text-space-950 shadow";
+                b1.className = "px-3.5 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all text-slate-400 hover:text-white";
+                setTimeout(() => {
+                    resizeAndDrawDragProjectile();
+                    restartProjectileSim();
+                }, 30);
+            }
+        }
+
+        // 沙盒 1：系船柱欧拉公式盲测提交与仿真
+        function submitPoe1Prediction(choice) {
+            appState.poe1Predicted = true;
+            appState.poe1Choice = choice;
+
+            for (let i = 1; i <= 4; i++) {
+                const btn = document.getElementById(`poe1-opt-${i}`);
+                if (i === choice) {
+                    btn.className = choice === 3
+                        ? "poe1-opt-btn text-left p-3 rounded-xl bg-emerald-500/20 border-2 border-emerald-400 transition flex items-center justify-between"
+                        : "poe1-opt-btn text-left p-3 rounded-xl bg-amber-500/20 border-2 border-amber-400 transition flex items-center justify-between";
+                } else if (i === 3) {
+                    btn.className = "poe1-opt-btn text-left p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/40 transition flex items-center justify-between";
+                } else {
+                    btn.className = "poe1-opt-btn text-left p-3 rounded-xl bg-space-950 border border-slate-800 opacity-60 transition flex items-center justify-between";
+                }
+            }
+
+            document.getElementById('poe1-lock-banner').classList.add('hidden');
+            const controls = document.getElementById('poe1-controls');
+            controls.classList.remove('opacity-60', 'pointer-events-none');
+            document.getElementById('poe1-status-badge').innerHTML = '<span class="text-emerald-400"><i class="fa-solid fa-unlock mr-1"></i>沙盒已解锁</span>';
+
+            const explainBox = document.getElementById('poe1-explain-box');
+            const fbTitle = document.getElementById('poe1-feedback-title');
+            explainBox.classList.remove('hidden');
+
+            if (choice === 3) {
+                fbTitle.textContent = "🎉 预测完全正确！直觉惊人：绕 2 圈后自由端仅需 6.56 N 即可锁住 1000 N 巨轮拉力！";
+            } else {
+                fbTitle.textContent = "💡 震撼的指数自锁效应！你预测的力偏大了，真实结果仅需 6.56 N（答案 C），快拖动右侧滑块体验！";
+            }
+
+            updateCapstanSim();
+            updateOverallProgress();
+        }
+
+        function resizeAndDrawCapstan() {
+            const canvas = document.getElementById('capstanCanvas');
+            if (!canvas) return;
+            const rect = canvas.parentElement.getBoundingClientRect();
+            canvas.width = rect.width * window.devicePixelRatio;
+            canvas.height = rect.height * window.devicePixelRatio;
+            updateCapstanSim();
+        }
+
+        function updateCapstanSim() {
+            const canvas = document.getElementById('capstanCanvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const dpr = window.devicePixelRatio || 1;
+            const w = canvas.width / dpr;
+            const h = canvas.height / dpr;
+
+            ctx.save();
+            ctx.scale(dpr, dpr);
+            ctx.clearRect(0, 0, w, h);
+
+            const turns = parseFloat(document.getElementById('slider-capstan-turns').value);
+            const mu = parseFloat(document.getElementById('slider-capstan-mu').value);
+            const theta0 = turns * 2 * Math.PI;
+            const G = 1000;
+            const ratio = Math.exp(mu * theta0);
+            const FA = G / ratio;
+
+            document.getElementById('val-capstan-turns').textContent = `${turns.toFixed(2)} 圈 (${theta0.toFixed(2)} rad)`;
+            document.getElementById('val-capstan-mu').textContent = `μ = ${mu.toFixed(2)}`;
+            document.getElementById('capstan-ratio-badge').textContent = `省力倍数：${ratio >= 100 ? ratio.toFixed(0) : ratio.toFixed(1)} 倍`;
+            document.getElementById('capstan-fa-legend').textContent = appState.poe1Predicted
+                ? `FA = ${FA < 1 ? FA.toFixed(2) : FA.toFixed(1)} N`
+                : `FA = ? (待盲测解锁)`;
+
+            // 中间分隔线
+            ctx.strokeStyle = 'rgba(148, 163, 184, 0.18)';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(w * 0.52, 14);
+            ctx.lineTo(w * 0.52, h - 38);
+            ctx.stroke();
+
+            // ============ 左半画布：粗糙木桩横截面与多层螺旋缠绕缆绳 ============
+            const cx = w * 0.26;
+            const cy = h * 0.48;
+            const baseR = Math.min(w * 0.13, h * 0.25);
+
+            ctx.fillStyle = appState.isLightTheme ? '#0f172a' : '#e2e8f0';
+            ctx.font = 'bold 12px Inter, sans-serif';
+            ctx.fillText('① 系船木桩横截面 (包角 θ₀)', 14, 24);
+
+            // 绘制木桩本体与木纹圆环
+            ctx.fillStyle = '#33241b';
+            ctx.strokeStyle = '#92400e';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.arc(cx, cy, baseR, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+
+            ctx.strokeStyle = 'rgba(217, 119, 6, 0.28)';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.arc(cx, cy, baseR * 0.65, 0, Math.PI * 2);
+            ctx.stroke();
+
+            ctx.fillStyle = '#fde68a';
+            ctx.font = 'bold 11px Inter, sans-serif';
+            ctx.fillText(`粗糙木桩 μ=${mu.toFixed(2)}`, cx - 38, cy + 4);
+
+            // 绘制缠绕缆绳螺旋线（从顶部 -pi/2 顺时针缠绕 theta0 角度）
+            const steps = 140;
+            const startAng = -Math.PI / 2;
+            for (let i = 0; i < steps; i++) {
+                const frac1 = i / steps;
+                const frac2 = (i + 1) / steps;
+                const a1 = startAng + frac1 * theta0;
+                const a2 = startAng + frac2 * theta0;
+                const r1 = baseR + 4 + frac1 * 18;
+                const r2 = baseR + 4 + frac2 * 18;
+
+                // 颜色从翠绿（小张力 FA）渐变到亮红（大张力 G）
+                const red = Math.round(16 + frac1 * 228);
+                const green = Math.round(185 - frac1 * 122);
+                const blue = Math.round(129 - frac1 * 35);
+                ctx.strokeStyle = `rgb(${red}, ${green}, ${blue})`;
+                ctx.lineWidth = 3.5;
+                ctx.beginPath();
+                ctx.moveTo(cx + r1 * Math.cos(a1), cy + r1 * Math.sin(a1));
+                ctx.lineTo(cx + r2 * Math.cos(a2), cy + r2 * Math.sin(a2));
+                ctx.stroke();
+            }
+
+            // 自由端 A（起点：顶部水平向左引出）
+            const startR = baseR + 4;
+            const ax = cx;
+            const ay = cy - startR;
+            drawArrow(ctx, ax, ay, ax - 58, ay, '#10b981', 3);
+            ctx.fillStyle = '#10b981';
+            ctx.font = 'bold 11px Inter, sans-serif';
+            ctx.fillText(
+                appState.poe1Predicted ? `水手端 FA = ${FA.toFixed(1)} N` : '水手自由端 FA = ?',
+                ax - 88,
+                ay - 10
+            );
+
+            // 巨轮负载端 B（终点：沿切线方向引出）
+            const endAng = startAng + theta0;
+            const endR = baseR + 22;
+            const bx = cx + endR * Math.cos(endAng);
+            const by = cy + endR * Math.sin(endAng);
+            const tanX = -Math.sin(endAng);
+            const tanY = Math.cos(endAng);
+            drawArrow(ctx, bx, by, bx + tanX * 58, by + tanY * 58, '#f43f5e', 3.5);
+            ctx.fillStyle = '#f43f5e';
+            ctx.fillText('巨轮拉力 G = 1000 N', bx + tanX * 42 - 35, by + tanY * 58 + 14);
+
+            // ============ 右半画布：张力 T(θ) = FA · e^(μθ) 指数暴增曲线 ============
+            const gx = w * 0.57;
+            const gy = h - 56;
+            const gw = w * 0.38;
+            const gh = h - 98;
+
+            ctx.fillStyle = appState.isLightTheme ? '#0f172a' : '#e2e8f0';
+            ctx.font = 'bold 12px Inter, sans-serif';
+            ctx.fillText('② 绳内张力 T(θ) = FA·e^(μθ) 指数放大', gx, 24);
+
+            // 坐标轴
+            drawArrow(ctx, gx, gy, gx + gw + 10, gy, '#64748b', 1.5);
+            drawArrow(ctx, gx, gy, gx, gy - gh - 10, '#64748b', 1.5);
+            ctx.fillStyle = appState.isLightTheme ? '#334155' : '#94a3b8';
+            ctx.font = '11px Inter, sans-serif';
+            ctx.fillText('包角 θ (圈数)', gx + gw - 55, gy + 16);
+            ctx.fillText('张力 T (N)', gx + 6, gy - gh + 4);
+
+            // 绘制指数曲线 T(θ) 从 FA 增长到 G=1000 N
+            ctx.strokeStyle = '#fbbf24';
+            ctx.lineWidth = 2.8;
+            ctx.beginPath();
+            for (let j = 0; j <= 80; j++) {
+                const u = j / 80;
+                const th = u * theta0;
+                const Tval = FA * Math.exp(mu * th); // 在 u=1 时恒达到 G=1000
+                const px = gx + u * gw;
+                const py = gy - (Tval / G) * gh;
+                if (j === 0) ctx.moveTo(px, py);
+                else ctx.lineTo(px, py);
+            }
+            ctx.stroke();
+
+            // 标注起点 FA 与终点 G
+            const startPy = gy - (FA / G) * gh;
+            ctx.fillStyle = '#10b981';
+            ctx.beginPath();
+            ctx.arc(gx, startPy, 4.5, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillText(appState.poe1Predicted ? `FA=${FA.toFixed(1)}N` : 'FA', gx + 6, startPy - 6);
+
+            ctx.fillStyle = '#f43f5e';
+            ctx.beginPath();
+            ctx.arc(gx + gw, gy - gh, 5, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillText('G=1000N', gx + gw - 54, gy - gh - 6);
+
+            ctx.restore();
+        }
+
+        // ===================== 沙盒 2：线性空气阻力斜抛运动轨迹与最高点加速度 =====================
+        let projSimTime = 0;
+        let projPlaying = true;
+        let projApexTime = 1.0;
+
+        function submitPoe2Prediction(choice) {
+            appState.poe2Predicted = true;
+            appState.poe2Choice = choice;
+
+            for (let i = 1; i <= 3; i++) {
+                const btn = document.getElementById(`poe2-opt-${i}`);
+                if (i === choice) {
+                    btn.className = choice === 2
+                        ? "poe2-opt-btn text-left p-3 rounded-xl bg-emerald-500/20 border-2 border-emerald-400 transition flex items-center justify-between"
+                        : "poe2-opt-btn text-left p-3 rounded-xl bg-amber-500/20 border-2 border-amber-400 transition flex items-center justify-between";
+                } else if (i === 2) {
+                    btn.className = "poe2-opt-btn text-left p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/40 transition flex items-center justify-between";
+                }
+            }
+
+            const exp = document.getElementById('poe2-explain-box');
+            const title = document.getElementById('poe2-feedback-title');
+            exp.classList.remove('hidden');
+            title.textContent = choice === 2
+                ? "🎉 预测完全正确！轨迹呈左缓右陡非对称形，且最高点因存在水平空气阻力使合加速度 a > g！"
+                : "💡 关键排雷（答案 B）：最高点处水平速度 vx ≠ 0，水平向后的空气阻力与重力垂直合成，使最高点合加速度 a > g！";
+
+            jumpToApex();
+            updateOverallProgress();
+        }
+
+        function updateDragParams() {
+            const gamma = parseFloat(document.getElementById('slider-drag-k').value);
+            const deg = parseFloat(document.getElementById('slider-drag-angle').value);
+            document.getElementById('val-drag-k').innerHTML = `${gamma.toFixed(2)} s<sup>&minus;1</sup>`;
+            document.getElementById('val-drag-angle').textContent = `${deg}°`;
+            drawDragProjectileFrame();
+        }
+
+        function jumpToApex() {
+            const gamma = parseFloat(document.getElementById('slider-drag-k').value);
+            const deg = parseFloat(document.getElementById('slider-drag-angle').value);
+            const v0 = 26;
+            const g = 9.8;
+            const v0y = v0 * Math.sin((deg * Math.PI) / 180);
+            // 线性阻力下竖直速度 vy(t) = (v0y + g/gamma)*e^(-gamma*t) - g/gamma = 0
+            projApexTime = (1 / gamma) * Math.log(1 + (gamma * v0y) / g);
+            projSimTime = projApexTime;
+            projPlaying = false;
+            drawDragProjectileFrame();
+        }
+
+        function restartProjectileSim() {
+            projSimTime = 0;
+            projPlaying = true;
+        }
+
+        function resizeAndDrawDragProjectile() {
+            const canvas = document.getElementById('dragProjectileCanvas');
+            if (!canvas) return;
+            const rect = canvas.parentElement.getBoundingClientRect();
+            canvas.width = rect.width * window.devicePixelRatio;
+            canvas.height = rect.height * window.devicePixelRatio;
+            drawDragProjectileFrame();
+        }
+
+        function drawDragProjectileFrame() {
+            const canvas = document.getElementById('dragProjectileCanvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const dpr = window.devicePixelRatio || 1;
+            const w = canvas.width / dpr;
+            const h = canvas.height / dpr;
+
+            ctx.save();
+            ctx.scale(dpr, dpr);
+            ctx.clearRect(0, 0, w, h);
+
+            const gamma = parseFloat(document.getElementById('slider-drag-k').value); // k/m
+            const deg = parseFloat(document.getElementById('slider-drag-angle').value);
+            const rad = (deg * Math.PI) / 180;
+            const v0 = 26;
+            const g = 9.8;
+            const v0x = v0 * Math.cos(rad);
+            const v0y = v0 * Math.sin(rad);
+
+            const ox = 38;
+            const oy = h - 46;
+            const scale = Math.min((w - 80) / 72, (h - 70) / 36);
+
+            // 地面基准线
+            ctx.strokeStyle = '#475569';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(15, oy);
+            ctx.lineTo(w - 15, oy);
+            ctx.stroke();
+
+            // 1. 绘制理想真空抛物线（灰色虚线）
+            const tVacTotal = (2 * v0y) / g;
+            ctx.strokeStyle = 'rgba(148, 163, 184, 0.45)';
+            ctx.lineWidth = 1.8;
+            ctx.setLineDash([5, 5]);
+            ctx.beginPath();
+            for (let i = 0; i <= 80; i++) {
+                const t = (i / 80) * tVacTotal;
+                const x = v0x * t;
+                const y = v0y * t - 0.5 * g * t * t;
+                const px = ox + x * scale;
+                const py = oy - y * scale;
+                if (i === 0) ctx.moveTo(px, py);
+                else ctx.lineTo(px, py);
+            }
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // 2. 绘制竖直渐近线 x_max = v0x / gamma
+            const xMax = v0x / gamma;
+            const asymPx = ox + xMax * scale;
+            if (asymPx < w - 10) {
+                ctx.strokeStyle = 'rgba(244, 63, 94, 0.55)';
+                ctx.lineWidth = 1.5;
+                ctx.setLineDash([4, 4]);
+                ctx.beginPath();
+                ctx.moveTo(asymPx, 18);
+                ctx.lineTo(asymPx, oy);
+                ctx.stroke();
+                ctx.setLineDash([]);
+                ctx.fillStyle = '#fb7185';
+                ctx.font = '11px Inter, sans-serif';
+                ctx.fillText('渐近线 xmax = mv₀x/k', asymPx - 65, 28);
+            }
+
+            // 3. 计算并绘制含线性阻力弹道实线
+            // x(t) = (v0x/gamma)*(1 - e^(-gamma*t))
+            // y(t) = ((v0y + g/gamma)/gamma)*(1 - e^(-gamma*t)) - (g/gamma)*t
+            projApexTime = (1 / gamma) * Math.log(1 + (gamma * v0y) / g);
+            let tFlight = projApexTime * 2.2;
+            ctx.strokeStyle = '#22d3ee';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            for (let i = 0; i <= 120; i++) {
+                const t = (i / 120) * 5.5;
+                const x = (v0x / gamma) * (1 - Math.exp(-gamma * t));
+                const y = ((v0y + g / gamma) / gamma) * (1 - Math.exp(-gamma * t)) - (g / gamma) * t;
+                if (i > 0 && y <= 0) {
+                    tFlight = t;
+                    ctx.lineTo(ox + x * scale, oy);
+                    break;
+                }
+                const px = ox + x * scale;
+                const py = oy - y * scale;
+                if (i === 0) ctx.moveTo(px, py);
+                else ctx.lineTo(px, py);
+            }
+            ctx.stroke();
+
+            // 最高点处的水平速度与合加速度大小计算
+            const vxApex = v0x * Math.exp(-gamma * projApexTime);
+            const axApex = -gamma * vxApex;
+            const aTotalApex = Math.hypot(axApex, g);
+            document.getElementById('apex-acc-readout').textContent =
+                `最高点 a = ${(aTotalApex / g).toFixed(2)} g (> g!)`;
+
+            // 当前时刻小球位置与速度、加速度矢量
+            if (projSimTime > tFlight) projSimTime = 0;
+            const curX = (v0x / gamma) * (1 - Math.exp(-gamma * projSimTime));
+            const curY = Math.max(0, ((v0y + g / gamma) / gamma) * (1 - Math.exp(-gamma * projSimTime)) - (g / gamma) * projSimTime);
+            const curVx = v0x * Math.exp(-gamma * projSimTime);
+            const curVy = (v0y + g / gamma) * Math.exp(-gamma * projSimTime) - g / gamma;
+
+            // 阻力加速度分量 a_drag = -gamma * v
+            const dragAx = -gamma * curVx;
+            const dragAy = -gamma * curVy;
+            const totAx = dragAx;
+            const totAy = -g + dragAy;
+
+            const ballPx = ox + curX * scale;
+            const ballPy = oy - curY * scale;
+
+            // 绘制速度矢量 v（绿色）、空气阻力加速度 -kv/m（琥珀色）、重力加速度 g（浅蓝虚线）、合加速度 a（品红色）
+            const vScale = 2.0;
+            const aScale = 4.2;
+            drawArrow(ctx, ballPx, ballPy, ballPx + curVx * vScale, ballPy - curVy * vScale, '#10b981', 2.4);
+            drawArrow(ctx, ballPx, ballPy, ballPx + dragAx * aScale, ballPy - dragAy * aScale, '#fbbf24', 2.6);
+            drawArrow(ctx, ballPx, ballPy, ballPx, ballPy + g * aScale, '#38bdf8', 2.0, true);
+            drawArrow(ctx, ballPx, ballPy, ballPx + totAx * aScale, ballPy - totAy * aScale, '#f43f5e', 3.2);
+
+            // 绘制小球
+            ctx.fillStyle = appState.isLightTheme ? '#0f172a' : '#ffffff';
+            ctx.beginPath();
+            ctx.arc(ballPx, ballPy, 6, 0, Math.PI * 2);
+            ctx.fill();
+
+            // 标注矢量名称
+            ctx.font = 'bold 11px Inter, sans-serif';
+            ctx.fillStyle = '#fbbf24';
+            ctx.fillText('-kv/m (阻力)', ballPx + dragAx * aScale - 42, ballPy - dragAy * aScale - 6);
+            ctx.fillStyle = '#38bdf8';
+            ctx.fillText('g', ballPx + 6, ballPy + g * aScale + 4);
+            ctx.fillStyle = '#f43f5e';
+            ctx.fillText('合加速度 a', ballPx + totAx * aScale - 35, ballPy - totAy * aScale + 14);
+
+            ctx.restore();
+        }
+
+        function animateProjectileLoop() {
+            if (appState.currentStage === 2 && !document.getElementById('poe-sandbox-2').classList.contains('hidden')) {
+                if (projPlaying) {
+                    projSimTime += 0.022;
+                    drawDragProjectileFrame();
+                }
+            }
+            requestAnimationFrame(animateProjectileLoop);
+        }
+
+        // =========================================================================
+        // 环节三：第二章 11 张 3D 概念闪卡数据库与交互逻辑（8张课前概念卡 + 3张课后推导卡）
+        // =========================================================================
+        const flashcardsData = [
+            {
+                id: 1,
+                type: 'preclass',
+                category: '摩擦力微观机制',
+                question: '为什么同一块长方体砖块在粗糙水平面上“平放”与“立放”时，滑动摩擦力大小 <span class="math">f = &mu;N</span> 完全相同，与宏观接触面积无关？',
+                hint: '思考：表面在显微镜下是凹凸不平的，“实际微凸体接触总面积”由什么决定？',
+                answer: '在微观尺度下，固体表面由无数微凸峰组成，<strong>真正发生分子咬合的实际接触面积 <span class="math">A<sub>实</sub></span> 仅占宏观表观面积的万分之一</strong>，且与正压力 <span class="math">N</span> 成正比！砖块立放时虽然表观面积变小，但局部压强增大，把微凸峰压得更扁，使得<strong>微观实际接触总面积 <span class="math">A<sub>实</sub></span> 保持不变</strong>，故摩擦力相同。',
+                formula: '微观实际接触面积 <span class="math">A<sub>实</sub> &propto; N</span>（与宏观表观面积 <span class="math">S</span> 无关）&rArr; <span class="math">f = &mu; N</span>',
+                pitfall: '注意边界：如果压力极大导致材料整体屈服，或像赛车宽胎那样处于软质橡胶粘着变形区，摩擦力才会与表观面积产生弱相关。',
+                classMastery: 76,
+                status: 'unrated'
+            },
+            {
+                id: 2,
+                type: 'preclass',
+                category: '牛顿第三定律边界',
+                question: '为什么非静止物体（例如两个高速运动的电荷）通过电磁场相互作用时，牛顿第三定律“作用力与反作用力等大反向”仅近似满足？',
+                hint: '场的传播速度是无限大还是有限的光速 <span class="math">c</span>？电磁场本身有没有动量？',
+                answer: '牛顿第三定律隐含了<strong>“相互作用瞬时超距传播”</strong>的假设。当两个运动电荷通过电磁场发生作用时，场以<strong>有限光速 <span class="math">c</span></strong> 传播存在时间延迟，且<strong>变化的电磁场自身也携带电磁动量 <span class="math"><span class="vec">P</span><sub>场</sub></span></strong>！因此仅看两个电荷机械动量之和并不守恒，必须把场的动量算进去才满足总动量守恒。',
+                formula: '<span class="math"><span class="vec">F</span><sub>12</sub>(t) + <span class="vec">F</span><sub>21</sub>(t) = &minus;<span class="frac"><span>d<span class="vec">P</span><sub>场</sub></span><span>dt</span></span> &ne; 0</span> &nbsp;（仅当 <span class="math">v &ll; c</span> 时近似为 0）',
+                pitfall: '这是大学物理对高中“牛顿第三定律放之四海而皆准”的重要认知升级：动量守恒定律比牛顿第三定律更基本、更普适！',
+                classMastery: 44,
+                status: 'unrated'
+            },
+            {
+                id: 3,
+                type: 'preclass',
+                category: '惯性系定义',
+                question: '既然 <span class="math"><span class="vec">F</span> = 0</span> 时由 <span class="math"><span class="vec">F</span> = m<span class="vec">a</span></span> 可直接推出 <span class="math"><span class="vec">a</span> = 0</span>，那牛顿第一定律岂不是牛顿第二定律在 <span class="math"><span class="vec">F</span> = 0</span> 时的多余特例？',
+                hint: '如果在一个加速刹车的高铁车厢里，<span class="math"><span class="vec">F</span> = m<span class="vec">a</span></span> 还成立吗？谁来定义“惯性系”？',
+                answer: '<strong>绝不是特例！</strong>牛顿第二定律 <span class="math"><span class="vec">F</span> = m<span class="vec">a</span></span> <strong>只在惯性参考系中才成立</strong>。而牛顿第一定律的核心使命，正是<strong>独立定义并找出了什么是“惯性参考系”</strong>（即孤立质点能保持静止或匀速直线运动的那类参考系），它是第二定律得以立身的逻辑基石！',
+                formula: '第一定律定舞台（定义惯性系 + 揭示惯性）&rArr; 第二定律演戏剧（在惯性系中定量计算 <span class="math"><span class="vec">F</span> = d<span class="vec">p</span>/dt</span>）',
+                pitfall: '逻辑闭环：若没有第一定律先界定惯性系，在旋转木马或加速车厢里直接套用 <span class="math"><span class="vec">F</span> = m<span class="vec">a</span></span> 就会陷入逻辑循环！',
+                classMastery: 88,
+                status: 'unrated'
+            },
+            {
+                id: 4,
+                type: 'preclass',
+                category: '绳张力条件',
+                question: '高中做题常默认“同一根绳子各处张力处处相等”，在大学物理微元分析中，这一结论成立必须同时满足哪两个理想化条件？',
+                hint: '对一小段绳微元 <span class="math">&Delta;m</span> 列切向牛顿第二定律：<span class="math">T<sub>2</sub> &minus; T<sub>1</sub> &minus; df = &Delta;m &middot; a<sub>t</sub></span>！',
+                answer: '由切向方程 <span class="math">T<sub>2</sub> &minus; T<sub>1</sub> = &Delta;m &middot; a<sub>t</sub> + df</span> 可知，张力处处相等必须同时满足：<br>① <strong>轻绳假设（质量 <span class="math">m<sub>绳</sub> &rarr; 0</span>）</strong>，或绳处于静止/匀速状态（<span class="math">a<sub>t</sub> = 0</span>）；<br>② <strong>接触面绝对光滑（摩擦力 <span class="math">df = 0</span>）</strong>。只要绳有质量且加速，或绕在粗糙圆柱上，张力必然随位置连续变化！',
+                formula: '有质量加速绳：<span class="math">dT = (dm) a</span> &nbsp;&nbsp;|&nbsp;&nbsp; 粗糙圆柱缠绕绳：<span class="math">dT = &mu; T d&theta;</span>',
+                pitfall: '第二章的系船柱欧拉公式与旋转圆环，正是打破“张力处处相等”定势的经典微元模型！',
+                classMastery: 85,
+                status: 'unrated'
+            },
+            {
+                id: 5,
+                type: 'preclass',
+                category: '竖直圆周临界',
+                question: '质点在竖直平面内做圆周运动通过最高点时，“轻绳/内轨模型”与“轻杆/圆管模型”不脱轨的临界速率为什么一个是 <span class="math">&radic;(gR)</span>，一个是 <span class="math">0</span>？',
+                hint: '区分“单侧约束（只能拉不能撑）”与“双侧约束（既能拉也能向上托）”！',
+                answer: '① <strong>轻绳或单侧内轨道</strong>属于<strong>单向约束</strong>，只能提供指向圆心的拉力/压力（<span class="math">T &ge; 0</span>），由 <span class="math">mg + T = mv<sup>2</sup>/R</span> 得临界速率 <span class="math">v<sub>min</sub> = &radic;(gR)</span>；<br>② <strong>轻杆或双侧圆管</strong>属于<strong>双向约束</strong>，在最高点可以提供向上的支持力抵消重力（<span class="math">N = mg</span>），因此通过最高点的临界速率为 <span class="math">v<sub>min</sub> = 0</span>！',
+                formula: '单侧约束（绳）：<span class="math">v<sub>临界</sub> = &radic;(gR)</span> &nbsp;&nbsp;|&nbsp;&nbsp; 双侧约束（轻杆/圆管）：<span class="math">v<sub>临界</sub> = 0</span>',
+                pitfall: '当轻杆模型在最高点速率满足 <span class="math">0 &le; v &lt; &radic;(gR)</span> 时，杆对球的作用力方向是竖直向上的支持力；当 <span class="math">v &gt; &radic;(gR)</span> 时才变成向下的拉力！',
+                classMastery: 91,
+                status: 'unrated'
+            },
+            {
+                id: 6,
+                type: 'preclass',
+                category: '变力积分选型',
+                question: '面对变力动力学方程 <span class="math">m a = F</span>，何时把 <span class="math">a</span> 写为 <span class="math"><span class="frac"><span>dv</span><span>dt</span></span></span>，何时必须写为 <span class="math">v<span class="frac"><span>dv</span><span>dx</span></span></span>？',
+                hint: '看题目给定的力函数与问题所求的变量里有没有时间 <span class="math">t</span>！',
+                answer: '判断准则极为清晰：<br>① 若已知 <span class="math">F(t)</span>，或已知 <span class="math">F(v)</span> 且求<strong>速度随时间 <span class="math">v(t)</span></strong>，用 <span class="math">a = <span class="frac"><span>dv</span><span>dt</span></span></span>；<br>② 若已知位置相关力 <span class="math">F(x)</span>，或已知 <span class="math">F(v)</span> 但求<strong>速度随位移 <span class="math">v(x)</span>（如求最大制动距离）</strong>，必须用链式消元 <span class="math">a = v<span class="frac"><span>dv</span><span>dx</span></span></span>！',
+                formula: '涉时求 <span class="math">v(t)</span> 用 <span class="math"><span class="frac"><span>dv</span><span>dt</span></span></span> &nbsp;&nbsp;|&nbsp;&nbsp; 涉位消时求 <span class="math">v(x)</span> 必用 <span class="math">v<span class="frac"><span>dv</span><span>dx</span></span></span>',
+                pitfall: '做题前先看一眼横坐标是 <span class="math">t</span> 还是 <span class="math">x</span>，选对微分形式能省去一半的计算量！',
+                classMastery: 62,
+                status: 'unrated'
+            },
+            {
+                id: 7,
+                type: 'preclass',
+                category: '静摩擦力误区',
+                question: '静止在斜面上的木块，其静摩擦力一定等于 <span class="math">&mu;<sub>s</sub> N</span> 吗？静摩擦力能不能对物体做正功？',
+                hint: '想一想你随加速启动的地铁车厢或上行自动扶梯一起加速前进时，脚底受什么力？',
+                answer: '① <strong>不一定！</strong>未达到即将滑动的临界状态前，静摩擦力是<strong>被动力</strong>，大小由平衡条件或牛顿第二定律 <span class="math">f<sub>s</sub> = mg sin&theta;</span> 决定，仅满足不等式 <span class="math">0 &le; f<sub>s</sub> &le; &mu;<sub>s</sub> N</span>；<br>② <strong>完全可以做正功！</strong>例如人在加速启动的列车中或随传送带加速向上运动时，静摩擦力方向与位移同向，充当动力做正功（只要求接触面间无相对位移）。',
+                formula: '一般静摩擦：<span class="math">0 &le; f<sub>s</sub> &le; f<sub>s,max</sub> = &mu;<sub>s</sub> N</span>（仅在刚要滑动瞬间取等号！）',
+                pitfall: '千万不要一看到“静摩擦系数 <span class="math">&mu;<sub>s</sub></span>”就不假思索写出 <span class="math">f = &mu;<sub>s</sub> N</span>！先判断物体是否处于临界滑动状态。',
+                classMastery: 89,
+                status: 'unrated'
+            },
+            {
+                id: 8,
+                type: 'preclass',
+                category: '流体阻力与收尾速度',
+                question: '雨滴或跳伞员在空气中下落时，为什么最终会趋近于一个恒定的“收尾速度（终端速度）<span class="math">v<sub>T</sub></span>”？线性阻力与二次方阻力下的 <span class="math">v<sub>T</sub></span> 分别是多少？',
+                hint: '当速度增大到使空气阻力恰好平衡重力（合外力 <span class="math">F<sub>合</sub> = 0</span>）时，加速度变为多少？',
+                answer: '随着下落速度 <span class="math">v</span> 增大，向上的流体阻力不断增大，导致向下加速度 <span class="math">a = g &minus; f(v)/m</span> 逐渐减小。当阻力增大到<strong>与重力（扣去浮力）恰好相等</strong>时，加速度 <span class="math">a &rarr; 0</span>，物体以此时的极限速度匀速下落，称为<strong>收尾速度 <span class="math">v<sub>T</sub></span></strong>。',
+                formula: '低速黏滞（<span class="math">f = kv</span>）：<span class="math">v<sub>T</sub> = <span class="frac"><span>mg</span><span>k</span></span></span> &nbsp;&nbsp;|&nbsp;&nbsp; 高速压差湍流（<span class="math">f = cv<sup>2</sup></span>）：<span class="math">v<sub>T</sub> = <span class="sqrt">&radic;(mg / c)</span></span>',
+                pitfall: '实际上求收尾速度根本不用积分微分方程！直接令加速度 <span class="math">a = dv/dt = 0</span> 解代数平衡方程即可秒出结果！',
+                classMastery: 84,
+                status: 'unrated'
+            },
+            // 以下3张为课后重度微元推导巩固卡
+            {
+                id: 9,
+                type: 'postclass',
+                category: '课后推导1·欧拉公式',
+                question: '【课后微元推导】如何对圆柱缠绕绳微元弧段 <span class="math">d&theta;</span> 列切向与法向平衡方程，完整推导出欧拉公式 <span class="math">F<sub>A</sub> = G e<sup>&minus;&mu;&theta;<sub>0</sub></sup></span>（例 2.3.3-3）？',
+                hint: '🔒 课后推导巩固：利用法向 <span class="math">dN = T d&theta;</span> 与切向临界平衡 <span class="math">dT = &mu; dN</span> 分离变量积分。',
+                answer: '1. <strong>法向力平衡</strong>：<span class="math">dN = T sin(d&theta;/2) + (T+dT)sin(d&theta;/2)</span>，取 <span class="math">sin(d&theta;/2) &approx; d&theta;/2</span> 并略去二阶小量 <span class="math">dT&middot;d&theta;/2</span>，得 <span class="math">dN = T d&theta;</span>；<br>2. <strong>切向力平衡</strong>（欲滑未滑临界状态）：<span class="math">(T + dT) cos(d&theta;/2) &minus; T cos(d&theta;/2) = df = &mu; dN</span>，取 <span class="math">cos(d&theta;/2) &approx; 1</span> 得 <span class="math">dT = &mu; T d&theta;</span>。',
+                formula: '<span class="math">&int;<sub>F<sub>A</sub></sub><sup>G</sup> <span class="frac"><span>dT</span><span>T</span></span> = &int;<sub>0</sub><sup>&theta;<sub>0</sub></sup> &mu; d&theta; &rArr; ln<span class="frac"><span>G</span><span>F<sub>A</sub></span></span> = &mu;&theta;<sub>0</sub> &rArr; F<sub>A</sub> = G e<sup>&minus;&mu;&theta;<sub>0</sub></sup></span>',
+                pitfall: '注意积分上下限对应关系：自由端 <span class="math">&theta; = 0</span> 处张力较小为 <span class="math">F<sub>A</sub></span>，重物端 <span class="math">&theta; = &theta;<sub>0</sub></span> 处张力为 <span class="math">G</span>。',
+                classMastery: 52,
+                status: 'unrated'
+            },
+            {
+                id: 10,
+                type: 'postclass',
+                category: '课后推导2·旋转圆环',
+                question: '【课后微元推导】质量为 <span class="math">m</span>、半径为 <span class="math">R</span> 的匀质细圆环绕中心轴以角速度 <span class="math">&omega;</span> 旋转，如何用微元法求出环内的张力 <span class="math">T</span>？',
+                hint: '🔒 课后推导巩固：截取圆心角为 <span class="math">d&theta;</span> 的微元弧段，其质量 <span class="math">dm = <span class="frac"><span>m</span><span>2&pi;</span></span> d&theta;</span>，向心合外力由谁提供？',
+                answer: '1. <strong>选取微元</strong>：截取圆心角为 <span class="math">d&theta;</span> 的小弧段，其质量 <span class="math">dm = m &middot; <span class="frac"><span>d&theta;</span><span>2&pi;</span></span></span>；<br>2. <strong>列向心动力学方程</strong>：两端张力 <span class="math">T</span> 在指向圆心方向的分力之和提供向心力：<span class="math">2T sin<span class="frac"><span>d&theta;</span><span>2</span></span> = (dm) &omega;<sup>2</sup> R</span>；<br>3. 代入小角度近似 <span class="math">2 sin(d&theta;/2) &approx; d&theta;</span>，消去两侧的 <span class="math">d&theta;</span> 即可直接解出 <span class="math">T</span>！',
+                formula: '<span class="math">T d&theta; = <span class="frac"><span>m d&theta;</span><span>2&pi;</span></span> &omega;<sup>2</sup> R &nbsp;&rArr;&nbsp; T = <span class="frac"><span>m &omega;<sup>2</sup> R</span><span>2&pi;</span></span></span>',
+                pitfall: '许多同学漏掉分母上的 <span class="math">2&pi;</span>！记住提供向心力的是微元两端张力的法向夹角分量 <span class="math">T d&theta;</span>，而不是整根绳的张力 <span class="math">T</span>。',
+                classMastery: 48,
+                status: 'unrated'
+            },
+            {
+                id: 11,
+                type: 'postclass',
+                category: '课后推导3·含阻斜抛',
+                question: '【课后微元推导】斜抛炮弹受线性空气阻力 <span class="math"><span class="vec">f</span> = &minus;k<span class="vec">v</span></span> 作用（习题 2-12），如何积分出水平与竖直运动方程 <span class="math">x(t), y(t)</span>？',
+                hint: '🔒 课后推导巩固：令 <span class="math">&gamma; = k/m</span>，将矢量方程拆成两个独立的线性微分方程：<span class="math">dv<sub>x</sub>/dt = &minus;&gamma;v<sub>x</sub></span> 与 <span class="math">dv<sub>y</sub>/dt = &minus;g &minus; &gamma;v<sub>y</sub></span>。',
+                answer: '1. <strong>水平方向</strong>：由 <span class="math"><span class="frac"><span>dv<sub>x</sub></span><span>v<sub>x</sub></span></span> = &minus;&gamma; dt</span> 积分得 <span class="math">v<sub>x</sub>(t) = v<sub>0x</sub>e<sup>&minus;&gamma;t</sup></span>，再对时间积分得 <span class="math">x(t) = <span class="frac"><span>v<sub>0x</sub></span><span>&gamma;</span></span>(1 &minus; e<sup>&minus;&gamma;t</sup>)</span>；<br>2. <strong>竖直方向</strong>：由 <span class="math"><span class="frac"><span>dv<sub>y</sub></span><span>g + &gamma;v<sub>y</sub></span></span> = &minus;dt</span> 积分得 <span class="math">v<sub>y</sub>(t) = (v<sub>0y</sub> + <span class="frac"><span>g</span><span>&gamma;</span></span>)e<sup>&minus;&gamma;t</sup> &minus; <span class="frac"><span>g</span><span>&gamma;</span></span></span>，再对时间积分即得 <span class="math">y(t)</span>。',
+                formula: '由 <span class="math">1 &minus; e<sup>&minus;&gamma;t</sup> = <span class="frac"><span>&gamma;x</span><span>v<sub>0x</sub></span></span></span> 消去时间 <span class="math">t</span> 可得轨迹方程：<span class="math">y(x) = (<span class="frac"><span>v<sub>0y</sub></span><span>v<sub>0x</sub></span></span> + <span class="frac"><span>g</span><span>&gamma;v<sub>0x</sub></span></span>)x + <span class="frac"><span>g</span><span>&gamma;<sup>2</sup></span></span> ln(1 &minus; <span class="frac"><span>&gamma;x</span><span>v<sub>0x</sub></span></span>)</span>',
+                pitfall: '线性阻力 <span class="math"><span class="vec">f</span> = &minus;k<span class="vec">v</span></span> 最大的数学优势是 <span class="math">x, y</span> 两个分量依然彼此解耦独立积分；若是二次方阻力 <span class="math">f &propto; v<sup>2</sup></span>，两个分量就会耦合在一起！',
+                classMastery: 45,
+                status: 'unrated'
+            }
+        ];
+
+        function getActiveCards() {
+            return appState.flashcardMode === 'preclass'
+                ? flashcardsData.slice(0, 8)
+                : flashcardsData;
+        }
+
+        function setFlashcardMode(mode) {
+            appState.flashcardMode = mode;
+            const bPre = document.getElementById('mode-btn-preclass');
+            const bFull = document.getElementById('mode-btn-full');
+
+            if (mode === 'preclass') {
+                bPre.className = "px-3.5 py-2 rounded-lg text-xs font-bold transition-all bg-gradient-to-r from-cyan-500 to-indigo-500 text-space-950 shadow flex items-center gap-1.5";
+                bFull.className = "px-3.5 py-2 rounded-lg text-xs font-bold transition-all text-slate-400 hover:text-white flex items-center gap-1.5";
+                if (appState.currentCardIndex >= 8) appState.currentCardIndex = 0;
+            } else {
+                bFull.className = "px-3.5 py-2 rounded-lg text-xs font-bold transition-all bg-gradient-to-r from-amber-400 to-cyan-400 text-space-950 shadow flex items-center gap-1.5";
+                bPre.className = "px-3.5 py-2 rounded-lg text-xs font-bold transition-all text-slate-400 hover:text-white flex items-center gap-1.5";
+            }
+            appState.isCardFlipped = false;
+            renderFlashcardDeck();
+        }
+
+        function renderFlashcardDeck() {
+            const activeCards = getActiveCards();
+            const curCard = activeCards[appState.currentCardIndex];
+
+            const pillsContainer = document.getElementById('flashcard-pills-container');
+            pillsContainer.innerHTML = '';
+            activeCards.forEach((c, idx) => {
+                let colorCls = "bg-space-950 text-slate-400 border-slate-800 hover:border-slate-600";
+                if (c.status === 'red') colorCls = "bg-rose-500/20 text-rose-300 border-rose-500/50";
+                if (c.status === 'yellow') colorCls = "bg-amber-500/20 text-amber-300 border-amber-500/50";
+                if (c.status === 'green') colorCls = "bg-emerald-500/20 text-emerald-300 border-emerald-500/50";
+                const activeRing = idx === appState.currentCardIndex ? "ring-2 ring-cyan-400 font-bold" : "";
+
+                const btn = document.createElement('button');
+                btn.className = `py-2 rounded-lg border text-xs font-mono transition ${colorCls} ${activeRing}`;
+                btn.innerHTML = `${c.id}${c.type === 'postclass' ? '*' : ''}`;
+                btn.onclick = () => {
+                    appState.currentCardIndex = idx;
+                    appState.isCardFlipped = false;
+                    renderFlashcardDeck();
+                };
+                pillsContainer.appendChild(btn);
+            });
+
+            const redCnt = activeCards.filter(c => c.status === 'red').length;
+            const yelCnt = activeCards.filter(c => c.status === 'yellow').length;
+            const grnCnt = activeCards.filter(c => c.status === 'green').length;
+            const ratedTotal = redCnt + yelCnt + grnCnt;
+
+            document.getElementById('count-red').textContent = redCnt;
+            document.getElementById('count-yellow').textContent = yelCnt;
+            document.getElementById('count-green').textContent = grnCnt;
+            document.getElementById('deck-counter-badge').textContent = `已评 ${ratedTotal} / ${activeCards.length} 张`;
+
+            document.getElementById('card-front-tag').textContent = `卡片 #${curCard.id} · ${curCard.category}`;
+            const postBadge = document.getElementById('card-postclass-badge');
+            if (curCard.type === 'postclass') postBadge.classList.remove('hidden');
+            else postBadge.classList.add('hidden');
+
+            const statusPill = document.getElementById('card-status-pill');
+            if (curCard.status === 'unrated') {
+                statusPill.textContent = '未自评';
+                statusPill.className = 'text-xs px-2.5 py-0.5 rounded bg-slate-800 text-slate-400';
+            } else if (curCard.status === 'red') {
+                statusPill.textContent = '🔴 需重来';
+                statusPill.className = 'text-xs px-2.5 py-0.5 rounded bg-rose-500/20 text-rose-300 border border-rose-500/40';
+            } else if (curCard.status === 'yellow') {
+                statusPill.textContent = '🟡 有点模糊';
+                statusPill.className = 'text-xs px-2.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40';
+            } else {
+                statusPill.textContent = '🟢 已掌握';
+                statusPill.className = 'text-xs px-2.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/40';
+            }
+
+            document.getElementById('card-front-question').innerHTML = curCard.question;
+            document.getElementById('card-front-hint').innerHTML = `<i class="fa-regular fa-lightbulb text-amber-400 mr-1.5"></i>${curCard.hint}`;
+            document.getElementById('card-back-answer').innerHTML = curCard.answer;
+            document.getElementById('card-back-formula').innerHTML = curCard.formula;
+            document.getElementById('card-back-pitfall').innerHTML = curCard.pitfall;
+
+            const inner = document.getElementById('flashcard-3d-inner');
+            if (appState.isCardFlipped) inner.classList.add('rotate-y-180');
+            else inner.classList.remove('rotate-y-180');
+
+            updateOverallProgress();
+        }
+
+        function flipCurrentCard() {
+            appState.isCardFlipped = !appState.isCardFlipped;
+            const inner = document.getElementById('flashcard-3d-inner');
+            if (appState.isCardFlipped) inner.classList.add('rotate-y-180');
+            else inner.classList.remove('rotate-y-180');
+        }
+
+        function prevCard() {
+            const activeCards = getActiveCards();
+            appState.currentCardIndex = (appState.currentCardIndex - 1 + activeCards.length) % activeCards.length;
+            appState.isCardFlipped = false;
+            renderFlashcardDeck();
+        }
+
+        function nextCard() {
+            const activeCards = getActiveCards();
+            appState.currentCardIndex = (appState.currentCardIndex + 1) % activeCards.length;
+            appState.isCardFlipped = false;
+            renderFlashcardDeck();
+        }
+
+        function rateCurrentCard(rating) {
+            const activeCards = getActiveCards();
+            activeCards[appState.currentCardIndex].status = rating;
+            renderFlashcardDeck();
+            renderHeatmap();
+
+            setTimeout(() => {
+                if (appState.currentCardIndex < activeCards.length - 1) {
+                    appState.currentCardIndex++;
+                    appState.isCardFlipped = false;
+                    renderFlashcardDeck();
+                }
+            }, 260);
+        }
+
+        // 键盘快捷键支持（空格翻转，左右方向键切换卡片）
+        window.addEventListener('keydown', (e) => {
+            if (appState.currentStage !== 3) return;
+            if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) return;
+            if (e.code === 'Space') {
+                e.preventDefault();
+                flipCurrentCard();
+            } else if (e.code === 'ArrowRight') {
+                e.preventDefault();
+                nextCard();
+            } else if (e.code === 'ArrowLeft') {
+                e.preventDefault();
+                prevCard();
+            }
+        });
+
+        // =========================================================================
+        // 环节四：迷思热力图 & 苏格拉底 AI 预习学伴
+        // =========================================================================
+        function renderHeatmap() {
+            const container = document.getElementById('heatmap-list');
+            if (!container) return;
+            container.innerHTML = '';
+
+            const coreCards = flashcardsData.slice(0, 8);
+            const focusItems = [];
+
+            coreCards.forEach(c => {
+                let adjustedMastery = c.classMastery;
+                let personalBadge = `<span class="text-[11px] px-2 py-0.5 rounded bg-slate-800 text-slate-400">待自评</span>`;
+
+                if (c.status === 'red') {
+                    adjustedMastery = Math.min(c.classMastery, 42);
+                    personalBadge = `<span class="text-[11px] px-2 py-0.5 rounded bg-rose-500/20 text-rose-300 border border-rose-500/40 font-semibold">🔴 个人标记：需重来</span>`;
+                    focusItems.push(`【${c.category}】${c.question.replace(/<[^>]+>/g, '').slice(0, 22)}...`);
+                } else if (c.status === 'yellow') {
+                    adjustedMastery = Math.min(c.classMastery, 68);
+                    personalBadge = `<span class="text-[11px] px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40 font-semibold">🟡 个人标记：有点模糊</span>`;
+                } else if (c.status === 'green') {
+                    adjustedMastery = Math.max(c.classMastery, 88);
+                    personalBadge = `<span class="text-[11px] px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-semibold">🟢 个人标记：已掌握</span>`;
+                } else if (c.classMastery < 65) {
+                    focusItems.push(`【${c.category}】班级高频痛点 (掌握率 ${c.classMastery}%)`);
+                }
+
+                const barColor = adjustedMastery >= 85
+                    ? 'bg-emerald-500'
+                    : adjustedMastery >= 65
+                        ? 'bg-amber-400'
+                        : 'bg-rose-500';
+
+                const row = document.createElement('div');
+                row.className = "p-3 rounded-xl bg-space-950 border border-slate-800/90 space-y-1.5";
+                row.innerHTML = `
+                    <div class="flex items-center justify-between text-xs">
+                        <span class="font-semibold text-slate-200">${c.id}. 【${c.category}】</span>
+                        <div class="flex items-center gap-2">
+                            ${personalBadge}
+                            <span class="font-mono text-slate-400">班级掌握率 ${c.classMastery}%</span>
+                        </div>
+                    </div>
+                    <div class="w-full h-2 bg-slate-800 rounded-full overflow-hidden">
+                        <div class="h-full ${barColor} transition-all duration-500" style="width: ${adjustedMastery}%"></div>
+                    </div>
+                `;
+                container.appendChild(row);
+            });
+
+            if (focusItems.length > 0) {
+                document.getElementById('focus-zone-list').innerHTML = focusItems
+                    .slice(0, 4)
+                    .map(item => `<li>${item}</li>`)
+                    .join('');
+            }
+        }
+
+        // 第二章苏格拉底三步启发对话剧本
+        const socraticScripts = {
+            1: {
+                title: '为什么微元法向力里 <span class="math">&Delta;T&middot;sin(&Delta;&theta;/2)</span> 可以直接扔掉？',
+                steps: [
+                    {
+                        ai: '这个问题抓住了大学物理微元法的灵魂！很多同学觉得扔掉一项是“差不多就行”的粗糙估算，其实它是<strong>绝对精确的微积分极限</strong>。<br><strong>第一步追问：</strong>当圆心角 <span class="math">&Delta;&theta;</span> 缩小为原来的 <span class="math">1/100</span> 时，一阶项 <span class="math">2T sin(&Delta;&theta;/2) &approx; T &Delta;&theta;</span> 缩小为原来的多少分之一？',
+                        options: [
+                            { text: '与 <span class="math">&Delta;&theta;</span> 成正比，缩小为原来的 <span class="math">1/100</span>（一阶无穷小）！', next: 1 },
+                            { text: '保持不变', next: 1 }
+                        ]
+                    },
+                    {
+                        ai: '完全正确！<strong>第二步追问：</strong>那再看 <span class="math">&Delta;T &middot; sin(&Delta;&theta;/2)</span> 这一项。因为张力差 <span class="math">&Delta;T &approx; &mu; T &Delta;&theta;</span> 本身就已经含有 1 个 <span class="math">&Delta;&theta;</span>，再乘上后面的 <span class="math">sin(&Delta;&theta;/2) &approx; &Delta;&theta;/2</span>，当 <span class="math">&Delta;&theta;</span> 缩小为 <span class="math">1/100</span> 时，这一项会缩小为原来的多少分之一？',
+                        options: [
+                            { text: '两个 <span class="math">1/100</span> 相乘，缩小为原来的 <span class="math">1/10000</span>（与 <span class="math">(&Delta;&theta;)<sup>2</sup></span> 成正比的二阶无穷小）！', next: 2 }
+                        ]
+                    },
+                    {
+                        ai: '🎉 <strong>顿悟完成！</strong>你看：当我们对整段绳积分（把 <span class="math">N</span> 个微元加起来，当 <span class="math">N &rarr; &infin;</span> 即 <span class="math">&Delta;&theta; &rarr; 0</span>）时：<br>• <span class="math">N</span> 个一阶小量（每个占 <span class="math">1/N</span>）累加起来是有限的非零值；<br>• 而 <span class="math">N</span> 个二阶小量（每个占 <span class="math">1/N<sup>2</sup></span>）累加起来只有 <span class="math">1/N &rarr; 0</span>！<br>所以舍弃 <span class="math">dT &middot; sin(d&theta;/2)</span> 不是近似，而是求导/积分极限下<strong>严格等于 0</strong>！',
+                        options: []
+                    }
+                ]
+            },
+            2: {
+                title: '遇到变力问题，怎么一秒判断该对时间 <span class="math">t</span> 还是位置 <span class="math">x</span> 积分？',
+                steps: [
+                    {
+                        ai: '判断变力积分方向，只需要看<strong>“自变量是谁”</strong>！<br><strong>第一步追问：</strong>如果题目告诉你弹簧振子受力 <span class="math">F = &minus;kx</span>，你试图直接写 <span class="math">m dv = &minus;kx dt</span> 然后两边积分，为什么会立刻卡壳？',
+                        options: [
+                            { text: '因为右边积分号里既有位置 <span class="math">x</span> 又有微分 <span class="math">dt</span>，变量没有分离，根本没法直接积！', next: 1 }
+                        ]
+                    },
+                    {
+                        ai: '一针见血！积分号 <span class="math">&int; f(&square;) d&square;</span> 要求里面的函数变量和微分符号必须统一。<br><strong>第二步追问：</strong>为了把右边的 <span class="math">dt</span> 换成 <span class="math">dx</span>，我们用链式法则把左边的加速度 <span class="math">a = dv/dt</span> 改写成什么？',
+                        options: [
+                            { text: '改写成 <span class="math">a = v(dv/dx)</span>！两边同乘 <span class="math">dx</span> 就变成 <span class="math">m v dv = F(x) dx</span>！', next: 2 }
+                        ]
+                    },
+                    {
+                        ai: '🎉 <strong>秒判法则到手！</strong>记住这三句话：<br>1. <strong>力含时间 <span class="math">F(t)</span></strong> &rArr; 用 <span class="math">m dv = F(t) dt</span>；<br>2. <strong>力含位置 <span class="math">F(x)</span></strong> &rArr; 必用 <span class="math">m v dv = F(x) dx</span>；<br>3. <strong>力含速度 <span class="math">F(v)</span></strong> &rArr; 问时间就用 <span class="math">m dv / F(v) = dt</span>，问制动距离就用 <span class="math">m v dv / F(v) = dx</span>！',
+                        options: []
+                    }
+                ]
+            },
+            3: {
+                title: '为什么两个运动电荷之间的电磁力不严格满足牛顿第三定律？',
+                steps: [
+                    {
+                        ai: '这是从经典牛顿力学迈向现代物理（场论）最精彩的一步！<br><strong>第一步追问：</strong>假定地球和太阳之间的引力，或者两个电荷之间的电磁力，需要通过空间中的“场”来传递。场的传播需要时间吗？',
+                        options: [
+                            { text: '需要！场以有限的光速 <span class="math">c</span> 传播，不是瞬时超距到达的', next: 1 }
+                        ]
+                    },
+                    {
+                        ai: '没错！既然有延迟，电荷 A 此时受到的力其实是电荷 B 在<strong>稍早时刻</strong>发出的场决定的。<br><strong>第二步追问：</strong>不仅如此，如果两个运动电荷某一时刻的相互作用力 <span class="math"><span class="vec">F</span><sub>12</sub> + <span class="vec">F</span><sub>21</sub> &ne; 0</span>，那凭空多出来的动量变化率去哪儿了？难道动量守恒定律被打破了吗？',
+                        options: [
+                            { text: '动量守恒依然严格成立！因为空间中的电磁场本身也携带动量 <span class="math"><span class="vec">P</span><sub>场</sub></span>！', next: 2 }
+                        ]
+                    },
+                    {
+                        ai: '🎉 <strong>物理思想升华！</strong><br>对于通过场相互作用的非静止系统：<br>• 单看两个粒子的机械动量，牛顿第三定律不再严格成立（<span class="math"><span class="vec">F</span><sub>12</sub> + <span class="vec">F</span><sub>21</sub> = &minus;d<span class="vec">P</span><sub>场</sub>/dt</span>）；<br>• 但<strong>“粒子机械动量 + 场的动量”总和依然严格守恒</strong>！这说明<strong>动量守恒定律比牛顿第三定律更加普适</strong>。',
+                        options: []
+                    }
+                ]
+            }
+        };
+
+        function appendChatBubble(sender, htmlContent, options = [], topicId = null) {
+            const box = document.getElementById('socratic-chat-box');
+            const wrap = document.createElement('div');
+
+            if (sender === 'user') {
+                wrap.className = "flex items-start justify-end gap-2.5";
+                wrap.innerHTML = `
+                    <div class="bg-cyan-500/20 border border-cyan-500/40 rounded-2xl rounded-tr-none p-3 text-xs sm:text-sm text-cyan-100 max-w-[85%]">
+                        ${htmlContent}
+                    </div>
+                    <div class="w-7 h-7 rounded-lg bg-cyan-500 text-space-950 font-bold flex items-center justify-center text-xs shrink-0 mt-0.5">我</div>
+                `;
+            } else {
+                let optsHtml = '';
+                if (options && options.length > 0) {
+                    optsHtml = `<div class="pt-2 space-y-1.5">` + options.map((opt, idx) => `
+                        <button onclick="advanceSocraticStep(${topicId}, ${opt.next}, ${idx})" class="w-full text-left px-3 py-2 rounded-xl bg-indigo-500/20 hover:bg-indigo-500/35 border border-indigo-400/40 text-xs text-cyan-200 transition flex items-center justify-between">
+                            <span>${opt.text}</span>
+                            <i class="fa-solid fa-chevron-right text-[10px] ml-2"></i>
+                        </button>
+                    `).join('') + `</div>`;
+                }
+
+                wrap.className = "flex items-start gap-2.5";
+                wrap.innerHTML = `
+                    <div class="w-7 h-7 rounded-lg bg-indigo-500/30 border border-indigo-400/40 flex items-center justify-center text-cyan-300 text-xs shrink-0 mt-0.5">AI</div>
+                    <div class="bg-space-950 border border-slate-800 rounded-2xl rounded-tl-none p-3.5 text-xs sm:text-sm text-slate-200 space-y-2 max-w-[92%]">
+                        <div>${htmlContent}</div>
+                        ${optsHtml}
+                    </div>
+                `;
+            }
+
+            box.appendChild(wrap);
+            box.scrollTop = box.scrollHeight;
+        }
+
+        function startSocraticTopic(topicId) {
+            const script = socraticScripts[topicId];
+            if (!script) return;
+            appendChatBubble('user', script.title);
+            setTimeout(() => {
+                const firstStep = script.steps[0];
+                appendChatBubble('ai', firstStep.ai, firstStep.options, topicId);
+            }, 220);
+        }
+
+        function advanceSocraticStep(topicId, stepIndex, optIdx) {
+            const script = socraticScripts[topicId];
+            if (!script) return;
+            const prevStep = script.steps[stepIndex - 1];
+            const chosenText = prevStep && prevStep.options[optIdx] ? prevStep.options[optIdx].text : '继续推导';
+            appendChatBubble('user', chosenText);
+
+            if (!script.steps[stepIndex]) return;
+            setTimeout(() => {
+                const stepObj = script.steps[stepIndex];
+                appendChatBubble('ai', stepObj.ai, stepObj.options, topicId);
+            }, 250);
+        }
+
+        function handleCustomQuestion(e) {
+            e.preventDefault();
+            const input = document.getElementById('socratic-input');
+            const q = input.value.trim();
+            if (!q) return;
+            input.value = '';
+            appendChatBubble('user', q);
+
+            setTimeout(() => {
+                if (q.includes('二阶') || q.includes('小量') || q.includes('圆环') || q.includes('欧拉') || q.includes('缠绕')) {
+                    startSocraticTopic(1);
+                } else if (q.includes('变力') || q.includes('积分') || q.includes('链式') || q.includes('dx')) {
+                    startSocraticTopic(2);
+                } else if (q.includes('第三定律') || q.includes('电荷') || q.includes('场')) {
+                    startSocraticTopic(3);
+                } else if (q.includes('砖') || q.includes('面积') || q.includes('摩擦')) {
+                    appendChatBubble('ai', `
+                        关于<strong>“为什么砖块平放与立放时摩擦力大小相同”</strong>，核心在于区分<strong>宏观表观面积</strong>与<strong>微观实际微凸体接触面积</strong>：<br>
+                        1. 表面在显微镜下由无数微凸峰构成，实际接触面积 <span class="math">A<sub>实</sub> &propto; 正压力 N</span>；<br>
+                        2. 砖块立放时虽然表观面积变小，但压强变大把微凸峰压得更扁，使得<strong>微观实际接触总面积保持不变</strong>，故 <span class="math">f = &mu;N</span> 与宏观面积无关！
+                    `);
+                } else {
+                    appendChatBubble('ai', `
+                        非常棒的思考！针对<strong>“${q}”</strong>，在第二章质点动力学中建议按以下两步拆解：<br>
+                        1. 明确研究对象（质点或微元弧段 <span class="math">dm</span>），画出隔离体受力图；<br>
+                        2. 选择正交坐标系（直角系或自然系 <span class="math"><span class="vec">e</span><sub>t</sub> &minus; <span class="vec">e</span><sub>n</sub></span>），若遇变力则通过 <span class="math">a = dv/dt</span> 或 <span class="math">a = v dv/dx</span> 分离变量积分。<br>
+                        你也可以点击上方 ①、②、③ 按钮体验三步启发式问答！
+                    `);
+                }
+            }, 280);
+        }
+
+        function resetSocraticChat() {
+            const box = document.getElementById('socratic-chat-box');
+            box.innerHTML = '';
+            appendChatBubble('ai', '对话已重置！请点击上方 ①、②、③ 高频卡点按钮，开启第二章苏格拉底三步启发式推导。');
+        }
+
+        // =========================================================================
+        // 平台适配导出弹窗（雨课堂 / 超星学习通预习回执码生成）
+        // =========================================================================
+        function openExportModal() {
+            const modal = document.getElementById('export-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            updateReceiptModalData();
+        }
+
+        function closeExportModal() {
+            const modal = document.getElementById('export-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function selectPlatform(plat) {
+            appState.selectedPlatform = plat;
+            const bRain = document.getElementById('plat-rain');
+            const bXue = document.getElementById('plat-xuexitong');
+            if (plat === 'rain') {
+                bRain.className = "py-2 rounded-lg font-bold bg-cyan-500 text-space-950 transition";
+                bXue.className = "py-2 rounded-lg font-bold text-slate-400 hover:text-white transition";
+            } else {
+                bXue.className = "py-2 rounded-lg font-bold bg-amber-400 text-space-950 transition";
+                bRain.className = "py-2 rounded-lg font-bold text-slate-400 hover:text-white transition";
+            }
+            updateReceiptModalData();
+        }
+
+        function updateReceiptModalData() {
+            const elapsedSec = Math.max(15, Math.floor((Date.now() - appState.startTime) / 1000));
+            const em = String(Math.floor(elapsedSec / 60)).padStart(2, '0');
+            const es = String(elapsedSec % 60).padStart(2, '0');
+            document.getElementById('modal-duration-text').textContent = `用时 ${em}:${es}`;
+
+            const coreCards = flashcardsData.slice(0, 8);
+            const gCnt = coreCards.filter(c => c.status === 'green').length;
+            const yCnt = coreCards.filter(c => c.status === 'yellow').length;
+            const rCnt = coreCards.filter(c => c.status === 'red').length;
+            const rated = gCnt + yCnt + rCnt;
+
+            document.getElementById('modal-card-stat').textContent = `已评 ${rated} / 8 张`;
+            document.getElementById('modal-poe-stat').textContent =
+                (appState.poe1Predicted || appState.poe2Predicted) ? '已完成盲测' : '体验中';
+
+            const redCards = coreCards.filter(c => c.status === 'red').map(c => c.category);
+            const weakStr = redCards.length > 0
+                ? redCards.join('、')
+                : '缠绕绳微元法向二阶小量取舍、牛顿第三定律场作用边界';
+            document.getElementById('modal-weak-points').innerHTML = weakStr;
+
+            const platPrefix = appState.selectedPlatform === 'rain' ? '【雨课堂预习回执】' : '【超星学习通回执】';
+            const hash = Math.random().toString(36).substring(2, 7).toUpperCase();
+            document.getElementById('modal-receipt-code').textContent =
+                `${platPrefix}MECH-CH2#TIME:${em}m${es}s#POE:${appState.poe1Predicted ? 'PASS' : 'VIEW'}#CARDS:G${gCnt}Y${yCnt}R${rCnt}#FOCUS:${weakStr.slice(0, 14)}#VER:${hash}`;
+        }
+
+        function copyReceiptCode() {
+            const text = document.getElementById('modal-receipt-code').textContent;
+            const tempInput = document.createElement('textarea');
+            tempInput.value = text;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempInput);
+
+            const toast = document.getElementById('copy-toast');
+            toast.classList.remove('hidden');
+            setTimeout(() => toast.classList.add('hidden'), 2500);
+        }
+
+        // ===================== 窗口初始化与响应式监听 =====================
+        window.onload = function () {
+            resizeAndDrawRopeElement();
+            showForceStrategy(2);
+            renderFlashcardDeck();
+            renderHeatmap();
+            animateProjectileLoop();
+
+            window.addEventListener('resize', () => {
+                if (appState.currentStage === 1) resizeAndDrawRopeElement();
+                if (appState.currentStage === 2) {
+                    resizeAndDrawCapstan();
+                    resizeAndDrawDragProjectile();
+                }
+            });
+        };
+    </script>
+</body>
+</html>
