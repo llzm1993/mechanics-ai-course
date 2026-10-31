@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>大学物理《力学》智慧课程 · 第9章：机械波（课前15分钟导学）</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        space: {
+                            950: '#070b14',
+                            900: '#0b1120',
+                            800: '#131c31',
+                            700: '#1e293b',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'PingFang SC', 'Microsoft YaHei', 'sans-serif'],
+                        math: ['Cambria Math', 'Times New Roman', 'serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+        :root {
+            --bg-primary: #070b14;
+            --bg-card: #0b1120;
+            --bg-elevated: #131c31;
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --text-muted: #94a3b8;
+            --border-color: #1e293b;
+            --canvas-bg: #070b14;
+            --canvas-grid: rgba(148, 163, 184, 0.06);
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            background-image: 
+                radial-gradient(at 15% 15%, rgba(34, 211, 238, 0.08) 0px, transparent 45%),
+                radial-gradient(at 85% 20%, rgba(244, 63, 94, 0.07) 0px, transparent 45%),
+                radial-gradient(at 50% 85%, rgba(99, 102, 241, 0.08) 0px, transparent 50%);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        /* 主题背景与卡片自适应映射 */
+        .bg-space-950 { background-color: var(--bg-primary) !important; }
+        .bg-space-950\/80, .bg-space-950\/90, .bg-space-950\/70 { background-color: var(--bg-primary) !important; }
+        .bg-space-900 { background-color: var(--bg-card) !important; }
+        .bg-space-900\/90 { background-color: var(--bg-card) !important; }
+        .bg-space-800 { background-color: var(--bg-elevated) !important; }
+        canvas { background-color: var(--canvas-bg); transition: background-color 0.3s ease; }
+
+        /* 浅色/护眼主题下的高对比度文字与边框自适应 */
+        body.theme-light .text-white,
+        body.theme-light .text-slate-100,
+        body.theme-light .text-slate-200 {
+            color: var(--text-primary) !important;
+        }
+        body.theme-light .text-slate-300 {
+            color: var(--text-secondary) !important;
+        }
+        body.theme-light .text-slate-400 {
+            color: var(--text-muted) !important;
+        }
+        body.theme-light .border-slate-800,
+        body.theme-light .border-slate-800\/80,
+        body.theme-light .border-slate-800\/90,
+        body.theme-light .border-slate-700,
+        body.theme-light .border-slate-700\/80 {
+            border-color: var(--border-color) !important;
+        }
+        body.theme-light .from-space-800 {
+            --tw-gradient-from: var(--bg-elevated) !important;
+            --tw-gradient-to: var(--bg-card) !important;
+            --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important;
+        }
+        body.theme-light .from-space-900 {
+            --tw-gradient-from: var(--bg-card) !important;
+            --tw-gradient-to: var(--bg-elevated) !important;
+            --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important;
+        }
+        body.theme-light .bg-indigo-950\/30,
+        body.theme-light .bg-cyan-950\/30,
+        body.theme-light .bg-emerald-950\/30,
+        body.theme-light .bg-rose-950\/30 {
+            background-color: var(--bg-elevated) !important;
+        }
+        body.theme-light .text-cyan-300,
+        body.theme-light .text-cyan-400 {
+            color: #0284c7 !important;
+        }
+        body.theme-light .text-amber-300,
+        body.theme-light .text-amber-400,
+        body.theme-light .text-amber-200 {
+            color: #b45309 !important;
+        }
+        body.theme-light .text-emerald-300,
+        body.theme-light .text-emerald-400,
+        body.theme-light .text-emerald-200 {
+            color: #047857 !important;
+        }
+        body.theme-light .text-rose-300,
+        body.theme-light .text-rose-400 {
+            color: #be123c !important;
+        }
+        body.theme-light .text-indigo-300,
+        body.theme-light .text-indigo-200 {
+            color: #4338ca !important;
+        }
+
+        /* 数学公式规范排版样式（物理量斜体、单位与算子正体） */
+        .math {
+            font-family: 'Cambria Math', 'Times New Roman', serif;
+            font-style: italic;
+            letter-spacing: 0.02em;
+        }
+        .math-rm {
+            font-family: 'Cambria Math', 'Times New Roman', serif;
+            font-style: normal;
+        }
+        .vec {
+            position: relative;
+            display: inline-block;
+            font-weight: 600;
+        }
+        .vec::after {
+            content: "→";
+            position: absolute;
+            top: -0.58em;
+            left: 50%;
+            transform: translateX(-50%) scale(0.75);
+            font-style: normal;
+            font-weight: 700;
+            line-height: 1;
+        }
+        .dot-top {
+            position: relative;
+            display: inline-block;
+        }
+        .dot-top::after {
+            content: "·";
+            position: absolute;
+            top: -0.55em;
+            left: 50%;
+            transform: translateX(-50%) scale(1.4);
+            font-weight: bold;
+        }
+        .ddot-top {
+            position: relative;
+            display: inline-block;
+        }
+        .ddot-top::after {
+            content: "··";
+            position: absolute;
+            top: -0.55em;
+            left: 50%;
+            transform: translateX(-50%) scale(1.1);
+            letter-spacing: -1px;
+            font-weight: bold;
+        }
+        .frac {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            vertical-align: middle;
+            margin: 0 0.16em;
+            font-size: 0.92em;
+        }
+        .frac > span:first-child {
+            border-bottom: 1.5px solid currentColor;
+            padding: 0 0.25em 0.05em;
+            line-height: 1.15;
+        }
+        .frac > span:last-child {
+            padding: 0.05em 0.25em 0;
+            line-height: 1.15;
+        }
+
+        /* 3D 闪卡翻转特效 */
+        .perspective-1000 {
+            perspective: 1200px;
+        }
+        .transform-style-3d {
+            transform-style: preserve-3d;
+            transition: transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .backface-hidden {
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+        }
+        .rotate-y-180 {
+            transform: rotateY(180deg);
+        }
+
+        /* 自定义滑块样式 */
+        input[type=range] {
+            -webkit-appearance: none;
+            background: #1e293b;
+            height: 6px;
+            border-radius: 999px;
+            outline: none;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #22d3ee;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(34, 211, 238, 0.6);
+            border: 2px solid #0f172a;
+            transition: transform 0.15s ease;
+        }
+        input[type=range]::-webkit-slider-thumb:hover {
+            transform: scale(1.15);
+        }
+
+        /* 网格背景装饰 */
+        .bg-grid-pattern {
+            background-size: 28px 28px;
+            background-image: 
+                linear-gradient(to right, var(--canvas-grid) 1px, transparent 1px),
+                linear-gradient(to bottom, var(--canvas-grid) 1px, transparent 1px);
+        }
+
+        /* 滚动条美化 */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0b1120;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+    
+        /* 阶段导航高亮（通用外壳） */
+        .stage-nav-btn.stage-active {
+            background-color: rgba(34,211,238,0.20) !important;
+            color: #67e8f9 !important;
+            border-color: rgba(34,211,238,0.40) !important;
+        }
+        /* 闪卡翻转（配合 ch2 已有的 .transform-style-3d/.backface-hidden/.rotate-y-180/.perspective-1000） */
+        .flip-card-inner.rotate-y-180 { transform: rotateY(180deg); }
+
+    </style>
+</head>
+<body class="min-h-screen flex flex-col selection:bg-cyan-500/30 selection:text-cyan-200">
+
+    <!-- ==================== 顶部固定智慧导航栏 ==================== -->
+    <header class="sticky top-0 z-40 backdrop-blur-xl bg-space-900/90 border-b border-slate-800/80 shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3">
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
+                <!-- 左侧课程标题与徽章 -->
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <a href="../../index.html" class="no-print px-3 py-2 rounded-xl bg-space-800 hover:bg-slate-700 text-cyan-300 border border-slate-700 text-xs font-semibold shadow flex items-center gap-1.5 transition-all mr-1" title="返回课程主页"><i class="fa-solid fa-house"></i><span>🏠 返回课程主页</span></a>
+<div class="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-cyan-500/20">
+                            <i class="fa-solid fa-water text-white text-lg"></i>
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <span class="text-xs font-semibold uppercase tracking-wider px-2 py-0.5 rounded bg-cyan-500/15 text-cyan-300 border border-cyan-500/30">智慧物理导学</span>
+                                <span class="text-xs text-slate-400 hidden sm:inline">控时长 · 补工具 · 立图像 · 抓迷思</span>
+                            </div>
+                            <h1 class="text-base sm:text-lg font-bold text-white tracking-tight mt-0.5">
+                                大学物理《力学》智慧课程 · 第9章：机械波（课前15分钟导学）
+                            </h1>
+                        </div>
+                    </div>
+                    <!-- 移动端主题与导出按钮 -->
+                    <div class="flex items-center gap-2 lg:hidden">
+                        <button onclick="toggleThemePanel()" class="px-2.5 py-1.5 rounded-lg bg-space-800 text-cyan-300 border border-slate-700 text-xs font-medium shadow flex items-center gap-1">
+                            <i class="fa-solid fa-palette"></i>
+                            <span>🎨 背景调控</span>
+                        </button>
+                        <button onclick="openExportModal()" class="px-3 py-1.5 rounded-lg bg-gradient-to-r from-indigo-600 to-cyan-600 text-white text-xs font-medium shadow">
+                            <i class="fa-solid fa-clipboard-check mr-1"></i>生成回执
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 中部4环节递进导航条 -->
+                <nav class="flex items-center gap-1.5 overflow-x-auto py-1 no-scrollbar">
+                    <button onclick="switchStage(1)" id="nav-stage-1" class="stage-nav-btn flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-all whitespace-nowrap bg-cyan-500/20 text-cyan-300 border border-cyan-500/40">
+                        <span id="badge-stage-1" class="w-5 h-5 rounded-full bg-cyan-400 text-space-950 font-bold flex items-center justify-center text-xs">1</span>
+                        <span>数学脚手架</span>
+                    </button>
+                    <i class="fa-solid fa-chevron-right text-[10px] text-slate-600"></i>
+                    <button onclick="switchStage(2)" id="nav-stage-2" class="stage-nav-btn flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-all whitespace-nowrap text-slate-400 hover:text-slate-200">
+                        <span id="badge-stage-2" class="w-5 h-5 rounded-full bg-slate-800 text-slate-400 font-bold flex items-center justify-center text-xs">2</span>
+                        <span>POE图像盲测</span>
+                    </button>
+                    <i class="fa-solid fa-chevron-right text-[10px] text-slate-600"></i>
+                    <button onclick="switchStage(3)" id="nav-stage-3" class="stage-nav-btn flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-all whitespace-nowrap text-slate-400 hover:text-slate-200">
+                        <span id="badge-stage-3" class="w-5 h-5 rounded-full bg-slate-800 text-slate-400 font-bold flex items-center justify-center text-xs">3</span>
+                        <span>3D闪卡排雷</span>
+                    </button>
+                    <i class="fa-solid fa-chevron-right text-[10px] text-slate-600"></i>
+                    <button onclick="switchStage(4)" id="nav-stage-4" class="stage-nav-btn flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-all whitespace-nowrap text-slate-400 hover:text-slate-200">
+                        <span id="badge-stage-4" class="w-5 h-5 rounded-full bg-slate-800 text-slate-400 font-bold flex items-center justify-center text-xs">4</span>
+                        <span>迷思图&amp;AI学伴</span>
+                    </button>
+                </nav>
+
+                <!-- 右侧：15分钟计时器（可暂停）、背景调控与回执按钮 -->
+                <div class="hidden lg:flex items-center gap-2.5">
+                    <div class="flex items-center gap-2.5 bg-space-950 px-3 py-1.5 rounded-xl border border-slate-800">
+                        <div class="text-right">
+                            <div class="flex items-center gap-1.5">
+                                <button onclick="toggleTimerPause()" id="timer-pause-btn" class="text-[11px] text-cyan-400 hover:text-cyan-300 transition" title="暂停/继续计时">
+                                    <i id="timer-pause-icon" class="fa-solid fa-pause"></i>
+                                </button>
+                                <span class="text-[11px] text-slate-400">预习控时</span>
+                                <span id="timer-display" class="text-xs font-mono font-bold text-cyan-300">15:00</span>
+                            </div>
+                            <div class="w-24 h-1.5 bg-slate-800 rounded-full overflow-hidden mt-1">
+                                <div id="overall-progress-bar" class="h-full bg-gradient-to-r from-cyan-400 to-emerald-400 transition-all duration-500" style="width: 15%"></div>
+                            </div>
+                        </div>
+                        <span id="overall-progress-text" class="text-xs font-bold text-emerald-400">15%</span>
+                    </div>
+
+                    <!-- 背景与护眼配色调控按钮 -->
+                    <button onclick="toggleThemePanel()" id="theme-toggle-btn" class="px-3 py-2 rounded-xl bg-space-800 hover:bg-slate-700 text-cyan-300 border border-slate-700 text-xs font-semibold shadow flex items-center gap-1.5 transition-all" title="切换护眼背景色与自定义配色">
+                        <i class="fa-solid fa-palette"></i>
+                        <span>🎨 背景调控</span>
+                    </button>
+
+                    <button onclick="openExportModal()" class="px-3.5 py-2 rounded-xl bg-gradient-to-r from-indigo-600 via-cyan-600 to-teal-600 hover:from-indigo-500 hover:to-teal-500 text-white text-xs font-semibold shadow-lg shadow-cyan-500/15 flex items-center gap-2 transition-all">
+                        <i class="fa-solid fa-clipboard-check"></i>
+                        <span>📋 雨课堂/学习通回执</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 展开式背景颜色与护眼主题调控面板 -->
+            <div id="theme-control-panel" class="hidden mt-3 pt-3 border-t border-slate-800/80 flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-space-950/90 p-3 rounded-xl border border-slate-800">
+                <div class="flex flex-wrap items-center gap-2">
+                    <span class="text-xs font-bold text-slate-300 mr-1"><i class="fa-solid fa-eye-low-vision text-cyan-400 mr-1"></i>预设背景主题：</span>
+                    <button onclick="applyThemePreset('dark')" id="preset-btn-dark" class="px-2.5 py-1.5 rounded-lg text-xs font-medium border border-cyan-400 bg-[#070b14] text-slate-100 flex items-center gap-1.5 shadow-sm transition ring-2 ring-cyan-400">
+                        <span class="w-3 h-3 rounded-full bg-[#070b14] border border-cyan-400"></span>🌌 默认深空蓝
+                    </button>
+                    <button onclick="applyThemePreset('light')" id="preset-btn-light" class="px-2.5 py-1.5 rounded-lg text-xs font-medium border border-slate-600 bg-[#f8fafc] text-slate-900 flex items-center gap-1.5 shadow-sm transition">
+                        <span class="w-3 h-3 rounded-full bg-[#ffffff] border border-slate-400"></span>☀️ 明亮护眼白
+                    </button>
+                    <button onclick="applyThemePreset('green')" id="preset-btn-green" class="px-2.5 py-1.5 rounded-lg text-xs font-medium border border-slate-600 bg-[#e6f2ea] text-[#132a1c] flex items-center gap-1.5 shadow-sm transition">
+                        <span class="w-3 h-3 rounded-full bg-[#a3d9b5] border border-emerald-700"></span>🍵 豆沙护眼绿
+                    </button>
+                    <button onclick="applyThemePreset('charcoal')" id="preset-btn-charcoal" class="px-2.5 py-1.5 rounded-lg text-xs font-medium border border-slate-600 bg-[#141619] text-[#e5e7eb] flex items-center gap-1.5 shadow-sm transition">
+                        <span class="w-3 h-3 rounded-full bg-[#272a30] border border-slate-400"></span>🌙 极夜深灰
+                    </button>
+                </div>
+
+                <!-- 自定义颜色拾取器（自动计算明度适配深浅文字与Canvas重绘） -->
+                <div class="flex items-center gap-2.5 self-end sm:self-auto">
+                    <label for="custom-bg-picker" class="text-xs text-slate-300 flex items-center gap-1.5 cursor-pointer">
+                        <span>自定义背景色：</span>
+                        <input type="color" id="custom-bg-picker" value="#070b14" oninput="applyCustomBgColor(this.value)" class="w-7 h-7 rounded cursor-pointer border border-slate-600 bg-transparent p-0">
+                    </label>
+                    <span id="theme-contrast-badge" class="text-[11px] px-2 py-0.5 rounded bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 font-mono">默认深空蓝 · 暗色高反差</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- ==================== 主体内容容器 ==================== -->
+        <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6">
+
+        <!-- =====================================================================
+             环节一：数学脚手架前置 —— 3分钟“微工具”唤醒
+             ===================================================================== -->
+        <section id="stage-1" class="stage-section space-y-6">
+            <!-- 环节导语横幅 -->
+            <div class="bg-gradient-to-r from-space-800 via-indigo-950/60 to-space-800 rounded-2xl p-5 border border-indigo-500/30 shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div class="space-y-1">
+                    <div class="flex items-center gap-2">
+                        <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">环节 1 / 4 · 预计 3 分钟</span>
+                        <span class="text-xs text-amber-300"><i class="fa-solid fa-screwdriver-wrench mr-1"></i>波函数 · 波速 · 干涉与驻波脚手架</span>
+                    </div>
+                    <h2 class="text-xl font-bold text-white">数学脚手架前置：3分钟“微工具”唤醒</h2>
+                    <p class="text-sm text-slate-300">预习第9章“机械波”前，先打通三个高频数理卡点：<span class="text-cyan-300 font-medium">行波波函数的相位与符号</span>、<span class="text-amber-300 font-medium">波速由介质决定（而非频率）</span>，以及<span class="text-emerald-300 font-medium">干涉相位差与驻波边界条件</span>。</p>
+                </div>
+            </div>
+
+            <!-- 卡片 1：波的产生与波函数 -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <div class="lg:col-span-7 bg-space-900 rounded-2xl border border-slate-800 p-5 shadow-xl space-y-3">
+                    <h3 class="text-base font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-water text-cyan-400"></i>
+                        <span>波的产生与波函数 <span class="math">y=A\cos[\omega(t\mp x/u)]</span></span>
+                    </h3>
+                    <p class="text-sm text-slate-300">机械波 = 波源的机械振动在弹性介质中的传播，<span class="text-cyan-300 font-medium">需要波源 + 介质</span>。质元只在平衡位置附近振动，不随波迁移。</p>
+                    <ul class="text-sm text-slate-300 space-y-1 list-disc pl-5">
+                        <li><span class="text-cyan-300 font-medium">横波</span>：质元振动方向 ⟂ 传播方向（绳波）。</li>
+                        <li><span class="text-cyan-300 font-medium">纵波</span>：质元振动方向 ∥ 传播方向（声波）。</li>
+                        <li>沿 <span class="math">+x</span> 传播：<span class="math">y=A\cos[\omega(t-x/u)]</span>；沿 <span class="math">−x</span> 传播：<span class="math">y=A\cos[\omega(t+x/u)]</span>。</li>
+                        <li>亦可写为 <span class="math">y=A\cos(\omega t\mp kx+\phi_0)</span>，其中波数 <span class="math">k=2\pi/\lambda</span>。</li>
+                    </ul>
+                    <div class="p-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-sm text-rose-200">
+                        <span class="font-bold">常见卡壳点 ·</span> 波形图中“某点的振动方向”≠“波的传播方向”。口诀：沿波传播方向看，<span class="text-rose-100 font-semibold">“上坡向下、下坡向上”</span>判断该点下一刻振动方向。
+                    </div>
+                </div>
+                <div class="lg:col-span-5 bg-space-900 rounded-2xl border border-slate-800 p-5 shadow-xl space-y-3">
+                    <h3 class="text-base font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-arrows-left-right text-amber-400"></i>
+                        <span>波长 / 周期 / 波速关系</span>
+                    </h3>
+                    <p class="text-sm text-slate-300">三者基本关系：</p>
+                    <div class="text-center text-lg text-cyan-200"><span class="math">u=\frac{\lambda}{T}=\lambda\nu</span></div>
+                    <p class="text-sm text-slate-300">其中角频率 <span class="math">\omega=2\pi/T=2\pi\nu</span>，故 <span class="math">u=\omega/k</span>。</p>
+                    <div class="p-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-sm text-rose-200">
+                        <span class="font-bold">常见卡壳点 ·</span> <span class="text-rose-100 font-semibold">波速由介质决定，与频率无关</span>。同一介质中不同频率的波波速相同；频率由波源决定，介质改变时频率不变、波速变、波长随之变。
+                    </div>
+                </div>
+            </div>
+
+            <!-- 卡片 2：波速与介质 & 干涉 / 驻波 / 多普勒 -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <div class="lg:col-span-7 bg-space-900 rounded-2xl border border-slate-800 p-5 shadow-xl space-y-3">
+                    <h3 class="text-base font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-gauge-high text-emerald-400"></i>
+                        <span>波速与介质的关系</span>
+                    </h3>
+                    <ul class="text-sm text-slate-300 space-y-1 list-disc pl-5">
+                        <li>弦上横波：<span class="math">u=\sqrt{T/\mu}</span>（<span class="math">T</span> 为张力，<span class="math">\mu</span> 为线密度）。</li>
+                        <li>空气中声速（理想气体）：<span class="math">u=\sqrt{\gamma RT/M}</span>；常温近似 <span class="math">u\approx 331+0.6t</span> m/s。</li>
+                        <li>固体棒纵波：<span class="math">u=\sqrt{Y/\rho}</span>。</li>
+                    </ul>
+                    <div class="p-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-sm text-rose-200">
+                        <span class="font-bold">常见卡壳点 ·</span> 决定波速的是<span class="text-rose-100 font-semibold">介质的弹性和惯性</span>，不是频率；温度、张力、密度改变才会改变波速。
+                    </div>
+                </div>
+                <div class="lg:col-span-5 bg-space-900 rounded-2xl border border-slate-800 p-5 shadow-xl space-y-3">
+                    <h3 class="text-base font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-wave-square text-indigo-400"></i>
+                        <span>叠加原理 · 干涉 · 驻波 · 多普勒</span>
+                    </h3>
+                    <ul class="text-sm text-slate-300 space-y-1 list-disc pl-5">
+                        <li>叠加原理：各波独立传播，位移矢量相加。</li>
+                        <li>干涉：相位差 <span class="math">\Delta\phi=2\pi\Delta x/\lambda+(\phi_2-\phi_1)</span>；加强 <span class="math">\delta=\pm2k\pi</span>，减弱 <span class="math">\delta=\pm(2k+1)\pi</span>。</li>
+                        <li>驻波：两列反向相干行波叠加；<span class="text-cyan-300 font-medium">波节始终不动</span>，波腹振幅最大。两端固定弦 <span class="math">L=n\lambda/2\;(n=1,2,\dots)</span>。</li>
+                        <li>多普勒：<span class="math">f'=f\,\frac{u\pm v_o}{u\mp v_s}</span>（观察者靠近取 +，波源靠近取 −）。</li>
+                    </ul>
+                    <div class="p-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-sm text-rose-200">
+                        <span class="font-bold">常见卡壳点 ·</span> 相位差与路程差：<span class="math">\delta=2\pi\Delta x/\lambda</span>。两波叠加<span class="text-rose-100 font-semibold">未必加强</span>，取决于相位差；驻波是干涉图样，并非“静止的波”。
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =====================================================================
+             环节二：POE 图像盲测 —— 2个反直觉预测
+             ===================================================================== -->
+        <section id="stage-2" class="stage-section hidden space-y-6">
+            <div class="bg-gradient-to-r from-space-800 via-rose-950/40 to-space-800 rounded-2xl p-5 border border-rose-500/30 shadow-xl">
+                <div class="flex items-center gap-2">
+                    <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30">环节 2 / 4 · 预计 4 分钟</span>
+                    <span class="text-xs text-cyan-300"><i class="fa-solid fa-eye mr-1"></i>Predict → Observe → Explain</span>
+                </div>
+                <h2 class="text-xl font-bold text-white mt-1">POE 图像盲测：先预测，再看解析</h2>
+                <p class="text-sm text-slate-300">下面两个情境极易凭直觉答错。先选你的预测，再点开解析。</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="poe-sandbox bg-space-900 rounded-2xl border border-slate-800 p-5 space-y-3">
+                    <h3 class="text-white font-bold">POE 1 · 绳波传播时，绳上某质点会随波向前跑吗？</h3>
+                    <p class="text-sm text-slate-300">一根绳子一端上下抖动产生向右传播的横波。绳上标记的红点，随着波向右传，它会怎样？</p>
+                    <div class="grid sm:grid-cols-2 gap-2">
+                        <button class="poe-opt text-left p-3 rounded-xl bg-space-950 border border-slate-800 hover:border-cyan-400 transition" data-correct="1">红点只在原地上下振动，不随波向右迁移</button>
+                        <button class="poe-opt text-left p-3 rounded-xl bg-space-950 border border-slate-800 hover:border-cyan-400 transition" data-correct="0">红点会随波一起向右“流”走</button>
+                    </div>
+                    <div class="poe-explain hidden p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-sm text-slate-200">解析：行波传播的是“振动状态/相位”，并非物质本身。每个质元只在自身平衡位置附近振动，并不随波迁移——波“流过”介质，但介质不“随波逐流”。</div>
+                </div>
+
+                <div class="poe-sandbox bg-space-900 rounded-2xl border border-slate-800 p-5 space-y-3">
+                    <h3 class="text-white font-bold">POE 2 · 两列同振幅相干波叠加，振幅一定加倍？</h3>
+                    <p class="text-sm text-slate-300">两列频率相同、振幅相等的波在某点相遇。该点的合振幅是否一定等于 2A（加强）？</p>
+                    <div class="grid sm:grid-cols-2 gap-2">
+                        <button class="poe-opt text-left p-3 rounded-xl bg-space-950 border border-slate-800 hover:border-cyan-400 transition" data-correct="1">不一定，取决于两波到达该点的相位差</button>
+                        <button class="poe-opt text-left p-3 rounded-xl bg-space-950 border border-slate-800 hover:border-cyan-400 transition" data-correct="0">一定加强，振幅恒为 2A</button>
+                    </div>
+                    <div class="poe-explain hidden p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-sm text-slate-200">解析：叠加满足干涉条件，合振幅由相位差决定。相位差为 <span class="math">2k\pi</span> 时加强（最大 2A）；为 <span class="math">(2k+1)\pi</span> 时相消（最小 0）。同理驻波的波节处正是始终相消、不动的点。</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =====================================================================
+             环节三：3D 闪卡排雷 —— 8张
+             ===================================================================== -->
+        <section id="stage-3" class="stage-section hidden space-y-6">
+            <div class="bg-gradient-to-r from-space-800 via-cyan-950/40 to-space-800 rounded-2xl p-5 border border-cyan-500/30 shadow-xl">
+                <div class="flex items-center gap-2">
+                    <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">环节 3 / 4 · 预计 5 分钟</span>
+                    <span class="text-xs text-amber-300"><i class="fa-solid fa-layer-group mr-1"></i>点击卡片翻转</span>
+                </div>
+                <h2 class="text-xl font-bold text-white mt-1">3D 闪卡排雷：核心概念 / 公式 / 图像</h2>
+                <p class="text-sm text-slate-300">八张闪卡覆盖本章最易混淆的概念与公式，点击任意卡片翻面看解释。</p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="flip-card perspective-1000 h-52 cursor-pointer select-none">
+                    <div class="flip-card-inner transform-style-3d relative w-full h-full">
+                        <div class="absolute inset-0 backface-hidden rounded-2xl border border-slate-800 bg-space-900 p-5 flex flex-col justify-center">
+                            <span class="text-xs font-bold text-cyan-300 mb-2">正面 · 概念</span>
+                            <div class="text-white font-semibold">什么是机械波？</div>
+                        </div>
+                        <div class="absolute inset-0 backface-hidden rotate-y-180 rounded-2xl border border-cyan-500/40 bg-gradient-to-br from-space-800 to-indigo-950/40 p-5 flex flex-col justify-center">
+                            <span class="text-xs font-bold text-emerald-300 mb-2">反面 · 解释</span>
+                            <div class="text-slate-200 text-sm">机械振动在弹性介质中的传播。必须同时具备<span class="text-cyan-300 font-medium">波源（振源）</span>与<span class="text-cyan-300 font-medium">弹性介质</span>，真空中不能传播机械波。</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flip-card perspective-1000 h-52 cursor-pointer select-none">
+                    <div class="flip-card-inner transform-style-3d relative w-full h-full">
+                        <div class="absolute inset-0 backface-hidden rounded-2xl border border-slate-800 bg-space-900 p-5 flex flex-col justify-center">
+                            <span class="text-xs font-bold text-cyan-300 mb-2">正面 · 易混</span>
+                            <div class="text-white font-semibold">横波与纵波如何区分？</div>
+                        </div>
+                        <div class="absolute inset-0 backface-hidden rotate-y-180 rounded-2xl border border-cyan-500/40 bg-gradient-to-br from-space-800 to-indigo-950/40 p-5 flex flex-col justify-center">
+                            <span class="text-xs font-bold text-emerald-300 mb-2">反面 · 解释</span>
+                            <div class="text-slate-200 text-sm">看质元振动方向与传播方向：<span class="text-cyan-300 font-medium">垂直</span>→横波（绳波）；<span class="text-cyan-300 font-medium">平行</span>→纵波（声波、弹簧疏密波）。</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flip-card perspective-1000 h-52 cursor-pointer select-none">
+                    <div class="flip-card-inner transform-style-3d relative w-full h-full">
+                        <div class="absolute inset-0 backface-hidden rounded-2xl border border-slate-800 bg-space-900 p-5 flex flex-col justify-center">
+                            <span class="text-xs font-bold text-cyan-300 mb-2">正面 · 公式</span>
+                            <div class="text-white font-semibold">行波波函数怎么写？</div>
+                        </div>
+                        <div class="absolute inset-0 backface-hidden rotate-y-180 rounded-2xl border border-cyan-500/40 bg-gradient-to-br from-space-800 to-indigo-950/40 p-5 flex flex-col justify-center">
+                            <span class="text-xs font-bold text-emerald-300 mb-2">反面 · 解释</span>
+                            <div class="text-slate-200 text-sm"><span class="math">y=A\cos[\omega(t\mp x/u)]</span>：<span class="math">x</span> 处质点在 <span class="math">t</span> 时刻的位移。沿 <span class="math">+x</span> 传用“−”，沿 <span class="math">−x</span> 传用“+”。</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flip-card perspective-1000 h-52 cursor-pointer select-none">
+                    <div class="flip-card-inner transform-style-3d relative w-full h-full">
+                        <div class="absolute inset-0 backface-hidden rounded-2xl border border-slate-800 bg-space-900 p-5 flex flex-col justify-center">
+                            <span class="text-xs font-bold text-cyan-300 mb-2">正面 · 公式</span>
+                            <div class="text-white font-semibold">波速、波长、频率的关系？</div>
+                        </div>
+                        <div class="absolute inset-0 backface-hidden rotate-y-180 rounded-2xl border border-cyan-500/40 bg-gradient-to-br from-space-800 to-indigo-950/40 p-5 flex flex-col justify-center">
+                            <span class="text-xs font-bold text-emerald-300 mb-2">反面 · 解释</span>
+                            <div class="text-slate-200 text-sm"><span class="math">u=\lambda/T=\lambda\nu</span>，且 <span class="math">u=\omega/k</span>。<span class="text-cyan-300 font-medium">波速由介质决定</span>，与频率无关。</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flip-card perspective-1000 h-52 cursor-pointer select-none">
+                    <div class="flip-card-inner transform-style-3d relative w-full h-full">
+                        <div class="absolute inset-0 backface-hidden rounded-2xl border border-slate-800 bg-space-900 p-5 flex flex-col justify-center">
+                            <span class="text-xs font-bold text-cyan-300 mb-2">正面 · 图像</span>
+                            <div class="text-white font-semibold">波形图上某点下一刻往哪动？</div>
+                        </div>
+                        <div class="absolute inset-0 backface-hidden rotate-y-180 rounded-2xl border border-cyan-500/40 bg-gradient-to-br from-space-800 to-indigo-950/40 p-5 flex flex-col justify-center">
+                            <span class="text-xs font-bold text-emerald-300 mb-2">反面 · 解释</span>
+                            <div class="text-slate-200 text-sm">沿波的传播方向看，<span class="text-cyan-300 font-medium">“上坡向下、下坡向上”</span>。该方向是质元振动方向，绝非波的传播方向。</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flip-card perspective-1000 h-52 cursor-pointer select-none">
+                    <div class="flip-card-inner transform-style-3d relative w-full h-full">
+                        <div class="absolute inset-0 backface-hidden rounded-2xl border border-slate-800 bg-space-900 p-5 flex flex-col justify-center">
+                            <span class="text-xs font-bold text-cyan-300 mb-2">正面 · 干涉</span>
+                            <div class="text-white font-semibold">两波干涉加强还是减弱？</div>
+                        </div>
+                        <div class="absolute inset-0 backface-hidden rotate-y-180 rounded-2xl border border-cyan-500/40 bg-gradient-to-br from-space-800 to-indigo-950/40 p-5 flex flex-col justify-center">
+                            <span class="text-xs font-bold text-emerald-300 mb-2">反面 · 解释</span>
+                            <div class="text-slate-200 text-sm">由相位差 <span class="math">\delta=2\pi\Delta x/\lambda</span> 决定：<span class="math">\delta=2k\pi</span> 加强，<span class="math">\delta=(2k+1)\pi</span> 减弱。</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flip-card perspective-1000 h-52 cursor-pointer select-none">
+                    <div class="flip-card-inner transform-style-3d relative w-full h-full">
+                        <div class="absolute inset-0 backface-hidden rounded-2xl border border-slate-800 bg-space-900 p-5 flex flex-col justify-center">
+                            <span class="text-xs font-bold text-cyan-300 mb-2">正面 · 驻波</span>
+                            <div class="text-white font-semibold">驻波的波节、波腹有何特征？</div>
+                        </div>
+                        <div class="absolute inset-0 backface-hidden rotate-y-180 rounded-2xl border border-cyan-500/40 bg-gradient-to-br from-space-800 to-indigo-950/40 p-5 flex flex-col justify-center">
+                            <span class="text-xs font-bold text-emerald-300 mb-2">反面 · 解释</span>
+                            <div class="text-slate-200 text-sm">波节<span class="text-cyan-300 font-medium">始终不动</span>（振幅0），波腹振幅最大。两端固定弦满足 <span class="math">L=n\lambda/2</span>。</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flip-card perspective-1000 h-52 cursor-pointer select-none">
+                    <div class="flip-card-inner transform-style-3d relative w-full h-full">
+                        <div class="absolute inset-0 backface-hidden rounded-2xl border border-slate-800 bg-space-900 p-5 flex flex-col justify-center">
+                            <span class="text-xs font-bold text-cyan-300 mb-2">正面 · 多普勒</span>
+                            <div class="text-white font-semibold">为什么警笛靠近时音调变高？</div>
+                        </div>
+                        <div class="absolute inset-0 backface-hidden rotate-y-180 rounded-2xl border border-cyan-500/40 bg-gradient-to-br from-space-800 to-indigo-950/40 p-5 flex flex-col justify-center">
+                            <span class="text-xs font-bold text-emerald-300 mb-2">反面 · 解释</span>
+                            <div class="text-slate-200 text-sm">观察者与波源相对运动使接收频率改变：<span class="math">f'=f\,\frac{u\pm v_o}{u\mp v_s}</span>。靠近→频率升高（音调高）。</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =====================================================================
+             环节四：迷思图 & AI 学伴 —— 3张迷思卡
+             ===================================================================== -->
+        <section id="stage-4" class="stage-section hidden space-y-6">
+            <div class="bg-gradient-to-r from-space-800 via-amber-950/40 to-space-800 rounded-2xl p-5 border border-amber-500/30 shadow-xl">
+                <div class="flex items-center gap-2">
+                    <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">环节 4 / 4 · 预计 3 分钟</span>
+                    <span class="text-xs text-cyan-300"><i class="fa-solid fa-comments mr-1"></i>AI 学伴随时答疑</span>
+                </div>
+                <h2 class="text-xl font-bold text-white mt-1">迷思图 &amp; AI 学伴：戳破三个高频错误观念</h2>
+                <p class="text-sm text-slate-300">点开每张卡片，揭示你可能在脑子里偷偷相信、却不对的物理直觉。</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="mc-card bg-space-900 rounded-2xl border border-slate-800 p-5 space-y-3">
+                    <div class="flex items-center gap-2"><i class="fa-solid fa-triangle-exclamation text-rose-400"></i><h3 class="text-white font-bold">迷思：波传播物质随波走</h3></div>
+                    <p class="text-sm text-rose-200">常见错误认识：水波把漂在水面的树叶“带”到了对岸，所以波把物质运走了。</p>
+                    <button class="mc-reveal-btn px-3 py-1.5 rounded-lg bg-amber-500/20 text-amber-300 border border-amber-500/30 text-xs font-semibold">揭示正确认知 →</button>
+                    <div class="mc-explain hidden p-3 rounded-xl bg-cyan-500/10 border border-cyan-500/30 text-sm text-slate-200">正确：介质质元只在平衡位置附近振动，不随波迁移。树叶随波“晃动”但最终基本留在原地（被水流带走另当别论）。传播的是振动状态/能量，不是物质本身。</div>
+                </div>
+
+                <div class="mc-card bg-space-900 rounded-2xl border border-slate-800 p-5 space-y-3">
+                    <div class="flex items-center gap-2"><i class="fa-solid fa-triangle-exclamation text-rose-400"></i><h3 class="text-white font-bold">迷思：波速由频率决定</h3></div>
+                    <p class="text-sm text-rose-200">常见错误认识：频率越高，波传播得越快。</p>
+                    <button class="mc-reveal-btn px-3 py-1.5 rounded-lg bg-amber-500/20 text-amber-300 border border-amber-500/30 text-xs font-semibold">揭示正确认知 →</button>
+                    <div class="mc-explain hidden p-3 rounded-xl bg-cyan-500/10 border border-cyan-500/30 text-sm text-slate-200">正确：<span class="text-cyan-300 font-medium">波速由介质决定</span>（如弦的张力与线密度、空气温度与密度）。频率由波源决定；换介质时频率不变、波速变、波长随之改变，但波速不会因频率升高而变大。</div>
+                </div>
+
+                <div class="mc-card bg-space-900 rounded-2xl border border-slate-800 p-5 space-y-3">
+                    <div class="flex items-center gap-2"><i class="fa-solid fa-triangle-exclamation text-rose-400"></i><h3 class="text-white font-bold">迷思：驻波是“静止的波”</h3></div>
+                    <p class="text-sm text-rose-200">常见错误认识：驻波既然叫“驻（静止）”，整列波和每个点都不动了。</p>
+                    <button class="mc-reveal-btn px-3 py-1.5 rounded-lg bg-amber-500/20 text-amber-300 border border-amber-500/30 text-xs font-semibold">揭示正确认知 →</button>
+                    <div class="mc-explain hidden p-3 rounded-xl bg-cyan-500/10 border border-cyan-500/30 text-sm text-slate-200">正确：驻波是<span class="text-cyan-300 font-medium">两列反向相干行波叠加形成的干涉图样</span>，波形不向前传播而已。各质元仍在各自平衡位置附近振动——波节处振幅恒为0（不动），波腹处振动最强，并非整体静止。</div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ==================== 平台适配导出弹窗（雨课堂 / 超星学习通预习回执） ==================== -->
+        <div id="export-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+        <div class="bg-space-900 border border-slate-700 rounded-2xl p-6 w-full max-w-md shadow-2xl">
+            <h3 class="text-lg font-bold text-white mb-3"><i class="fa-solid fa-clipboard-check text-cyan-400 mr-2"></i>预习回执</h3>
+            <textarea id="export-text" rows="6" class="w-full bg-space-950 border border-slate-700 rounded-xl p-3 text-sm text-slate-200"></textarea>
+            <div class="flex justify-end gap-2 mt-4">
+                <button onclick="copyExport()" class="px-3 py-2 rounded-lg bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 text-xs font-semibold">复制</button>
+                <button onclick="closeExportModal()" class="px-3 py-2 rounded-lg bg-slate-700 text-white text-xs font-semibold">关闭</button>
+            </div>
+        </div>
+    </div>
+    <script>
+    (function(){
+      'use strict';
+      var titleEl = document.getElementById('chTitle');
+      var CHAPTER_TITLE = (document.querySelector('h1') ? document.querySelector('h1').textContent : '') || '';
+      // 计时器
+      var remain = 15*60, running = true;
+      var timerEl = document.getElementById('timer-display');
+      var pauseIcon = document.getElementById('timer-pause-icon');
+      function fmt(s){ var m=Math.floor(s/60), x=s%60; return (m<10?'0':'')+m+':'+(x<10?'0':'')+x; }
+      function tick(){ if(!running) return; if(remain>0){ remain--; if(timerEl) timerEl.textContent=fmt(remain); var pct=Math.round((1-remain/900)*100); var bar=document.getElementById('overall-progress-bar'); if(bar) bar.style.width=pct+'%'; var txt=document.getElementById('overall-progress-text'); if(txt) txt.textContent=pct+'%'; } }
+      setInterval(tick,1000);
+      window.toggleTimerPause=function(){ running=!running; if(pauseIcon) pauseIcon.className = running?'fa-solid fa-pause':'fa-solid fa-play'; };
+      // 主题
+      window.toggleThemePanel=function(){ var p=document.getElementById('theme-control-panel'); if(!p) return; p.classList.toggle('hidden'); p.classList.toggle('flex'); };
+      var presets={dark:'#070b14',light:'#f8fafc',green:'#e6f2ea',charcoal:'#141619'};
+      window.applyThemePreset=function(k){ var c=presets[k]; if(!c) return; document.body.style.backgroundColor=c; document.body.classList.toggle('theme-light', k==='light'||k==='green'); ['dark','light','green','charcoal'].forEach(function(x){ var b=document.getElementById('preset-btn-'+x); if(b) b.classList.toggle('ring-2', x===k); }); var badge=document.getElementById('theme-contrast-badge'); if(badge) badge.textContent = (k==='dark'||k==='charcoal')?'暗色高反差':'亮色护眼'; };
+      window.applyCustomBgColor=function(hex){ document.body.style.backgroundColor=hex; };
+      // 阶段切换
+      window.switchStage=function(n){ for(var i=1;i<=4;i++){ var sec=document.getElementById('stage-'+i); if(!sec) continue; sec.classList.toggle('hidden', i!==n); var btn=document.getElementById('nav-stage-'+i); if(btn) btn.classList.toggle('stage-active', i===n); var badge=document.getElementById('badge-stage-'+i); if(badge){ badge.classList.toggle('bg-cyan-400', i===n); badge.classList.toggle('text-space-950', i===n); badge.classList.toggle('bg-slate-800', i!==n); badge.classList.toggle('text-slate-400', i!==n);} } };
+      // 闪卡翻转
+      document.querySelectorAll('.flip-card').forEach(function(c){ c.addEventListener('click', function(){ var inner=c.querySelector('.flip-card-inner'); if(inner) inner.classList.toggle('rotate-y-180'); }); });
+      // POE 揭示
+      document.querySelectorAll('.poe-opt').forEach(function(b){ b.addEventListener('click', function(){ var box=b.closest('.poe-sandbox'); if(!box) return; box.querySelectorAll('.poe-opt').forEach(function(o){ o.disabled=true; }); b.classList.add(b.dataset.correct==='1'?'ring-2 ring-emerald-400':'ring-2 ring-rose-400'); var ex=box.querySelector('.poe-explain'); if(ex) ex.classList.remove('hidden'); }); });
+      // 迷思揭示
+      document.querySelectorAll('.mc-reveal-btn').forEach(function(b){ b.addEventListener('click', function(){ var card=b.closest('.mc-card'); if(!card) return; var ex=card.querySelector('.mc-explain'); if(ex) ex.classList.toggle('hidden'); }); });
+      // 回执
+      window.openExportModal=function(){ var m=document.getElementById('export-modal'); if(m) m.classList.remove('hidden'); var t=document.getElementById('export-text'); if(t) t.value='《力学》智慧课程 · '+CHAPTER_TITLE+'\n预习回执生成于 '+new Date().toLocaleString()+'\n已完成：数学脚手架 / POE图像盲测 / 3D闪卡排雷 / 迷思图&AI学伴 四个环节。'; };
+      window.closeExportModal=function(){ var m=document.getElementById('export-modal'); if(m) m.classList.add('hidden'); };
+      window.copyExport=function(){ var t=document.getElementById('export-text'); if(t&&navigator.clipboard) navigator.clipboard.writeText(t.value); };
+      // 初始
+      switchStage(1);
+    })();
+    </script>
+</body>
+</html>
