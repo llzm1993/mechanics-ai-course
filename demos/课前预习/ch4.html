@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>大学物理《力学》智慧课程 · 第4章：动能定理与功能原理（课前15分钟导学）</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        space: {
+                            950: '#070b14',
+                            900: '#0b1120',
+                            800: '#131c31',
+                            700: '#1e293b',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'PingFang SC', 'Microsoft YaHei', 'sans-serif'],
+                        math: ['Cambria Math', 'Times New Roman', 'serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+        :root {
+            --bg-primary: #070b14;
+            --bg-card: #0b1120;
+            --bg-elevated: #131c31;
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --text-muted: #94a3b8;
+            --border-color: #1e293b;
+            --canvas-bg: #070b14;
+            --canvas-grid: rgba(148, 163, 184, 0.06);
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            background-image: 
+                radial-gradient(at 15% 15%, rgba(34, 211, 238, 0.08) 0px, transparent 45%),
+                radial-gradient(at 85% 20%, rgba(244, 63, 94, 0.07) 0px, transparent 45%),
+                radial-gradient(at 50% 85%, rgba(99, 102, 241, 0.08) 0px, transparent 50%);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        /* 主题背景与卡片自适应映射 */
+        .bg-space-950 { background-color: var(--bg-primary) !important; }
+        .bg-space-950\/80, .bg-space-950\/90, .bg-space-950\/70 { background-color: var(--bg-primary) !important; }
+        .bg-space-900 { background-color: var(--bg-card) !important; }
+        .bg-space-900\/90 { background-color: var(--bg-card) !important; }
+        .bg-space-800 { background-color: var(--bg-elevated) !important; }
+        canvas { background-color: var(--canvas-bg); transition: background-color 0.3s ease; }
+
+        /* 浅色/护眼主题下的高对比度文字与边框自适应 */
+        body.theme-light .text-white,
+        body.theme-light .text-slate-100,
+        body.theme-light .text-slate-200 {
+            color: var(--text-primary) !important;
+        }
+        body.theme-light .text-slate-300 {
+            color: var(--text-secondary) !important;
+        }
+        body.theme-light .text-slate-400 {
+            color: var(--text-muted) !important;
+        }
+        body.theme-light .border-slate-800,
+        body.theme-light .border-slate-800\/80,
+        body.theme-light .border-slate-800\/90,
+        body.theme-light .border-slate-700,
+        body.theme-light .border-slate-700\/80 {
+            border-color: var(--border-color) !important;
+        }
+        body.theme-light .from-space-800 {
+            --tw-gradient-from: var(--bg-elevated) !important;
+            --tw-gradient-to: var(--bg-card) !important;
+            --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important;
+        }
+        body.theme-light .from-space-900 {
+            --tw-gradient-from: var(--bg-card) !important;
+            --tw-gradient-to: var(--bg-elevated) !important;
+            --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important;
+        }
+        body.theme-light .bg-indigo-950\/30,
+        body.theme-light .bg-cyan-950\/30,
+        body.theme-light .bg-emerald-950\/30,
+        body.theme-light .bg-rose-950\/30 {
+            background-color: var(--bg-elevated) !important;
+        }
+        body.theme-light .text-cyan-300,
+        body.theme-light .text-cyan-400 {
+            color: #0284c7 !important;
+        }
+        body.theme-light .text-amber-300,
+        body.theme-light .text-amber-400,
+        body.theme-light .text-amber-200 {
+            color: #b45309 !important;
+        }
+        body.theme-light .text-emerald-300,
+        body.theme-light .text-emerald-400,
+        body.theme-light .text-emerald-200 {
+            color: #047857 !important;
+        }
+        body.theme-light .text-rose-300,
+        body.theme-light .text-rose-400 {
+            color: #be123c !important;
+        }
+        body.theme-light .text-indigo-300,
+        body.theme-light .text-indigo-200 {
+            color: #4338ca !important;
+        }
+
+        /* 数学公式规范排版样式（物理量斜体、单位与算子正体） */
+        .math {
+            font-family: 'Cambria Math', 'Times New Roman', serif;
+            font-style: italic;
+            letter-spacing: 0.02em;
+        }
+        .math-rm {
+            font-family: 'Cambria Math', 'Times New Roman', serif;
+            font-style: normal;
+        }
+        .vec {
+            position: relative;
+            display: inline-block;
+            font-weight: 600;
+        }
+        .vec::after {
+            content: "→";
+            position: absolute;
+            top: -0.58em;
+            left: 50%;
+            transform: translateX(-50%) scale(0.75);
+            font-style: normal;
+            font-weight: 700;
+            line-height: 1;
+        }
+        .dot-top {
+            position: relative;
+            display: inline-block;
+        }
+        .dot-top::after {
+            content: "·";
+            position: absolute;
+            top: -0.55em;
+            left: 50%;
+            transform: translateX(-50%) scale(1.4);
+            font-weight: bold;
+        }
+        .ddot-top {
+            position: relative;
+            display: inline-block;
+        }
+        .ddot-top::after {
+            content: "··";
+            position: absolute;
+            top: -0.55em;
+            left: 50%;
+            transform: translateX(-50%) scale(1.1);
+            letter-spacing: -1px;
+            font-weight: bold;
+        }
+        .frac {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            vertical-align: middle;
+            margin: 0 0.16em;
+            font-size: 0.92em;
+        }
+        .frac > span:first-child {
+            border-bottom: 1.5px solid currentColor;
+            padding: 0 0.25em 0.05em;
+            line-height: 1.15;
+        }
+        .frac > span:last-child {
+            padding: 0.05em 0.25em 0;
+            line-height: 1.15;
+        }
+
+        /* 3D 闪卡翻转特效 */
+        .perspective-1000 {
+            perspective: 1200px;
+        }
+        .transform-style-3d {
+            transform-style: preserve-3d;
+            transition: transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .backface-hidden {
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+        }
+        .rotate-y-180 {
+            transform: rotateY(180deg);
+        }
+
+        /* 自定义滑块样式 */
+        input[type=range] {
+            -webkit-appearance: none;
+            background: #1e293b;
+            height: 6px;
+            border-radius: 999px;
+            outline: none;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #22d3ee;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(34, 211, 238, 0.6);
+            border: 2px solid #0f172a;
+            transition: transform 0.15s ease;
+        }
+        input[type=range]::-webkit-slider-thumb:hover {
+            transform: scale(1.15);
+        }
+
+        /* 网格背景装饰 */
+        .bg-grid-pattern {
+            background-size: 28px 28px;
+            background-image: 
+                linear-gradient(to right, var(--canvas-grid) 1px, transparent 1px),
+                linear-gradient(to bottom, var(--canvas-grid) 1px, transparent 1px);
+        }
+
+        /* 滚动条美化 */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0b1120;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+    
+        /* 阶段导航高亮（通用外壳） */
+        .stage-nav-btn.stage-active {
+          background-color: rgba(34,211,238,0.20) !important;
+          color: #67e8f9 !important;
+          border-color: rgba(34,211,238,0.40) !important;
+        }
+        /* 闪卡翻转（配合 ch2 已有的 .transform-style-3d/.backface-hidden/.rotate-y-180/.perspective-1000） */
+        .flip-card-inner.rotate-y-180 { transform: rotateY(180deg); }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col selection:bg-cyan-500/30 selection:text-cyan-200">
+
+    <!-- ==================== 顶部固定智慧导航栏 ==================== -->
+    <header class="sticky top-0 z-40 backdrop-blur-xl bg-space-900/90 border-b border-slate-800/80 shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3">
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
+                <!-- 左侧课程标题与徽章 -->
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <a href="../../index.html" class="no-print px-3 py-2 rounded-xl bg-space-800 hover:bg-slate-700 text-cyan-300 border border-slate-700 text-xs font-semibold shadow flex items-center gap-1.5 transition-all mr-1" title="返回课程主页"><i class="fa-solid fa-house"></i><span>🏠 返回课程主页</span></a>
+<div class="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-cyan-500/20">
+                            <i class="fa-solid fa-bolt text-white text-lg"></i>
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <span class="text-xs font-semibold uppercase tracking-wider px-2 py-0.5 rounded bg-cyan-500/15 text-cyan-300 border border-cyan-500/30">智慧物理导学</span>
+                                <span class="text-xs text-slate-400 hidden sm:inline">控时长 · 补工具 · 立图像 · 抓迷思</span>
+                            </div>
+                            <h1 class="text-base sm:text-lg font-bold text-white tracking-tight mt-0.5">
+                                大学物理《力学》智慧课程 · 第四章：动能定理与功能原理（课前15分钟导学）
+                            </h1>
+                        </div>
+                    </div>
+                    <!-- 移动端主题与导出按钮 -->
+                    <div class="flex items-center gap-2 lg:hidden">
+                        <button onclick="toggleThemePanel()" class="px-2.5 py-1.5 rounded-lg bg-space-800 text-cyan-300 border border-slate-700 text-xs font-medium shadow flex items-center gap-1">
+                            <i class="fa-solid fa-palette"></i>
+                            <span>🎨 背景调控</span>
+                        </button>
+                        <button onclick="openExportModal()" class="px-3 py-1.5 rounded-lg bg-gradient-to-r from-indigo-600 to-cyan-600 text-white text-xs font-medium shadow">
+                            <i class="fa-solid fa-clipboard-check mr-1"></i>生成回执
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 中部4环节递进导航条 -->
+                <nav class="flex items-center gap-1.5 overflow-x-auto py-1 no-scrollbar">
+                    <button onclick="switchStage(1)" id="nav-stage-1" class="stage-nav-btn flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-all whitespace-nowrap bg-cyan-500/20 text-cyan-300 border border-cyan-500/40">
+                        <span id="badge-stage-1" class="w-5 h-5 rounded-full bg-cyan-400 text-space-950 font-bold flex items-center justify-center text-xs">1</span>
+                        <span>数学脚手架</span>
+                    </button>
+                    <i class="fa-solid fa-chevron-right text-[10px] text-slate-600"></i>
+                    <button onclick="switchStage(2)" id="nav-stage-2" class="stage-nav-btn flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-all whitespace-nowrap text-slate-400 hover:text-slate-200">
+                        <span id="badge-stage-2" class="w-5 h-5 rounded-full bg-slate-800 text-slate-400 font-bold flex items-center justify-center text-xs">2</span>
+                        <span>POE图像盲测</span>
+                    </button>
+                    <i class="fa-solid fa-chevron-right text-[10px] text-slate-600"></i>
+                    <button onclick="switchStage(3)" id="nav-stage-3" class="stage-nav-btn flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-all whitespace-nowrap text-slate-400 hover:text-slate-200">
+                        <span id="badge-stage-3" class="w-5 h-5 rounded-full bg-slate-800 text-slate-400 font-bold flex items-center justify-center text-xs">3</span>
+                        <span>3D闪卡排雷</span>
+                    </button>
+                    <i class="fa-solid fa-chevron-right text-[10px] text-slate-600"></i>
+                    <button onclick="switchStage(4)" id="nav-stage-4" class="stage-nav-btn flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-all whitespace-nowrap text-slate-400 hover:text-slate-200">
+                        <span id="badge-stage-4" class="w-5 h-5 rounded-full bg-slate-800 text-slate-400 font-bold flex items-center justify-center text-xs">4</span>
+                        <span>迷思图&amp;AI学伴</span>
+                    </button>
+                </nav>
+
+                <!-- 右侧：15分钟计时器（可暂停）、背景调控与回执按钮 -->
+                <div class="hidden lg:flex items-center gap-2.5">
+                    <div class="flex items-center gap-2.5 bg-space-950 px-3 py-1.5 rounded-xl border border-slate-800">
+                        <div class="text-right">
+                            <div class="flex items-center gap-1.5">
+                                <button onclick="toggleTimerPause()" id="timer-pause-btn" class="text-[11px] text-cyan-400 hover:text-cyan-300 transition" title="暂停/继续计时">
+                                    <i id="timer-pause-icon" class="fa-solid fa-pause"></i>
+                                </button>
+                                <span class="text-[11px] text-slate-400">预习控时</span>
+                                <span id="timer-display" class="text-xs font-mono font-bold text-cyan-300">15:00</span>
+                            </div>
+                            <div class="w-24 h-1.5 bg-slate-800 rounded-full overflow-hidden mt-1">
+                                <div id="overall-progress-bar" class="h-full bg-gradient-to-r from-cyan-400 to-emerald-400 transition-all duration-500" style="width: 15%"></div>
+                            </div>
+                        </div>
+                        <span id="overall-progress-text" class="text-xs font-bold text-emerald-400">15%</span>
+                    </div>
+
+                    <!-- 背景与护眼配色调控按钮 -->
+                    <button onclick="toggleThemePanel()" id="theme-toggle-btn" class="px-3 py-2 rounded-xl bg-space-800 hover:bg-slate-700 text-cyan-300 border border-slate-700 text-xs font-semibold shadow flex items-center gap-1.5 transition-all" title="切换护眼背景色与自定义配色">
+                        <i class="fa-solid fa-palette"></i>
+                        <span>🎨 背景调控</span>
+                    </button>
+
+                    <button onclick="openExportModal()" class="px-3.5 py-2 rounded-xl bg-gradient-to-r from-indigo-600 via-cyan-600 to-teal-600 hover:from-indigo-500 hover:to-teal-500 text-white text-xs font-semibold shadow-lg shadow-cyan-500/15 flex items-center gap-2 transition-all">
+                        <i class="fa-solid fa-clipboard-check"></i>
+                        <span>📋 雨课堂/学习通回执</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 展开式背景颜色与护眼主题调控面板 -->
+            <div id="theme-control-panel" class="hidden mt-3 pt-3 border-t border-slate-800/80 flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-space-950/90 p-3 rounded-xl border border-slate-800">
+                <div class="flex flex-wrap items-center gap-2">
+                    <span class="text-xs font-bold text-slate-300 mr-1"><i class="fa-solid fa-eye-low-vision text-cyan-400 mr-1"></i>预设背景主题：</span>
+                    <button onclick="applyThemePreset('dark')" id="preset-btn-dark" class="px-2.5 py-1.5 rounded-lg text-xs font-medium border border-cyan-400 bg-[#070b14] text-slate-100 flex items-center gap-1.5 shadow-sm transition ring-2 ring-cyan-400">
+                        <span class="w-3 h-3 rounded-full bg-[#070b14] border border-cyan-400"></span>🌌 默认深空蓝
+                    </button>
+                    <button onclick="applyThemePreset('light')" id="preset-btn-light" class="px-2.5 py-1.5 rounded-lg text-xs font-medium border border-slate-600 bg-[#f8fafc] text-slate-900 flex items-center gap-1.5 shadow-sm transition">
+                        <span class="w-3 h-3 rounded-full bg-[#ffffff] border border-slate-400"></span>☀️ 明亮护眼白
+                    </button>
+                    <button onclick="applyThemePreset('green')" id="preset-btn-green" class="px-2.5 py-1.5 rounded-lg text-xs font-medium border border-slate-600 bg-[#e6f2ea] text-[#132a1c] flex items-center gap-1.5 shadow-sm transition">
+                        <span class="w-3 h-3 rounded-full bg-[#a3d9b5] border border-emerald-700"></span>🍵 豆沙护眼绿
+                    </button>
+                    <button onclick="applyThemePreset('charcoal')" id="preset-btn-charcoal" class="px-2.5 py-1.5 rounded-lg text-xs font-medium border border-slate-600 bg-[#141619] text-[#e5e7eb] flex items-center gap-1.5 shadow-sm transition">
+                        <span class="w-3 h-3 rounded-full bg-[#272a30] border border-slate-400"></span>🌙 极夜深灰
+                    </button>
+                </div>
+
+                <!-- 自定义颜色拾取器（自动计算明度适配深浅文字与Canvas重绘） -->
+                <div class="flex items-center gap-2.5 self-end sm:self-auto">
+                    <label for="custom-bg-picker" class="text-xs text-slate-300 flex items-center gap-1.5 cursor-pointer">
+                        <span>自定义背景色：</span>
+                        <input type="color" id="custom-bg-picker" value="#070b14" oninput="applyCustomBgColor(this.value)" class="w-7 h-7 rounded cursor-pointer border border-slate-600 bg-transparent p-0">
+                    </label>
+                    <span id="theme-contrast-badge" class="text-[11px] px-2 py-0.5 rounded bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 font-mono">默认深空蓝 · 暗色高反差</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- ==================== 主体内容容器 ==================== -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6">
+        <!-- =====================================================================
+             环节一：数学脚手架前置 —— 3分钟“微工具”唤醒
+             ===================================================================== -->
+        <section id="stage-1" class="stage-section space-y-6">
+            <!-- 环节导语横幅 -->
+            <div class="bg-gradient-to-r from-space-800 via-indigo-950/60 to-space-800 rounded-2xl p-5 border border-indigo-500/30 shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div class="space-y-1">
+                    <div class="flex items-center gap-2">
+                        <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">环节 1 / 4 · 预计 3 分钟</span>
+                        <span class="text-xs text-amber-300"><i class="fa-solid fa-screwdriver-wrench mr-1"></i>微元积分与标量功脚手架</span>
+                    </div>
+                    <h2 class="text-xl font-bold text-white">数学脚手架前置：3分钟“微工具”唤醒</h2>
+                    <p class="text-sm text-slate-300">预习第四章“动能定理与功能原理”前，先打通三个高频数理卡点：<span class="text-cyan-300 font-medium">变力做功的线积分</span>、<span class="text-amber-300 font-medium">动能定理的标量本质</span>，以及<span class="text-emerald-300 font-medium">保守力与势能的系统观</span>。</p>
+                </div>
+            </div>
+
+            <!-- 三张微工具/卡点卡片 -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- 微工具 A -->
+                <div class="bg-space-900 rounded-2xl border border-slate-800 p-5 space-y-3 shadow-xl">
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs font-bold uppercase tracking-wider px-2.5 py-1 rounded bg-cyan-500/15 text-cyan-300 border border-cyan-500/30">微工具 A · 功的线积分</span>
+                    </div>
+                    <h3 class="text-base font-bold text-white">变力做功：元功与点积</h3>
+                    <p class="text-xs text-slate-300 leading-relaxed">位移微元 <span class="math">d<span class="vec">r</span></span> 上力的微元功为 <span class="math">dW = <span class="vec">F</span>&middot;d<span class="vec">r</span></span>；总功是沿路径的线积分（标量）。</p>
+                    <div class="bg-space-950 rounded-xl p-3 border border-slate-800 text-center">
+                        <span class="math text-sm text-white">W = &int;<sub>A</sub><sup>B</sup> <span class="vec">F</span>&middot;d<span class="vec">r</span> = &int; (<span class="vec">F</span>&middot;<span class="vec">v</span>) dt</span>
+                    </div>
+                    <div class="p-3 rounded-xl bg-rose-500/10 border border-rose-500/25 text-xs space-y-1">
+                        <div class="font-bold text-rose-300 flex items-center gap-1.5"><i class="fa-solid fa-circle-question"></i> 常见卡壳点：</div>
+                        <p class="text-slate-300">误把变力做功当成 <span class="math">F&middot;s</span>（恒力公式）。力随位置变化时必须积分；点积意味着只有<b>沿位移方向</b>的分力做功，垂直分量不做功。</p>
+                    </div>
+                </div>
+
+                <!-- 微工具 B -->
+                <div class="bg-space-900 rounded-2xl border border-slate-800 p-5 space-y-3 shadow-xl">
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs font-bold uppercase tracking-wider px-2.5 py-1 rounded bg-amber-500/15 text-amber-300 border border-amber-500/30">微工具 B · 动能定理</span>
+                    </div>
+                    <h3 class="text-base font-bold text-white">合外力功 = 动能增量</h3>
+                    <p class="text-xs text-slate-300 leading-relaxed">对单个质点，所有力做功的代数和等于动能变化，与路径、过程无关：</p>
+                    <div class="bg-space-950 rounded-xl p-3 border border-slate-800 text-center">
+                        <span class="math text-sm text-white">W<sub>合</sub> = &Delta;E<sub>k</sub> = <span class="frac"><span>&frac12;m v<sup>2</sup></span><span>&minus; &frac12;m v<sub>0</sub><sup>2</sup></span></span></span>
+                    </div>
+                    <div class="p-3 rounded-xl bg-rose-500/10 border border-rose-500/25 text-xs space-y-1">
+                        <div class="font-bold text-rose-300 flex items-center gap-1.5"><i class="fa-solid fa-circle-question"></i> 常见卡壳点：</div>
+                        <p class="text-slate-300">瞬时功率 <span class="math">P = <span class="frac"><span>dW</span><span>dt</span></span> = <span class="vec">F</span>&middot;<span class="vec">v</span></span> 是<b>点积</b>，仅当力与速度同向才简写为 <span class="math">P = Fv</span>；动能定理对曲线运动同样成立，不必先分解力。</p>
+                    </div>
+                </div>
+
+                <!-- 微工具 C -->
+                <div class="bg-space-900 rounded-2xl border border-slate-800 p-5 space-y-3 shadow-xl">
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs font-bold uppercase tracking-wider px-2.5 py-1 rounded bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">微工具 C · 保守力与势能</span>
+                    </div>
+                    <h3 class="text-base font-bold text-white">保守力 → 势能（系统观）</h3>
+                    <p class="text-xs text-slate-300 leading-relaxed">重力、弹力、万有引力、静电力为保守力，做功与路径无关，可定义势能 <span class="math">E<sub>p</sub></span> 使 <span class="math">W<sub>保</sub> = &minus;&Delta;E<sub>p</sub></span>。</p>
+                    <div class="bg-space-950 rounded-xl p-3 border border-slate-800 space-y-1.5 text-center">
+                        <div class="math text-sm text-white">重力：E<sub>p</sub> = mgh</div>
+                        <div class="math text-sm text-white">弹性：E<sub>p</sub> = <span class="frac"><span>1</span><span>2</span></span>k x<sup>2</sup></div>
+                        <div class="math text-sm text-white">引力：E<sub>p</sub> = &minus;<span class="frac"><span>G M m</span><span>r</span></span></div>
+                    </div>
+                    <div class="p-3 rounded-xl bg-rose-500/10 border border-rose-500/25 text-xs space-y-1">
+                        <div class="font-bold text-rose-300 flex items-center gap-1.5"><i class="fa-solid fa-circle-question"></i> 常见卡壳点：</div>
+                        <p class="text-slate-300">势能属于“<b>物体 + 场源</b>”系统，不是单个物体的属性；重力势能零点可任选，差值才有意义。一对内力的功与参考系无关。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =====================================================================
+             环节二：POE 图像盲测 —— 2 个反直觉预测
+             ===================================================================== -->
+        <section id="stage-2" class="stage-section space-y-6 hidden">
+            <div class="bg-gradient-to-r from-space-800 via-indigo-950/60 to-space-800 rounded-2xl p-5 border border-indigo-500/30 shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div class="space-y-1">
+                    <div class="flex items-center gap-2">
+                        <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">环节 2 / 4 · 预计 4 分钟</span>
+                        <span class="text-xs text-amber-300"><i class="fa-solid fa-eye mr-1"></i>预测-观察-解释</span>
+                    </div>
+                    <h2 class="text-xl font-bold text-white">POE 图像盲测：先预测，再揭示</h2>
+                    <p class="text-sm text-slate-300">在揭晓解析前，凭直觉做出选择。重点关注<span class="text-cyan-300 font-medium">“做功是否与路径有关”</span>与<span class="text-amber-300 font-medium">“一对内力总功”</span>这两个易错图像。</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- 沙盒 1 -->
+                <div class="poe-sandbox bg-space-900 rounded-2xl border border-slate-800 p-5 space-y-3">
+                    <h3 class="text-white font-bold">沙盒 ①：不同路径，重力做功一样吗？</h3>
+                    <p class="text-sm text-slate-300">两质量相同的滑块分别自同一高台 A 沿“直滑梯”和“螺旋盘旋滑梯”（无摩擦）滑到地面 B。两路径长度相差很大。重力对两滑块做的功相比如何？</p>
+                    <div class="grid sm:grid-cols-2 gap-2">
+                        <button class="poe-opt text-left p-3 rounded-xl bg-space-950 border border-slate-800 hover:border-cyan-400 transition" data-correct="1">一样多——只取决于高度差 <span class="math">h</span>，与路径无关</button>
+                        <button class="poe-opt text-left p-3 rounded-xl bg-space-950 border border-slate-800 hover:border-cyan-400 transition" data-correct="0">路径长的那个重力做功更多</button>
+                    </div>
+                    <div class="poe-explain hidden p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-sm text-slate-200">重力是保守力，<span class="math">W<sub>G</sub> = mgh</span> 仅由初末位置的高度差决定，与路径形状、长度均无关。无论直下还是盘旋，只要起点与终点高度相同，重力做功就相同。</div>
+                </div>
+
+                <!-- 沙盒 2 -->
+                <div class="poe-sandbox bg-space-900 rounded-2xl border border-slate-800 p-5 space-y-3">
+                    <h3 class="text-white font-bold">沙盒 ②：滑动摩擦力，“总功”到底多少？</h3>
+                    <p class="text-sm text-slate-300">木块在粗糙水平地面上滑行距离 <span class="math">s</span> 后停下。木块受地面滑动摩擦力 <span class="math">f</span> 向左，地面受木块摩擦力向右但地面不动。这一对滑动摩擦力的总功是多少？</p>
+                    <div class="grid sm:grid-cols-2 gap-2">
+                        <button class="poe-opt text-left p-3 rounded-xl bg-space-950 border border-slate-800 hover:border-cyan-400 transition" data-correct="1">总功为负 <span class="math">W<sub>总</sub> = &minus;f s</span>，转化为内能（生热）</button>
+                        <button class="poe-opt text-left p-3 rounded-xl bg-space-950 border border-slate-800 hover:border-cyan-400 transition" data-correct="0">地面不动所以摩擦力不做功，系统总功为零</button>
+                    </div>
+                    <div class="poe-explain hidden p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-sm text-slate-200">单个力的功看其受力物体的位移：木块位移 <span class="math">s</span> 做负功 <span class="math">&minus;fs</span>，地面位移为 0 做功为 0，故总功 <span class="math">&minus;fs = &minus;f&middot;s<sub>相对</sub></span>，即摩擦生热。注意“一对内力功”与参考系选择无关。</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =====================================================================
+             环节三：3D 闪卡排雷 —— 8 张核心概念卡
+             ===================================================================== -->
+        <section id="stage-3" class="stage-section space-y-6 hidden">
+            <div class="bg-gradient-to-r from-space-800 via-indigo-950/60 to-space-800 rounded-2xl p-5 border border-indigo-500/30 shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div class="space-y-1">
+                    <div class="flex items-center gap-2">
+                        <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">环节 3 / 4 · 预计 5 分钟</span>
+                        <span class="text-xs text-amber-300"><i class="fa-solid fa-layer-group mr-1"></i>点击翻转</span>
+                    </div>
+                    <h2 class="text-xl font-bold text-white">3D 闪卡排雷：核心概念 / 公式 / 图像</h2>
+                    <p class="text-sm text-slate-300">点击任意卡片翻面查看解释与公式。覆盖<span class="text-cyan-300 font-medium">功与动能定理</span>、<span class="text-amber-300 font-medium">保守力与势能</span>、<span class="text-emerald-300 font-medium">功能原理与守恒条件</span>。</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <!-- 卡 1 -->
+                <div class="flip-card perspective-1000 h-52 cursor-pointer select-none">
+                    <div class="flip-card-inner transform-style-3d relative w-full h-full">
+                        <div class="absolute inset-0 backface-hidden rounded-2xl border border-slate-800 bg-space-900 p-5 flex flex-col justify-center">
+                            <span class="text-xs font-bold text-cyan-300 mb-2">正面 · 概念</span>
+                            <div class="text-white font-semibold">功是什么量？如何定义？</div>
+                        </div>
+                        <div class="absolute inset-0 backface-hidden rotate-y-180 rounded-2xl border border-cyan-500/40 bg-gradient-to-br from-space-800 to-indigo-950/40 p-5 flex flex-col justify-center">
+                            <span class="text-xs font-bold text-emerald-300 mb-2">反面 · 解释</span>
+                            <div class="text-slate-200 text-sm">功是<b>标量</b>（力与位移的点积）。元功 <span class="math">dW = <span class="vec">F</span>&middot;d<span class="vec">r</span></span>，总功 <span class="math">W = &int;<span class="vec">F</span>&middot;d<span class="vec">r</span></span>。正负表示能量流向。</div>
+                        </div>
+                    </div>
+                </div>
+                <!-- 卡 2 -->
+                <div class="flip-card perspective-1000 h-52 cursor-pointer select-none">
+                    <div class="flip-card-inner transform-style-3d relative w-full h-full">
+                        <div class="absolute inset-0 backface-hidden rounded-2xl border border-slate-800 bg-space-900 p-5 flex flex-col justify-center">
+                            <span class="text-xs font-bold text-cyan-300 mb-2">正面 · 公式</span>
+                            <div class="text-white font-semibold">动能定理</div>
+                        </div>
+                        <div class="absolute inset-0 backface-hidden rotate-y-180 rounded-2xl border border-cyan-500/40 bg-gradient-to-br from-space-800 to-indigo-950/40 p-5 flex flex-col justify-center">
+                            <span class="text-xs font-bold text-emerald-300 mb-2">反面 · 公式</span>
+                            <div class="text-slate-200 text-sm">对质点：<span class="math">W<sub>合</sub> = &Delta;E<sub>k</sub> = <span class="frac"><span>&frac12;m v<sup>2</sup></span><span>&minus; &frac12;m v<sub>0</sub><sup>2</sup></span></span></span>。合外力功直接给出动能变化。</div>
+                        </div>
+                    </div>
+                </div>
+                <!-- 卡 3 -->
+                <div class="flip-card perspective-1000 h-52 cursor-pointer select-none">
+                    <div class="flip-card-inner transform-style-3d relative w-full h-full">
+                        <div class="absolute inset-0 backface-hidden rounded-2xl border border-slate-800 bg-space-900 p-5 flex flex-col justify-center">
+                            <span class="text-xs font-bold text-cyan-300 mb-2">正面 · 概念</span>
+                            <div class="text-white font-semibold">什么是保守力？</div>
+                        </div>
+                        <div class="absolute inset-0 backface-hidden rotate-y-180 rounded-2xl border border-cyan-500/40 bg-gradient-to-br from-space-800 to-indigo-950/40 p-5 flex flex-col justify-center">
+                            <span class="text-xs font-bold text-emerald-300 mb-2">反面 · 解释</span>
+                            <div class="text-slate-200 text-sm">做功与<b>路径无关</b>、只由初末位置决定的力。如重力、弹力、万有引力、静电力。沿闭合路径做功为零。</div>
+                        </div>
+                    </div>
+                </div>
+                <!-- 卡 4 -->
+                <div class="flip-card perspective-1000 h-52 cursor-pointer select-none">
+                    <div class="flip-card-inner transform-style-3d relative w-full h-full">
+                        <div class="absolute inset-0 backface-hidden rounded-2xl border border-slate-800 bg-space-900 p-5 flex flex-col justify-center">
+                            <span class="text-xs font-bold text-cyan-300 mb-2">正面 · 公式</span>
+                            <div class="text-white font-semibold">三种势能表达式</div>
+                        </div>
+                        <div class="absolute inset-0 backface-hidden rotate-y-180 rounded-2xl border border-cyan-500/40 bg-gradient-to-br from-space-800 to-indigo-950/40 p-5 flex flex-col justify-center">
+                            <span class="text-xs font-bold text-emerald-300 mb-2">反面 · 公式</span>
+                            <div class="text-slate-200 text-sm">重力 <span class="math">mgh</span>；弹性 <span class="math"><span class="frac"><span>1</span><span>2</span></span>k x<sup>2</sup></span>；引力 <span class="math">&minus;<span class="frac"><span>G M m</span><span>r</span></span></span>。势能属于系统。</div>
+                        </div>
+                    </div>
+                </div>
+                <!-- 卡 5 -->
+                <div class="flip-card perspective-1000 h-52 cursor-pointer select-none">
+                    <div class="flip-card-inner transform-style-3d relative w-full h-full">
+                        <div class="absolute inset-0 backface-hidden rounded-2xl border border-slate-800 bg-space-900 p-5 flex flex-col justify-center">
+                            <span class="text-xs font-bold text-cyan-300 mb-2">正面 · 公式</span>
+                            <div class="text-white font-semibold">瞬时功率</div>
+                        </div>
+                        <div class="absolute inset-0 backface-hidden rotate-y-180 rounded-2xl border border-cyan-500/40 bg-gradient-to-br from-space-800 to-indigo-950/40 p-5 flex flex-col justify-center">
+                            <span class="text-xs font-bold text-emerald-300 mb-2">反面 · 公式</span>
+                            <div class="text-slate-200 text-sm"><span class="math">P = <span class="frac"><span>dW</span><span>dt</span></span> = <span class="vec">F</span>&middot;<span class="vec">v</span></span>。是点积；同向时 <span class="math">P = Fv</span>，单位 1 W = 1 J/s。</div>
+                        </div>
+                    </div>
+                </div>
+                <!-- 卡 6 -->
+                <div class="flip-card perspective-1000 h-52 cursor-pointer select-none">
+                    <div class="flip-card-inner transform-style-3d relative w-full h-full">
+                        <div class="absolute inset-0 backface-hidden rounded-2xl border border-slate-800 bg-space-900 p-5 flex flex-col justify-center">
+                            <span class="text-xs font-bold text-cyan-300 mb-2">正面 · 公式</span>
+                            <div class="text-white font-semibold">功能原理</div>
+                        </div>
+                        <div class="absolute inset-0 backface-hidden rotate-y-180 rounded-2xl border border-cyan-500/40 bg-gradient-to-br from-space-800 to-indigo-950/40 p-5 flex flex-col justify-center">
+                            <span class="text-xs font-bold text-emerald-300 mb-2">反面 · 公式</span>
+                            <div class="text-slate-200 text-sm">对系统：<span class="math">W<sub>非保</sub> = &Delta;E = &Delta;E<sub>k</sub> + &Delta;E<sub>p</sub></span>。非保守力功等于系统机械能增量。</div>
+                        </div>
+                    </div>
+                </div>
+                <!-- 卡 7 -->
+                <div class="flip-card perspective-1000 h-52 cursor-pointer select-none">
+                    <div class="flip-card-inner transform-style-3d relative w-full h-full">
+                        <div class="absolute inset-0 backface-hidden rounded-2xl border border-slate-800 bg-space-900 p-5 flex flex-col justify-center">
+                            <span class="text-xs font-bold text-cyan-300 mb-2">正面 · 条件</span>
+                            <div class="text-white font-semibold">机械能守恒条件</div>
+                        </div>
+                        <div class="absolute inset-0 backface-hidden rotate-y-180 rounded-2xl border border-cyan-500/40 bg-gradient-to-br from-space-800 to-indigo-950/40 p-5 flex flex-col justify-center">
+                            <span class="text-xs font-bold text-emerald-300 mb-2">反面 · 解释</span>
+                            <div class="text-slate-200 text-sm">当且仅当 <span class="math">W<sub>非保</sub> = 0</span>（只有保守力做功）时，<span class="math">E = E<sub>k</sub> + E<sub>p</sub></span> 保持不变。有摩擦生热则不守恒。</div>
+                        </div>
+                    </div>
+                </div>
+                <!-- 卡 8 -->
+                <div class="flip-card perspective-1000 h-52 cursor-pointer select-none">
+                    <div class="flip-card-inner transform-style-3d relative w-full h-full">
+                        <div class="absolute inset-0 backface-hidden rounded-2xl border border-slate-800 bg-space-900 p-5 flex flex-col justify-center">
+                            <span class="text-xs font-bold text-cyan-300 mb-2">正面 · 概念</span>
+                            <div class="text-white font-semibold">一对内力的功</div>
+                        </div>
+                        <div class="absolute inset-0 backface-hidden rotate-y-180 rounded-2xl border border-cyan-500/40 bg-gradient-to-br from-space-800 to-indigo-950/40 p-5 flex flex-col justify-center">
+                            <span class="text-xs font-bold text-emerald-300 mb-2">反面 · 解释</span>
+                            <div class="text-slate-200 text-sm">系统内一对作用力与反作用力做功之和 <b>与参考系无关</b>，只取决于相对位移，可正可负（如滑动摩擦生热为负）。</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =====================================================================
+             环节四：迷思图 & AI 学伴 —— 3 张迷思卡
+             ===================================================================== -->
+        <section id="stage-4" class="stage-section space-y-6 hidden">
+            <div class="bg-gradient-to-r from-space-800 via-indigo-950/60 to-space-800 rounded-2xl p-5 border border-indigo-500/30 shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div class="space-y-1">
+                    <div class="flex items-center gap-2">
+                        <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">环节 4 / 4 · 预计 3 分钟</span>
+                        <span class="text-xs text-amber-300"><i class="fa-solid fa-comments mr-1"></i>高频错误观念纠偏</span>
+                    </div>
+                    <h2 class="text-xl font-bold text-white">迷思图 &amp; AI 学伴：排雷收尾</h2>
+                    <p class="text-sm text-slate-300">点击“揭示正确认知”核对你的理解。若仍有疑问，可在课堂或 AI 学伴中追问。</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- 迷思 1 -->
+                <div class="mc-card bg-space-900 rounded-2xl border border-slate-800 p-5 space-y-3">
+                    <div class="flex items-center gap-2"><i class="fa-solid fa-triangle-exclamation text-rose-400"></i><h3 class="text-white font-bold">迷思：功是矢量</h3></div>
+                    <p class="text-sm text-rose-200">常见错误认识：功有方向，可以像力一样合成与分解。</p>
+                    <button class="mc-reveal-btn px-3 py-1.5 rounded-lg bg-amber-500/20 text-amber-300 border border-amber-500/30 text-xs font-semibold">揭示正确认知 →</button>
+                    <div class="mc-explain hidden p-3 rounded-xl bg-cyan-500/10 border border-cyan-500/30 text-sm text-slate-200">正确：功是<b>标量</b>（力与位移的点积 <span class="math"><span class="vec">F</span>&middot;<span class="vec">r</span></span>）。它只有正负、没有方向；正功表示动力输入能量，负功表示阻力消耗能量。</div>
+                </div>
+                <!-- 迷思 2 -->
+                <div class="mc-card bg-space-900 rounded-2xl border border-slate-800 p-5 space-y-3">
+                    <div class="flex items-center gap-2"><i class="fa-solid fa-triangle-exclamation text-rose-400"></i><h3 class="text-white font-bold">迷思：动能定理 = 功能原理</h3></div>
+                    <p class="text-sm text-rose-200">常见错误认识：两者是一回事，随便用哪一个都行。</p>
+                    <button class="mc-reveal-btn px-3 py-1.5 rounded-lg bg-amber-500/20 text-amber-300 border border-amber-500/30 text-xs font-semibold">揭示正确认知 →</button>
+                    <div class="mc-explain hidden p-3 rounded-xl bg-cyan-500/10 border border-cyan-500/30 text-sm text-slate-200">正确：动能定理 <span class="math">W<sub>合</sub> = &Delta;E<sub>k</sub></span> 针对<b>单个质点</b>；功能原理 <span class="math">W<sub>非保</sub> = &Delta;E</span> 针对<b>系统</b>，引入了势能。对质点用动能定理，对含势能的系统才用功能原理。</div>
+                </div>
+                <!-- 迷思 3 -->
+                <div class="mc-card bg-space-900 rounded-2xl border border-slate-800 p-5 space-y-3">
+                    <div class="flex items-center gap-2"><i class="fa-solid fa-triangle-exclamation text-rose-400"></i><h3 class="text-white font-bold">迷思：势能属于单个物体</h3></div>
+                    <p class="text-sm text-rose-200">常见错误认识：“物体的重力势能”只属于该物体本身。</p>
+                    <button class="mc-reveal-btn px-3 py-1.5 rounded-lg bg-amber-500/20 text-amber-300 border border-amber-500/30 text-xs font-semibold">揭示正确认知 →</button>
+                    <div class="mc-explain hidden p-3 rounded-xl bg-cyan-500/10 border border-cyan-500/30 text-sm text-slate-200">正确：势能是<b>相互作用能</b>，属于“物体 + 场源（如地球）”组成的系统。说“物体的势能”只是一种简略说法，脱离系统无从定义势能。</div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+        <!-- ==================== 平台适配导出弹窗（雨课堂 / 超星学习通预习回执） ==================== -->
+    <div id="export-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+        <div class="bg-space-900 border border-slate-700 rounded-2xl p-6 w-full max-w-md shadow-2xl">
+            <h3 class="text-lg font-bold text-white mb-3"><i class="fa-solid fa-clipboard-check text-cyan-400 mr-2"></i>预习回执</h3>
+            <textarea id="export-text" rows="6" class="w-full bg-space-950 border border-slate-700 rounded-xl p-3 text-sm text-slate-200"></textarea>
+            <div class="flex justify-end gap-2 mt-4">
+                <button onclick="copyExport()" class="px-3 py-2 rounded-lg bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 text-xs font-semibold">复制</button>
+                <button onclick="closeExportModal()" class="px-3 py-2 rounded-lg bg-slate-700 text-white text-xs font-semibold">关闭</button>
+            </div>
+        </div>
+    </div>
+
+
+<!-- ==================== 核心交互与物理仿真脚本 ==================== -->
+        <script>
+    (function(){
+      'use strict';
+      var titleEl = document.getElementById('chTitle');
+      var CHAPTER_TITLE = (document.querySelector('h1') ? document.querySelector('h1').textContent : '') || '';
+      // 计时器
+      var remain = 15*60, running = true;
+      var timerEl = document.getElementById('timer-display');
+      var pauseIcon = document.getElementById('timer-pause-icon');
+      function fmt(s){ var m=Math.floor(s/60), x=s%60; return (m<10?'0':'')+m+':'+(x<10?'0':'')+x; }
+      function tick(){ if(!running) return; if(remain>0){ remain--; if(timerEl) timerEl.textContent=fmt(remain); var pct=Math.round((1-remain/900)*100); var bar=document.getElementById('overall-progress-bar'); if(bar) bar.style.width=pct+'%'; var txt=document.getElementById('overall-progress-text'); if(txt) txt.textContent=pct+'%'; } }
+      setInterval(tick,1000);
+      window.toggleTimerPause=function(){ running=!running; if(pauseIcon) pauseIcon.className = running?'fa-solid fa-pause':'fa-solid fa-play'; };
+      // 主题
+      window.toggleThemePanel=function(){ var p=document.getElementById('theme-control-panel'); if(!p) return; p.classList.toggle('hidden'); p.classList.toggle('flex'); };
+      var presets={dark:'#070b14',light:'#f8fafc',green:'#e6f2ea',charcoal:'#141619'};
+      window.applyThemePreset=function(k){ var c=presets[k]; if(!c) return; document.body.style.backgroundColor=c; document.body.classList.toggle('theme-light', k==='light'||k==='green'); ['dark','light','green','charcoal'].forEach(function(x){ var b=document.getElementById('preset-btn-'+x); if(b) b.classList.toggle('ring-2', x===k); }); var badge=document.getElementById('theme-contrast-badge'); if(badge) badge.textContent = (k==='dark'||k==='charcoal')?'暗色高反差':'亮色护眼'; };
+      window.applyCustomBgColor=function(hex){ document.body.style.backgroundColor=hex; };
+      // 阶段切换
+      window.switchStage=function(n){ for(var i=1;i<=4;i++){ var sec=document.getElementById('stage-'+i); if(!sec) continue; sec.classList.toggle('hidden', i!==n); var btn=document.getElementById('nav-stage-'+i); if(btn) btn.classList.toggle('stage-active', i===n); var badge=document.getElementById('badge-stage-'+i); if(badge){ badge.classList.toggle('bg-cyan-400', i===n); badge.classList.toggle('text-space-950', i===n); badge.classList.toggle('bg-slate-800', i!==n); badge.classList.toggle('text-slate-400', i!==n);} } };
+      // 闪卡翻转
+      document.querySelectorAll('.flip-card').forEach(function(c){ c.addEventListener('click', function(){ var inner=c.querySelector('.flip-card-inner'); if(inner) inner.classList.toggle('rotate-y-180'); }); });
+      // POE 揭示
+      document.querySelectorAll('.poe-opt').forEach(function(b){ b.addEventListener('click', function(){ var box=b.closest('.poe-sandbox'); if(!box) return; box.querySelectorAll('.poe-opt').forEach(function(o){ o.disabled=true; }); b.classList.add(b.dataset.correct==='1'?'ring-2 ring-emerald-400':'ring-2 ring-rose-400'); var ex=box.querySelector('.poe-explain'); if(ex) ex.classList.remove('hidden'); }); });
+      // 迷思揭示
+      document.querySelectorAll('.mc-reveal-btn').forEach(function(b){ b.addEventListener('click', function(){ var card=b.closest('.mc-card'); if(!card) return; var ex=card.querySelector('.mc-explain'); if(ex) ex.classList.toggle('hidden'); }); });
+      // 回执
+      window.openExportModal=function(){ var m=document.getElementById('export-modal'); if(m) m.classList.remove('hidden'); var t=document.getElementById('export-text'); if(t) t.value='《力学》智慧课程 · '+CHAPTER_TITLE+'\n预习回执生成于 '+new Date().toLocaleString()+'\n已完成：数学脚手架 / POE图像盲测 / 3D闪卡排雷 / 迷思图&AI学伴 四个环节。'; };
+      window.closeExportModal=function(){ var m=document.getElementById('export-modal'); if(m) m.classList.add('hidden'); };
+      window.copyExport=function(){ var t=document.getElementById('export-text'); if(t&&navigator.clipboard) navigator.clipboard.writeText(t.value); };
+      // 初始
+      switchStage(1);
+    })();
+    </script>
+
+</body>
+</html>
