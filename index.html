@@ -185,6 +185,7 @@
     .phase-pre .phase-no { color: var(--accent-rose); background: rgba(251,113,133,0.10); }
     .phase-demo .phase-no { color: var(--accent-amber); background: rgba(251,191,36,0.10); }
     .phase-card .phase-no { color: var(--accent-blue); background: rgba(56,189,248,0.10); }
+    .phase-exercise .phase-no { color: var(--accent-emerald); background: rgba(52,211,153,0.10); }
 
     /* ===== 章节网格 ===== */
     .chapter-grid {
@@ -232,10 +233,12 @@
     .phase-pre .chapter-card.live { border-color: rgba(251,113,133,0.5); }
     .phase-demo .chapter-card.live { border-color: rgba(251,191,36,0.5); }
     .phase-card .chapter-card.live { border-color: rgba(56,189,248,0.5); }
+    .phase-exercise .chapter-card.live { border-color: rgba(52,211,153,0.5); }
     .chapter-card.live:hover { transform: translateY(-4px); box-shadow: 0 18px 40px -20px rgba(0,0,0,0.8); }
     .phase-pre .chapter-card.live .ch-status { color: var(--accent-rose); }
     .phase-demo .chapter-card.live .ch-status { color: var(--accent-amber); }
     .phase-card .chapter-card.live .ch-status { color: var(--accent-blue); }
+    .phase-exercise .chapter-card.live .ch-status { color: var(--accent-emerald); }
     .chapter-card.live .ch-dot { background: currentColor; }
 
     /* ===== 关于 ===== */
@@ -399,6 +402,7 @@
           <a href="#pre">课前预习</a>
           <a href="#demo">课中演示</a>
           <a href="#card">课后闪卡</a>
+          <a href="#exercise">习题讲解</a>
           <a href="#about">关于</a>
         </nav>
         <div class="auth-area" id="authArea">
@@ -483,6 +487,18 @@
       <div class="chapter-grid" data-phase="card"></div>
     </section>
 
+    <!-- 课后习题讲解 -->
+    <section id="exercise" class="phase phase-exercise">
+      <div class="phase-head">
+        <span class="phase-no">04</span>
+        <div>
+          <h2 class="section-title">课后习题讲解</h2>
+          <p class="section-sub">逐题精讲 + 视频播放器，按章切换、支持连播与进度记忆</p>
+        </div>
+      </div>
+      <div class="chapter-grid" data-phase="exercise"></div>
+    </section>
+
     <!-- 关于 -->
     <section id="about">
       <h2 class="section-title">关于本课程</h2>
@@ -558,7 +574,8 @@
     const LIVE = {
       pre:  Object.fromEntries(Array.from({length:12}, (_,i)=>[i,{ url:`demos/课前预习/ch${i+1}.html`, label:"开始预习" }])),
       demo: Object.fromEntries(Array.from({length:12}, (_,i)=> i===5 ? [i,{ url:"demos/gyroscope-precession.html", label:"打开演示" }] : [i,{ url:`demos/课中演示/demo.html?ch=${i+1}`, label:"打开演示" }])),
-      card: Object.fromEntries(Array.from({length:12}, (_,i)=>[i,{ url:`demos/课后复习/flashcards.html?ch=${i+1}`, label:"打开闪卡" }]))
+      card: Object.fromEntries(Array.from({length:12}, (_,i)=>[i,{ url:`demos/课后复习/flashcards.html?ch=${i+1}`, label:"打开闪卡" }])),
+      exercise: { 1: { url: "demos/习题讲解/player.html?ch=2", label: "观看讲解" } }
     };
 
     document.querySelectorAll('.chapter-grid').forEach(grid => {
@@ -570,7 +587,7 @@
         if (item) {
           card.href = item.url;
           card.className = 'chapter-card live';
-          if (phase === 'pre') { card.target = '_blank'; card.rel = 'noopener noreferrer'; }
+          if (phase === 'pre' || phase === 'exercise') { card.target = '_blank'; card.rel = 'noopener noreferrer'; }
           card.innerHTML =
             '<span class="ch-num">第 ' + String(i + 1).padStart(2, '0') + ' 章</span>' +
             '<h3 class="ch-title">' + title + '</h3>' +
