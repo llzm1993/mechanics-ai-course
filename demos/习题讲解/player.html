@@ -97,6 +97,9 @@
     width: 100%; height: 100%;
     display: block; background: #000; object-fit: contain;
   }
+  /* 隐藏原生控件中的「下载」入口，并禁止右键另存 */
+  .video-shell video::-webkit-media-controls-enclosure { overflow: hidden; }
+  .video-shell video::-internal-media-controls-download-button { display: none; }
   .now { margin-top: 18px; }
   .now-head { display: flex; align-items: flex-start; gap: 12px; }
   .now-no {
@@ -214,7 +217,7 @@
     <div class="layout" id="layout">
       <section class="stage">
         <div class="video-shell">
-          <video id="video" controls playsinline preload="metadata"></video>
+          <video id="video" controls playsinline preload="metadata" controlsList="nodownload noremoteplayback" disablePictureInPicture></video>
         </div>
         <div class="now">
           <div class="now-head">
@@ -246,7 +249,7 @@
     <div class="empty" id="empty" hidden>
       <div class="ico">🎬</div>
       <h2>该章习题讲解正在制作中</h2>
-      <p>目前已上线 <strong>第二章 · 牛顿运动定律</strong> 的 13 道习题讲解。<br />
+      <p>目前已上线 <strong>第 2–4 章</strong> 共 35 道习题讲解（牛顿运动定律 13 讲、非惯性系与惯性力 10 讲、质心与动量守恒 12 讲）。<br />
         其他章节正在陆续录制，敬请期待。<br /><br />
         <a href="../../index.html">← 返回课程主页</a>
       </p>
@@ -263,7 +266,8 @@
     "机械波", "流体力学", "万有引力与天体运动", "狭义相对论基础"
   ];
 
-  // 视频数据：目前仅第二章上线。新增章节时在此追加即可（dir 为章节目录名）。
+  // 视频数据：新增章节时在此追加即可（dir 为章节目录名；name 可覆盖该章显示名）。
+  // 注：视频按教材章号组织，个别章主题与网站 12 章大纲的命名不完全对应，故用 name 标注真实内容。
   var DATA = {
     2: {
       dir: "第二章",
@@ -281,6 +285,40 @@
         { no: "2-10", title: "向心力的隐藏来源",                      file: "习题2-10_向心力的隐藏来源.mp4", tag: "向心力" },
         { no: "2-11", title: "巧解多体系统的运动学几何约束",          file: "习题2-11：巧解多体系统的运动学几何约束.mp4", tag: "几何约束" },
         { no: "2-12", title: "空气阻力下的真实抛体轨迹推导",          file: "习题2-12：空气阻力下的真实抛体轨迹推导.mp4", tag: "空气阻力" }
+      ]
+    },
+    3: {
+      dir: "第三章",
+      name: "非惯性系与惯性力",
+      videos: [
+        { no: "3-1",  title: "斜面下滑小车内的单摆悬角破解",          file: "习题3-1：斜面下滑小车内的单摆悬角破解.mp4", tag: "非惯性系" },
+        { no: "3-2",  title: "卡车拖圆木的非惯性系秒杀法",            file: "习题3-2：卡车拖圆木的非惯性系秒杀法.mp4", tag: "平动惯性力" },
+        { no: "3-3",  title: "下沉铁盒里的阿特伍德机",                file: "习题3-3：下沉铁盒里的阿特伍德机.mp4", tag: "等效重力" },
+        { no: "3-4",  title: "如何用惯性力秒杀双滑轮系统",            file: "习题3-4：如何用惯性力秒杀双滑轮系统.mp4", tag: "惯性力" },
+        { no: "3-5",  title: "用平动惯性力破解相对静止",              file: "习题3-5：用平动惯性力破解相对静止.mp4", tag: "相对静止" },
+        { no: "3-6",  title: "巧用惯性离心力拆解转弯极限",            file: "习题3-6讲解：巧用惯性离心力拆解转弯极限.mp4", tag: "惯性离心力" },
+        { no: "3-7",  title: "如何用惯性离心力秒杀双绳旋转系统",      file: "习题3-7：如何用惯性离心力秒杀双绳旋转系统.mp4", tag: "双绳旋转" },
+        { no: "3-8",  title: "飞出圆盘的物块落在哪？",                file: "习题3-8：飞出圆盘的物块落在哪？.mp4", tag: "临界脱离" },
+        { no: "3-9",  title: "旋转钢丝上的绝对平衡",                  file: "习题3-9：旋转钢丝上的绝对平衡.mp4", tag: "旋转平衡" },
+        { no: "3-10", title: "旋转槽内小球的隐藏受力",                file: "习题3-10：旋转槽内小球的隐藏受力.mp4", tag: "约束力" }
+      ]
+    },
+    4: {
+      dir: "第四章",
+      name: "质心与动量守恒",
+      videos: [
+        { no: "4-1",  title: "地月系统的质心究竟藏在哪里？",          file: "习题4-1：地月系统的质心究竟藏在哪里？.mp4", tag: "质心" },
+        { no: "4-2",  title: "空间质心坐标计算",                      file: "习题4-2空间质心坐标计算.mp4", tag: "质心坐标" },
+        { no: "4-3",  title: "如何破解非刚体软绳的受力难题",          file: "习题4-3：如何破解非刚体软绳的受力难题.mp4", tag: "软绳" },
+        { no: "4-4",  title: "子弹穿木块的分段动量守恒",              file: "习题4-4：子弹穿木块的分段动量守恒.mp4", tag: "分段守恒" },
+        { no: "4-5",  title: "质心位移如何破解复杂运动难题",          file: "习题4-5：质心位移如何破解复杂运动难题.mp4", tag: "质心位移" },
+        { no: "4-6",  title: "如何计算空中互推的落地距离？",          file: "习题4-6：如何计算空中互推的落地距离？.mp4", tag: "反冲" },
+        { no: "4-7",  title: "小船上谁先到达木桩",                    file: "习题4-7_小船上谁先到达木桩.mp4", tag: "相对运动" },
+        { no: "4-8",  title: "复杂物理过程如何精准拆解？",            file: "习题4-8：复杂物理过程如何精准拆解？.mp4", tag: "过程拆解" },
+        { no: "4-9",  title: "动量守恒如何破解最高点炸裂问题",        file: "习题4-9：动量守恒如何破解最高点炸裂问题.mp4", tag: "炸裂" },
+        { no: "4-10", title: "钢珠砸秤盘，读数怎么算？",              file: "习题4-10：钢珠砸秤盘，读数怎么算？.mp4", tag: "冲量" },
+        { no: "4-11", title: "喷泉水柱悬停垃圾桶的力学奥秘",          file: "习题4-11：喷泉水柱悬停垃圾桶的力学奥秘.mp4", tag: "连续体动量" },
+        { no: "4-12", title: "漏水水桶的变质量陷阱",                  file: "习题4-12：漏水水桶的变质量陷阱.mp4", tag: "变质量" }
       ]
     }
   };
@@ -321,6 +359,10 @@
     return encodeURI(dir + "/" + v.file);
   }
 
+  function chName(ch) {
+    return (DATA[ch] && DATA[ch].name) || CHAPTER_NAMES[ch - 1] || "";
+  }
+
   function renderChapterNav() {
     chapterNav.innerHTML = "";
     CHAPTER_NAMES.forEach(function (name, i) {
@@ -328,7 +370,7 @@
       var has = DATA[ch] && DATA[ch].videos && DATA[ch].videos.length;
       var b = document.createElement("button");
       b.className = "ch-pill" + (ch === currentChapter ? " active" : "") + (has ? "" : " disabled");
-      b.textContent = "第 " + ch + " 章 · " + name;
+      b.textContent = "第 " + ch + " 章 · " + chName(ch);
       b.title = has ? "查看本章习题讲解" : "该章讲解制作中";
       b.addEventListener("click", function () {
         if (!has) return;
@@ -342,7 +384,7 @@
     currentChapter = ch;
     videos = (DATA[ch] && DATA[ch].videos) || [];
     currentIndex = 0;
-    var name = CHAPTER_NAMES[ch - 1] || "";
+    var name = chName(ch);
     chapterBadge.textContent = "第" + ch + "章 · " + name;
     renderChapterNav();
     var hasVideos = videos.length > 0;
@@ -424,6 +466,11 @@
       setVideo(currentIndex + 1, true);
     }
   });
+
+  // 关闭下载通道：禁止右键「视频另存为」与拖拽保存
+  videoEl.setAttribute("draggable", "false");
+  videoEl.addEventListener("contextmenu", function (e) { e.preventDefault(); });
+  videoEl.addEventListener("dragstart", function (e) { e.preventDefault(); });
 
   prevBtn.addEventListener("click", function () { setVideo(currentIndex - 1, true); });
   nextBtn.addEventListener("click", function () { setVideo(currentIndex + 1, true); });
