@@ -179,7 +179,7 @@
       <div id="redirect">
         <div class="redirect-card">
           <div class="icon">🌀</div>
-          <h2>第 6 章 · 刚体定轴转动</h2>
+          <h2>第 7 章 · 刚体</h2>
           <p>本章的互动演示是一个专门的 <b>Three.js 三维陀螺仪</b> 演示，直观展示重力作用下陀螺的进动与角动量增量关系 <span class="mono">dL = M dt</span>。点击下方按钮在新页面中打开该 3D 演示。</p>
           <a class="link-btn" href="../gyroscope-precession.html">打开陀螺仪 3D 演示 →</a>
         </div>
@@ -228,10 +228,10 @@ document.addEventListener('DOMContentLoaded', function () {
   };
 
   const CHAPTERS = {
-    1:{name:'质点运动学'}, 2:{name:'牛顿运动定律'}, 3:{name:'动量守恒定律'},
-    4:{name:'动能定理与功能原理'}, 5:{name:'角动量与力矩'}, 6:{name:'刚体定轴转动'},
-    7:{name:'刚体平面运动'}, 8:{name:'机械振动'}, 9:{name:'机械波'},
-    10:{name:'流体力学'}, 11:{name:'万有引力与天体运动'}, 12:{name:'狭义相对论基础'}
+    1:{name:'质点运动学'}, 2:{name:'惯性系下质点动力学'}, 3:{name:'非惯性系下质点动力学'},
+    4:{name:'动量定理与动量守恒定律'}, 5:{name:'功能原理与机械能守恒定律'}, 6:{name:'角动量定理与角动量守恒定律'},
+    7:{name:'刚体'}, 8:{name:'流体'}, 9:{name:'振动'},
+    10:{name:'波动'}, 11:{name:'狭义相对论简介'}, 12:{name:'广义相对论、宇宙学与天体物理初步'}
   };
 
   // ===== 绘图工具 =====
@@ -265,6 +265,52 @@ document.addEventListener('DOMContentLoaded', function () {
   // DEMOS 1–5, 7–12
   // =========================================================================
   const DEMOS = {
+    // ---------------- 第3章 非惯性系下质点动力学：加速系中的单摆悬角 ----------------
+    3: {
+      name: '非惯性系下质点动力学',
+      desc: '在向右加速（加速度 $a_0$）的参考系中，每个质点都被虚加一个向左的平动惯性力 $-ma_0$，使牛顿定律形式上仍然成立：图钉$\vec F+(-m\vec a_0)=m\vec a\,^\prime$。单摆因此悬停在等效重力 $\vec g_{eff}$（由 $\vec g$ 与 $-a_0$ 合成）方向，悬线与竖直夹角 $\tan\theta=a_0/g$。拖动滑块改变 $a_0$，观察悬角如何“秒杀”求解——这正是非惯性系解题的通用钥匙。',
+      controls: [
+        { key:'a0', label:'参考系加速度 $a_0$（右为正）', min:-10, max:10, step:0.5, value:3, unit:'m/s²' },
+        { key:'L', label:'摆长 $L$', min:0.6, max:2.2, step:0.1, value:1.4, unit:'m' }
+      ],
+      init(P, S) { S.phi = 0.7; S.w = 0; },
+      step(P, S, dt) {
+        const g = 9.8;
+        const Ge = Math.sqrt(g*g + P.a0*P.a0);
+        const phi0 = Math.atan2(P.a0, g);          // 平衡角（向左为正）
+        const k = Ge / P.L;
+        S.w += (-k * Math.sin(S.phi - phi0) - 0.7 * S.w) * dt;   // 带阻尼的小幅摆动
+        S.phi += S.w * dt;
+      },
+      draw(ctx, W, H, P, S) {
+        clearBg(ctx, W, H);
+        const g = 9.8, Ge = Math.sqrt(g*g + P.a0*P.a0);
+        const phi0 = Math.atan2(P.a0, g);
+        const px = W/2, py = H*0.20, L = Math.min(W, H) * 0.46;
+        const bx = px - L*Math.sin(S.phi), by = py + L*Math.cos(S.phi);
+        // 竖直参考线
+        ctx.strokeStyle = C.axis; ctx.setLineDash([5,5]); ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(px, py + L*1.1); ctx.stroke(); ctx.setLineDash([]);
+        // 摆杆
+        ctx.strokeStyle = C.blue; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(px,py); ctx.lineTo(bx,by); ctx.stroke();
+        // 摆球
+        ctx.fillStyle = C.red; ctx.beginPath(); ctx.arc(bx, by, 9, 0, 7); ctx.fill();
+        const sc = 8;
+        // 重力 g（向下）
+        arrow(ctx, bx, by, bx, by + g*sc, C.text, 3); label(ctx, bx+12, by+g*sc, 'mg', C.text);
+        // 平动惯性力 -m a0（向左，a0>0）
+        if (Math.abs(P.a0) > 0.05) { arrow(ctx, bx, by, bx - P.a0*sc, by, C.amber, 3); label(ctx, bx - P.a0*sc - 6, by-12, '-m a₀', C.amber); }
+        // 等效重力 g_eff（由球指向支点方向）
+        const ux = px - bx, uy = py - by, ul = Math.hypot(ux,uy) || 1;
+        arrow(ctx, bx, by, bx + ux/ul*L*0.5, by + uy/ul*L*0.5, C.cyan, 3);
+        label(ctx, bx + ux/ul*L*0.5 + 6, by + uy/ul*L*0.5 - 6, 'g_eff', C.cyan);
+        // 文本
+        ctx.fillStyle = C.text; ctx.font = '600 13px JetBrains Mono, monospace'; ctx.textAlign = 'left';
+        ctx.fillText('平衡角 θ = atan(a₀/g) = ' + (phi0*180/Math.PI).toFixed(1) + '°（左偏）', 16, 24);
+        ctx.fillText('当前摆角 φ = ' + (S.phi*180/Math.PI).toFixed(1) + '°', 16, 44);
+      }
+    },
+
 
     // ---------------- 第1章 质点运动学：抛体运动 ----------------
     1: {
@@ -333,7 +379,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // ---------------- 第2章 牛顿运动定律：斜面滑块 ----------------
     2: {
-      name: '牛顿运动定律',
+      name: '惯性系下质点动力学',
       desc: '沿斜面方向列牛顿第二定律：$ma=mg\\sin\\theta-f$。滑动摩擦力 $f=\\mu N=\\mu mg\\cos\\theta$，故 $a=g(\\sin\\theta-\\mu\\cos\\theta)$。当 $\\mu\\ge\\tan\\theta$ 时静摩擦足以平衡，物体静止。',
       controls: [
         { key:'m', label:'质量 $m$', min:0.5, max:5, step:0.1, value:2, unit:'kg' },
@@ -403,9 +449,9 @@ document.addEventListener('DOMContentLoaded', function () {
       }
     },
 
-    // ---------------- 第3章 动量守恒：一维对心碰撞 ----------------
-    3: {
-      name: '动量守恒定律',
+    // ---------------- 第4章 动量守恒：一维对心碰撞 ----------------
+    4: {
+      name: '动量定理与动量守恒定律',
       desc: '一维对心碰撞满足动量守恒 $m_1u_1+m_2u_2=m_1v_1+m_2v_2$。恢复系数 $e=(v_2-v_1)/(u_1-u_2)$；完全弹性 $e=1$ 动能守恒，完全非弹性 $e=0$ 共速、动能损失最大。',
       controls: [
         { key:'m1', label:'质量 $m_1$', min:0.5, max:5, step:0.1, value:2, unit:'kg' },
@@ -462,9 +508,9 @@ document.addEventListener('DOMContentLoaded', function () {
       }
     },
 
-    // ---------------- 第4章 动能定理与功能原理 ----------------
-    4: {
-      name: '动能定理与功能原理',
+    // ---------------- 第5章 动能定理与功能原理 ----------------
+    5: {
+      name: '功能原理与机械能守恒定律',
       desc: '动能定理 $W_{\\text{合}}=\\Delta E_k$。斜面下滑时合外力做功 $W_{\\text{合}}=(mg\\sin\\theta-\\mu mg\\cos\\theta)s$，动能增量 $\\Delta E_k=\\frac12mv^2-\\frac12mv_0^2$，二者始终相等。',
       controls: [
         { key:'m', label:'质量 $m$', min:0.5, max:5, step:0.1, value:2, unit:'kg' },
@@ -509,9 +555,9 @@ document.addEventListener('DOMContentLoaded', function () {
       }
     },
 
-    // ---------------- 第5章 角动量与力矩：单摆 ----------------
-    5: {
-      name: '角动量与力矩',
+    // ---------------- 第6章 角动量与力矩：单摆 ----------------
+    6: {
+      name: '角动量定理与角动量守恒定律',
       desc: '单摆受重力矩 $\\tau=-mgl\\sin\\varphi$，转动方程 $I\\ddot\\varphi=\\tau$，其中 $I=ml^2$，角动量 $L=I\\omega$。重力矩不断改变角动量方向（垂直于摆动平面）。',
       controls: [
         { key:'l', label:'摆长 $l$', min:0.4, max:2, step:0.1, value:1, unit:'m' },
@@ -573,7 +619,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // ---------------- 第7章 刚体平面运动：纯滚动 vs 滑动 ----------------
     7: {
-      name: '刚体平面运动',
+      name: '刚体',
       desc: '圆柱纯滚动无滑满足运动学约束 $v=\\omega R$，质心加速度 $a=\\dfrac{g\\sin\\theta}{1+I/(mR^2)}$（实心圆柱 $I=\\frac12mR^2$，故 $a=\\frac23g\\sin\\theta$）。若打滑则 $v\\neq\\omega R$。上方为纯滚动，下方为有滑动（无摩擦）。',
       controls: [
         { key:'R', label:'半径 $R$', min:0.3, max:1.2, step:0.05, value:0.6, unit:'m' },
@@ -629,9 +675,9 @@ document.addEventListener('DOMContentLoaded', function () {
       }
     },
 
-    // ---------------- 第8章 机械振动：弹簧振子 ----------------
-    8: {
-      name: '机械振动',
+    // ---------------- 第9章 机械振动：弹簧振子 ----------------
+    9: {
+      name: '振动',
       desc: '弹簧振子运动方程 $\\ddot x=-\\frac{k}{m}x-\\frac{b}{m}\\dot x$。无阻尼时 $\\omega_0=\\sqrt{k/m}$，周期 $T=2\\pi/\\omega_0$；欠阻尼时振幅按 $e^{-\\gamma t}$ 衰减，$\\gamma=b/(2m)$。',
       controls: [
         { key:'k', label:'劲度系数 $k$', min:1, max:30, step:0.5, value:10, unit:'N/m' },
@@ -714,9 +760,9 @@ document.addEventListener('DOMContentLoaded', function () {
       }
     },
 
-    // ---------------- 第9章 机械波：行波/驻波 ----------------
-    9: {
-      name: '机械波',
+    // ---------------- 第10章 机械波：行波/驻波 ----------------
+    10: {
+      name: '波动',
       desc: '行波 $y=A\\sin(kx-\\omega t)$，波速 $v=\\lambda f=\\omega/k$。两列反向行波叠加形成驻波 $y=2A\\sin(kx)\\cos(\\omega t)$。',
       controls: [
         { key:'f', label:'频率 $f$', min:0.2, max:3, step:0.1, value:1, unit:'Hz' },
@@ -765,9 +811,9 @@ document.addEventListener('DOMContentLoaded', function () {
       }
     },
 
-    // ---------------- 第10章 流体力学：连续性 + 伯努利 ----------------
-    10: {
-      name: '流体力学',
+    // ---------------- 第8章 流体力学：连续性 + 伯努利 ----------------
+    8: {
+      name: '流体',
       desc: '连续性方程 $A_1v_1=A_2v_2$；水平管伯努利方程 $p+\\frac12\\rho v^2=\\text{常数}$，故管径变细处流速增大、压强减小（文丘里效应）。',
       controls: [
         { key:'v1', label:'入口流速 $v_1$', min:0.5, max:5, step:0.1, value:2, unit:'m/s' },
@@ -834,9 +880,9 @@ document.addEventListener('DOMContentLoaded', function () {
       }
     },
 
-    // ---------------- 第11章 万有引力与天体运动 ----------------
-    11: {
-      name: '万有引力与天体运动',
+    // ---------------- 第12章 万有引力与天体运动 ----------------
+    12: {
+      name: '广义相对论、宇宙学与天体物理初步',
       desc: '万有引力 $F=\\dfrac{GMm}{r^2}$ 提供向心力。机械能 $E=\\frac12mv^2-\\dfrac{GMm}{r}<0$ 为椭圆轨道；角动量 $\\vec L=\\vec r\\times m\\vec v$ 守恒，故近地点速度快、远地点速度慢（开普勒第二定律）。',
       controls: [
         { key:'vf', label:'初速 (×圆轨道)', min:0.4, max:1.5, step:0.05, value:1, unit:'v_c' },
@@ -903,9 +949,9 @@ document.addEventListener('DOMContentLoaded', function () {
       }
     },
 
-    // ---------------- 第12章 狭义相对论基础 ----------------
-    12: {
-      name: '狭义相对论基础',
+    // ---------------- 第11章 狭义相对论基础 ----------------
+    11: {
+      name: '狭义相对论简介',
       desc: '时间膨胀 $\\Delta t=\\gamma\\Delta\\tau$，长度收缩 $L=L_0/\\gamma$，其中 $\\gamma=1/\\sqrt{1-\\beta^2},\\;\\beta=v/c$。经典力学认为时间与长度与参考系无关（$\\gamma=1$）。',
       controls: [
         { key:'beta', label:'速率比 $\\beta=v/c$', min:0, max:0.95, step:0.01, value:0.6 }
@@ -1055,7 +1101,7 @@ document.addEventListener('DOMContentLoaded', function () {
     ch = n;
     document.getElementById('chTitle').textContent = `第 ${n} 章 · ${CHAPTERS[n].name} · 互动演示`;
     document.getElementById('chapJump').value = String(n);
-    if (n === 6) { demo = null; showRedirect(true); history.replaceState(null, '', '?ch=' + n); return; }
+    if (n === 7) { demo = null; showRedirect(true); history.replaceState(null, '', '?ch=' + n); return; }
     showRedirect(false);
     demo = DEMOS[n];
     document.getElementById('desc').innerHTML = demo.desc;
@@ -1090,7 +1136,7 @@ document.addEventListener('DOMContentLoaded', function () {
     requestAnimationFrame(loop);
     let dt = (now - last) / 1000; last = now;
     if (dt > 0.05) dt = 0.05;
-    if (demo && ch !== 6) {
+    if (demo && ch !== 7) {
       if (playing) demo.step(P, S, dt);
       demo.draw(ctx, W, H, P, S);
       updateReadout(demo.readout(P, S));
