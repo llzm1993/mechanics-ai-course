@@ -2873,5 +2873,21 @@
             });
         };
     </script>
+  <!-- 预习数据采集（写入 Supabase，匿名/登录均可） -->
+  <script src="../../vendor/supabase.js"></script>
+  <script>
+    window.PREP_CHAPTER = 2;
+    window.PREP_GET_RESULTS = function () {
+      var secs = Math.floor((Date.now() - appState.startTime) / 1000);
+      var map = {};
+      try {
+        var cards = (typeof getActiveCards === "function") ? getActiveCards() : [];
+        var rank = { red: 0, yellow: 1, green: 2 };
+        cards.forEach(function (c, i) { if (c.status && c.status !== 'unrated') map[i + 1] = rank[c.status]; });
+      } catch (e) {}
+      return { prep_seconds: secs, card_results: map };
+    };
+  </script>
+  <script src="../../vendor/prep-tracker.js"></script>
 </body>
 </html>
